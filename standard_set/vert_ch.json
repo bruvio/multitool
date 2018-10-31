@@ -1,0 +1,30 @@
+{
+	"ppf":[
+	"kg1v/lid1",
+	"kg1v/lid2",
+	"kg1v/lid3",
+	"kg1v/lid4",
+	"kg1v/fc1",
+	"kg1v/fc2",
+	"kg1v/fc3",
+	"kg1v/fc4"],
+	"jpf":[
+	"df/g1v-mva<1",
+	"df/g1v-mva<2",
+	"df/g1v-mva<3",
+	"df/g1v-mva<4",
+	"df/g1c-cprb<dcn:001",
+	"df/g1c-cprb<dcn:002",
+	"df/g1c-cprb<dcn:003",
+	"df/g1c-cprb<dcn:004",
+	"df/g1c-cprb<met:001",
+	"df/g1c-cprb<met:002",
+	"df/g1c-cprb<met:003",
+	"df/g1c-cprb<met:004",
+	"df/g1r-lid:001",
+	"df/g1r-lid:002",
+	"df/g1r-lid:003",
+	"df/g1r-lid:004"
+    ]
+
+}

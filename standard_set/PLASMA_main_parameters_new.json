@@ -1,0 +1,85 @@
+//symbols 
+//================    ===============================
+//character           description
+//================    ===============================
+//   -                solid line style
+//   --               dashed line style
+//   -.               dash-dot line style
+//   :                dotted line style
+//   .                point marker
+//   ,                pixel marker
+//   o                circle marker
+//   v                triangle_down marker
+//   ^                triangle_up marker
+//   <                triangle_left marker
+//   >                triangle_right marker
+//   1                tri_down marker
+//   2                tri_up marker
+//   3                tri_left marker
+//   4                tri_right marker
+//   s                square marker
+//   p                pentagon marker
+//   *                star marker
+//   h                hexagon1 marker
+//   H                hexagon2 marker
+//   +                plus marker
+//   x                x marker
+//   D                diamond marker
+//   d                thin_diamond marker
+//   |                vline marker
+//   _                hline marker
+//================    ===============================
+//linestyles ['-', '--', '-.', ':']
+{
+   "ppf":{
+
+      "jetppf/KG1V/LID3":["1","+",":"],
+//      "jetppf/KG1V/LID4",
+      "jetppf/MAGN/IPLA":["2","+","--"],
+//      "jetppf/EFIT/BTND",
+//      "jetppf/EFIT/WP",
+//      "jetppf/EFIT/WDIA",
+      "jetppf/EFIT/BVAC":["3",".","--"],
+      "jetppf/EFIT/POHM":["4",".","--"],
+      "jetppf/SCAL/PRAD": ["4","+",":"],
+      "jetppf/NBI/PTOT": ["4",".","--"],
+//      "jetppf/KG1L/LAD3",
+//      "jetppf/KG1L/LAD4",
+//      "jetppf/GASM/ELER",
+      "jetppf/GASM/G09R": ["5","+",":"],
+      "jetppf/GASM/C32R": ["5",".","--"],
+//      "jetppf/KG10/LID3",
+//      "jetppf/KG10/LID4",
+//      "jetppf/BOLO/TOPX",
+//      "jetppf/BOLO/TXPN",
+//      "jetppf/BOLO/TOPI",
+//      "jetppf/BOLO/TOBU",
+//   "HRTX/NELA",
+//   "HRTX/NEVL",
+      "jetppf/KY4D/ITOT": ["6","+","-"],
+      "jetppf/KY4D/OTOT": ["6",".","--"],
+//   "EDG7/DAI",
+//   "EDG7/DAO",
+//   "EDG8/TDAO",
+//   "EDG8/TDAI",
+//  "EDG8/TBEO",
+//      "jetppf/PT5P/PEN1",
+//      "jetppf/PT5P/PEN2",
+//      "jetppf/PT5P/BAR1",
+      "jetppf/PT5P/BAR2":[ "7","+",":"],
+      "jetppf/LIDX/NEVL": ["8","+",":"],
+      "jetppf/LIDX/TEVL": ["8",".","--"],
+      "jetppf/LIDX/TE0": ["9","+",":"],
+      "jetppf/LIDX/NE0": ["9",".","--"],
+      "jetppf/SCAL/H98Y": ["10","+","-"]
+//      "jetppf/S3AD/AD35"
+},
+  "icolumn":"1",
+  "irow":"10",
+  "linewidth":"0.5",
+  "markersize":"1"
+
+
+}
+
+

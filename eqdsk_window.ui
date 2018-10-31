@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>eqdsk_window</class>
+ <widget class="QMainWindow" name="eqdsk_window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>284</width>
+    <height>223</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>eqdsk tools</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QCheckBox" name="savefigure_checkBox">
+      <property name="text">
+       <string>save Figure</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="plotbutton">
+      <property name="text">
+       <string>plot time traces</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="selectfile">
+      <property name="text">
+       <string>select eqdsk</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="KG1L_radio_2">
+         <property name="toolTip">
+          <string extracomment="runs KG1L code for selected pulse and debug level"/>
+         </property>
+         <property name="whatsThis">
+          <string extracomment="runs KG1L code for selected pulse and debug level"/>
+         </property>
+         <property name="text">
+          <string>KG1L</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QRadioButton" name="KG1H_radio_2">
+         <property name="toolTip">
+          <string extracomment="run KG1H code (at the moment is bugged to print to screen!)"/>
+         </property>
+         <property name="whatsThis">
+          <string extracomment="run KG1H code (at the moment is bugged to print to screen!)"/>
+         </property>
+         <property name="text">
+          <string>KG1H</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>284</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

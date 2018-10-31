@@ -1,0 +1,25 @@
+{
+    "ppf": {
+        "jetppf/kg1v/lid1":["1","o",":"],
+        "jetppf/kg1v/lid2":["2","o",":"],
+        "jetppf/kg1v/lid3":["3","o",":"],
+        "jetppf/kg1v/lid4":["4","o",":"],
+        "jetppf/kg1v/lid5":["5","o",":"],
+        "jetppf/kg1v/lid6":["6","o",":"],
+        "jetppf/kg1v/lid7":["7","o",":"],
+        "jetppf/kg1v/lid8":["8","o",":"],
+        "chain1/kg1r/lid1":["1","s","--"],
+        "chain1/kg1r/lid2":["2","s","--"],
+        "chain1/kg1r/lid3":["3","s","--"],
+        "chain1/kg1r/lid4":["4","s","--"],
+        "chain1/kg1r/lid5":["5","s","--"],
+        "chain1/kg1r/lid6":["6","s","--"],
+        "chain1/kg1r/lid7":["7","s","--"],
+        "chain1/kg1r/lid8":["8","s","--"]
+    },
+
+  "icolumn":"1",
+  "irow":"8",
+  "linewidth":"0.5",
+  "markersize":"1"
+}
