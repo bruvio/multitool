@@ -12,33 +12,36 @@ __email__ = "bruno.viola@ukaea.uk"
 __status__ = "Production"
 __credits__ = ["gioart"]
 
-
+import eproc as ep
 import argparse
-import logging
-import sys
-import numpy as np
-import pathlib
-import stat
-import os
-import subprocess
-import time
-from shutil import copyfile
-from PyQt4 import QtGui
-import bruvio_tools
-
-
-
 from pathlib import Path
-
+import logging
+import pathlib
+import numpy as np
 from ppf import *
+import bruvio_tools
+from MAGTool import *  # Magnetics Tool
+# from PyQt4 import QtGui
+from PyQt4 import Qt, QtCore,QtGui
+from magSurfGA_SL import Ui_magsurf_window
+from edge2d_window import Ui_edge2d_window
+from eqdsk_window import Ui_eqdsk_window
+# from goMagSurfGA_SL import *
+from matplotlib import cm
+from plotdata import Ui_plotdata_window
+from scipy import interpolate
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 
 sys.path.append('../')
-# from kg1_tools.status_flags.status_flag import GetSF
-# from kg1_tools.kg1_tools_gui.utility import *
+from EDGE2D.class_sim import sim
+from EDGE2D.EDGE2DAnalyze import shot,read_json
+from kg1_tools.kg1_tools_gui.utility import plot_time_traces
+# from kg1_tools.kg1_tools_gui.GO_kg1_tools import handle_readdata_button
 # from reqco.test_reqco_ver01 import *
 # from smtpexample_fork import mail
 
-from numpy import arange,asscalar
 import matplotlib.pyplot as plt
 plt.rcParams["savefig.directory"] = os.chdir(os.getcwd())
 
@@ -60,29 +63,1229 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         super(bruvio_tool, self).__init__(parent)
         self.setupUi(self)
         logging.debug('start')
+        cwd = os.getcwd()
+        self.workfold = cwd
+        self.home = cwd
+        parent= Path(self.home)
+        print(parent.parent)
+        self.edge2dfold = str(parent.parent)+'/EDGE2D'
+        if "USR" in os.environ:
+            logging.debug('USR in env')
+            #self.owner = os.getenv('USR')
+            self.owner = os.getlogin()
+        else:
+            logging.debug('using getuser to authenticate')
+            import getpass
+            self.owner = getpass.getuser()
+
+        logging.debug('this is your username {}'.format(self.owner))
+        self.homefold = os.path.join(os.sep, 'u', self.owner)
+        logging.debug('this is your homefold {}'.format(self.homefold))
+        logging.debug('this is edge2d fold {}'.format(self.edge2dfold))
+        home = str(Path.home())
+
+        # cwd = os.getcwd()
+        # self.home = cwd
+        # print(self.home)
+        # print(owner)
+        logging.debug('we are in %s', cwd)
+        # psrint(homefold + os.sep+ folder)
+
+        pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
+        pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
+
+        self.readdata_button.clicked.connect(self.handle_readdata_button)
+        self.edge2d_button.clicked.connect(self.handle_edge2d_button)
+        self.eqdsk_button.clicked.connect(self.handle_eqdsk_button)
+        self.magsurf_button.clicked.connect(self.handle_magsurf_button)
+        self.readdata_button.setToolTip(
+            'opens windows to read standard set to plot time traces')
+
+
         self.exit_button.clicked.connect(self.handle_exit_button)
+        self.PathTranfile = None
+
+
+    def handle_readdata_button(self):
+        """
+        opens a new windows where the user can input a list of pulses he/she wants to plot
+
+        than the user can select a standard sets (a list of signal)
+        and then plot them
+
+
+        :return:
+        """
+
+        logging.info('\n')
+        logging.info('plotting tool')
+
+        self.window_plotdata = QtGui.QMainWindow()
+        self.ui_plotdata = Ui_plotdata_window()
+        self.ui_plotdata.setupUi(self.window_plotdata)
+        self.window_plotdata.show()
+
+        initpulse = pdmsht()
+        initpulse2 = initpulse -1
+
+        self.ui_plotdata.textEdit_pulselist.setText(str(initpulse))
+        # self.ui_plotdata.textEdit_colorlist.setText('black')
+
+        self.ui_plotdata.selectfile.clicked.connect(self.selectstandardset)
+
+        self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
+        self.ui_plotdata.savefigure_checkBox.setChecked(False)
+
+        self.JSONSS = 'PLASMA_main_parameters_new.json'
+        logging.debug('default set is {}'.format(self.JSONSS))
+        logging.info('select a standard set')
+        logging.info('\n')
+        logging.info('type in a list of pulses')
+
+    def handle_eqdsk_button(self):
+        logging.info('\n')
+        logging.info('eqdsk tool')
+
+        self.window_eqdsk = QtGui.QMainWindow()
+        self.ui_eqdsk = Ui_eqdsk_window()
+        self.ui_eqdsk.setupUi(self.window_eqdsk)
+        self.window_eqdsk.show()
+
+        self.ui_eqdsk.eqdsk_exit.clicked.connect(self.exitGUI_eqdsk)
+
+
+    def handle_edge2d_button(self):
+        logging.info('\n')
+        logging.info('edge2d tool')
+        self.Inputcode = 0
+        self.ExtraInput = 0
+        self.PathCatalog = '/home'
+
+        self.edge2d_window = QtGui.QMainWindow()
+        self.ui_edge2d = Ui_edge2d_window()
+        self.ui_edge2d.setupUi(self.edge2d_window)
+        self.edge2d_window.show()
+
+        self.ui_edge2d.edge2d_exit.clicked.connect(self.exitGUI_edge2d)
+        self.ui_edge2d.rungetnames_button.clicked.connect(self.getsimnames)
+
+        self.ui_edge2d.pushButton_pumpcurrents.clicked.connect(self.handle_pumpcurrents)
+        self.ui_edge2d.pushButton_contour.clicked.connect(self.handle_contour)
+        self.ui_edge2d.pushButton_powerbalance.clicked.connect(self.handle_powerbalance)
+        self.ui_edge2d.pushButton_print.clicked.connect(self.handle_print)
+        self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
+        self.ui_edge2d.pushButton_radiation.clicked.connect(self.handle_radiation)
 
 
 
 
 
 
-    #----------------------------
-    def handle_help_menu(self):
-        import webbrowser
-        url='file://' + os.path.realpath('./docs/build/html/index.html')
-        webbrowser.get(using='google-chrome').open(url,new=2);
+        self.ui_edge2d.lineEdit_1st.setText('input_dict_84600.json')
+        self.JSONSS1 = 'input_dict_84600.json'
+        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600.json')
+        self.JSONSS2 = 'compare_dict_84600.json'
 
-        # ----------------------------
-    def handle_pdf_open(self):
-            """
+        fsm = Qt.QFileSystemModel()
+        index = fsm.setRootPath(self.PathCatalog)
+        # self.comboBox = Qt.QComboBox()
+        self.ui_edge2d.comboBox_Name.setModel(fsm)
+        self.ui_edge2d.comboBox_Name.setRootModelIndex(index)
+        self.ui_edge2d.comboBox_Name.currentIndexChanged.connect(self.ScanName)
 
-            :return: open pdf file of the guide
-            """
-            file = os.path.realpath('./docs/kg1_tools_gui_documentation.pdf')
-            import subprocess
+        self.simlist = []
+        self.namelist = []
 
-            subprocess.Popen(['okular', file])
+        # self.ui_edge2d.comboBoxProgramE2d.currentIndexChanged.connect(self.ProgramE2dFunc)
+
+        self.ui_edge2d.comboBox_Machine.currentIndexChanged.connect(self.MachineFunc)
+
+        self.ui_edge2d.comboBox_Shot.currentIndexChanged.connect(self.ShotFunc)
+
+        self.ui_edge2d.comboBox_Date.currentIndexChanged.connect(self.DatagFunc)
+
+        self.ui_edge2d.comboBox_Seq.currentIndexChanged.connect(self.SeqFunc)
+
+
+        self.ui_edge2d.add_sim.clicked.connect(self.handle_add_sim)
+        self.ui_edge2d.lineEdit_var.setText('denel')
+        self.ui_edge2d.lineEdit_var_5.setText(self.ui_edge2d.lineEdit_var.text())
+
+
+        self.ui_edge2d.lineEdit_var.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var))
+        self.ui_edge2d.lineEdit_var_5.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var_5))
+
+
+        self.ui_edge2d.lineEdit_var_2.setText('ot')
+        self.ui_edge2d.lineEdit_var_3.setText('test')
+        self.ui_edge2d.lineEdit_var_4.setText('targetfilename')
+        self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
+
+
+
+
+
+
+        self.ui_edge2d.checkBox_profile.setChecked(False)
+        self.ui_edge2d.checkBox_time.setChecked(False)
+        self.ui_edge2d.checkBox_flux.setChecked(False)
+        self.ui_edge2d.checkBox_geom.setChecked(False)
+
+        self.ui_edge2d.select_json1.clicked.connect(self.handle_selectjson1)
+        self.ui_edge2d.select_json2.setEnabled(False);
+        self.ui_edge2d.lineEdit_2nd.setEnabled(False);
+        self.ui_edge2d.enablecompare_check.setChecked(False)
+
+        self.ui_edge2d.enablecompare_check.toggled.connect(
+            lambda: self.checkprintstate(self.ui_edge2d.enablecompare_check))
+
+        self.ui_edge2d.select_json2.clicked.connect(self.handle_selectjson2)
+
+        self.ui_edge2d.runanalyze_button.clicked.connect(self.handle_runanalyze_button)
+
+        self.ui_edge2d.edit_JSON2.setChecked(False)
+        self.ui_edge2d.edit_JSON1.setChecked(False)
+
+        self.ui_edge2d.edit_JSON1.toggled.connect(
+            lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON1))
+        self.ui_edge2d.edit_JSON2.toggled.connect(
+            lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON2))
+        self.ui_edge2d.textEdit_message2.setText('input_dict_84600.json')
+        self.ui_edge2d.runcpmparesims_button.clicked.connect(self.handle_run)
+
+
+
+
+
+
+
+        # self.ui_edge2d.enablecompare_check.setText('input_dict_84600.json')
+        #
+        #
+        # self.inputJSONSS = QtGui.QFileDialog.getOpenFileName(None,
+        #                                                 'Select Standard set',
+        #                                                 "./standard_set",
+        #                                                 'JSON Files(*.json)')
+        #
+        # self.inputJSONSS = os.path.basename(self.inputJSONSS)
+        # logging.debug('you have chosen {}'.format(self.inputJSONSS))
+        # os.chdir(self.home)
+
+    def handle_magsurf_button(self):
+        self.window_magsurf = QtGui.QMainWindow()
+        self.ui_magsurf = Ui_magsurf_window()
+        self.ui_magsurf.setupUi(self.window_magsurf)
+        self.window_magsurf.show()
+        # self.ui_magsurf.setupUi(self.ui_magsurf)
+        toolBar = NavigationToolbar(self.ui_magsurf.canvas, self.window_magsurf)
+        self.window_magsurf.addToolBar(toolBar)
+        #
+        # #
+        self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
+        self.ui_magsurf.isopsiPB.clicked.connect(self.plotIsoPsi)
+        self.ui_magsurf.isopsiFillPB.clicked.connect(self.plotIsoPsiFill)
+        self.ui_magsurf.solPB.clicked.connect(self.plotSol)
+        self.ui_magsurf.corePB.clicked.connect(self.plotCore)
+        #
+        initpulse = pdmsht()
+        self.ui_magsurf.JPNedit.setText(str(initpulse))
+
+        self.ui_magsurf.timeEdit.setText('50')  # s
+        self.ui_magsurf.stepPsiEdit.setText('0.1')  # V/s
+        self.ui_magsurf.solEdit.setText('1')  # cm
+        self.ui_magsurf.NsolEdit.setText('5')  # integer, nr of SOL lines
+        self.ui_magsurf.coreEdit.setText('5')  # integer, nr of CORE lines
+        self.ui_magsurf.coreStepEdit.setText('0.1')  # V/s
+        #
+        self.ui_magsurf.FW_CB.setChecked(True)
+        self.ui_magsurf.GAP_CB.setChecked(True)
+        self.ui_magsurf.GAP_CB.setStyleSheet("color:red")
+        self.ui_magsurf.XLOC_CB.setChecked(True)
+        self.ui_magsurf.XLOC_CB.setStyleSheet("color:magenta")
+        self.ui_magsurf.WALLS_CB.setChecked(True)
+        self.ui_magsurf.WALLS_CB.setStyleSheet("color:blue")
+        self.ui_magsurf.EFIT_CB.setChecked(True)
+        self.ui_magsurf.EFIT_CB.setStyleSheet("color:green")
+        #
+        self.ui_magsurf.minSlider.setText('40s')
+        self.ui_magsurf.maxSlider.setText('70s')
+        self.ui_magsurf.actualSlider.setText('  ')
+        self.ui_magsurf.configPlasma.setText('   ')
+        self.ui_magsurf.timeXLOC_LB.setText('   ')
+        self.ui_magsurf.timeWALLS_LB.setText('   ')
+        self.ui_magsurf.timeEFIT_LB.setText('   ')
+        #
+        self.ui_magsurf.resetPB.clicked.connect(self.resetGUI)
+        self.ui_magsurf.defaultPB.clicked.connect(self.defaultGUI)
+        self.ui_magsurf.exitPB.clicked.connect(self.exitGUI)
+        #
+
+        self.ui_magsurf.plotParam = {
+            'JPNobj': None,
+            'expDataDictJPNobj_EFIT': None,
+            'nameListGap': None,
+            'nameListStrikePoints': None,
+            'expDataDictJPNobj_XLOC': None,
+            'expDataDictJPNobj_WALLS': None,
+            'offR_XLOC': None,
+            'offZ_XLOC': None,
+            'time': None,
+            'gapDict': None,
+            'xFW': None,
+            'yFW': None,
+            'rEFIT': None,
+            'zEFIT': None,
+            'rBND_XLOC_smooth': None,
+            'zBND_XLOC_smooth': None,
+            'rBND_XLOC': None,
+            'zBND_XLOC': None,
+            'rXp': None,
+            'zXp': None,
+            'rSP': None,
+            'zSP': None,
+            'rBND_WALLS': None,
+            'zBND_WALLS': None,
+            'checkFW': None,
+            'checkGAP': None,
+            'checkXLOC': None,
+            'checkWALLS': None,
+            'checkEFIT': None,
+            'flagDiverted': None,
+            'rGrid': None,
+            'zGrid': None,
+            'psiGrid': None,
+            'psiEFIT': None
+        }
+
+        self.ui_magsurf.horizontalSlider.valueChanged.connect(self.slider_moved)
+        self.ui_magsurf.horizontalSlider.sliderReleased.connect(
+            lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
+
+
+
+    def handle_pumpcurrents(self):
+        if not self.simlist:
+            logging.error('choose a simulation first')
+        else:
+            logging.info('function not yet available')
+    def handle_contour(self):
+        if not self.simlist:
+            logging.error('choose a simulation first')
+        else:
+            self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
+            for index1 in range(0, len(self.simlist)):
+                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+                for j, vari in enumerate(self.variable):
+                    logging.info(
+                        'collection {} data'.format(vari))
+                    simu = self.simlist[index1][0]
+                    label = self.simlist[index1][1]
+                    var = ep.data(simu.fullpath, vari).data
+                    var = -np.trim_zeros(var, 'b')
+                    simu.contour(var, vari.lower()+'_' + label)
+                    # variable = ep.data(simu.fullpath, vari ).data
+                    # variable = -np.trim_zeros(variable, 'b')
+                    # simu.contour(vari, vari.lower()+'_' + label)
+                    plt.show(block=True)
+
+
+    def handle_powerbalance(self):
+        if not self.simlist:
+            logging.error('choose a simulation first')
+        else:
+            logging.info('computing power balance')
+            for index1 in range(0, len(self.simlist)):
+                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+                simu = self.simlist[index1][0]
+                label = self.simlist[index1][1]
+                simu_pb = simu.read_print_file_edge2d()
+
+
+                sim.bar_power_balance(simu_pb, label)
+                plt.show(block=True)
+
+    def handle_print(self):
+        if not self.simlist:
+            logging.error('choose a simulation first')
+        else:
+            self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
+            # for index1 in range(0, len(self.simlist)):
+                # print(simlist[i][0].fullpath)
+            logging.info('writing print-file data to csv file')
+            # logging.info('analyzing sim {}'.format(self.namelist[index1]))
+            sim.write_print2file(self.simlist, self.edge2dfold+'/e2d_data', self.targetfilename)
+
+            logging.info('done')
+
+    def handle_profiles(self):
+        if not self.simlist:
+            logging.error('choose a simulation first')
+        else:
+            logging.info('writing simulation profiles to file')
+            sim.write_edge2d_profiles1(self.simlist, 'e2dprofiles_python')
+            logging.info('done')
+
+
+    def handle_radiation(self):
+        if not self.simlist :
+            logging.error('choose a simulation first')
+        else:
+            # for index1 in range(0, len(self.simlist)):
+            #     simu = self.simlist[index1][0]
+                upper = input('enter upper bound in exp notation \n')
+                sim.contour_rad_power(self.simlist, float(upper))
+                plt.show(block=True)
+
+
+    def updateLineedit(self,lineedit):
+        if lineedit.objectName() == "lineEdit_var":
+            self.ui_edge2d.lineEdit_var_5.setText(self.ui_edge2d.lineEdit_var.text())
+        if lineedit.objectName() == "lineEdit_var_5":
+            self.ui_edge2d.lineEdit_var.setText(self.ui_edge2d.lineEdit_var_5.text())
+
+
+
+    def defaultGUI(self):
+        """
+        Push this button to configure GUI with default values
+        :return: GUI with default set
+        """
+        #
+        self.ui_magsurf.JPNedit.setText('92504')
+        self.ui_magsurf.timeEdit.setText('50')
+        self.ui_magsurf.stepPsiEdit.setText('0.1')
+        self.ui_magsurf.solEdit.setText('1') # cm
+        self.ui_magsurf.NsolEdit.setText('5') # integer, nr of SOL lines
+        self.ui_magsurf.coreEdit.setText('5') # integer, nr of CORE lines
+        self.ui_magsurf.coreStepEdit.setText('0.1') # V/s
+        #
+        self.ui_magsurf.FW_CB.setChecked(True)
+        self.ui_magsurf.GAP_CB.setChecked(True)
+        self.ui_magsurf.XLOC_CB.setChecked(True)
+        self.ui_magsurf.WALLS_CB.setChecked(True)
+        self.ui_magsurf.EFIT_CB.setChecked(True)
+        #
+        self.ui_magsurf.minSlider.setText('40s')
+        self.ui_magsurf.maxSlider.setText('70s')
+        self.ui_magsurf.actualSlider.setText('  ')
+        self.ui_magsurf.configPlasma.setText('   ')
+        self.ui_magsurf.timeXLOC_LB.setText('   ')
+        self.ui_magsurf.timeWALLS_LB.setText('   ')
+        self.ui_magsurf.timeEFIT_LB.setText('   ')
+        #
+        self.ui_magsurf.canvas.figure.clear()
+        self.ui_magsurf.canvas.draw()
+
+    def resetGUI(self):
+        """
+        Push this button to configure GUI with reset values
+        :return: reset GUI values
+        """
+        self.ui_magsurf.JPNedit.setText(' ')
+        self.ui_magsurf.timeEdit.setText(' ')
+        self.ui_magsurf.stepPsiEdit.setText(' ')
+        self.ui_magsurf.solEdit.setText(' ') # cm
+        self.ui_magsurf.NsolEdit.setText(' ') # integer, nr of SOL lines
+        self.ui_magsurf.coreEdit.setText(' ') # integer, nr of CORE lines
+        self.ui_magsurf.coreStepEdit.setText(' ') # V/s
+        self.ui_magsurf.timeXLOC_LB.setText('   ')
+        self.ui_magsurf.timeWALLS_LB.setText('   ')
+        self.ui_magsurf.timeEFIT_LB.setText('   ')
+        #
+        self.ui_magsurf.FW_CB.setChecked(False)
+        self.ui_magsurf.GAP_CB.setChecked(False)
+        self.ui_magsurf.XLOC_CB.setChecked(False)
+        self.ui_magsurf.WALLS_CB.setChecked(False)
+        self.ui_magsurf.EFIT_CB.setChecked(False)
+            #
+        self.ui_magsurf.minSlider.setText(' ')
+        self.ui_magsurf.maxSlider.setText(' ')
+        self.ui_magsurf.actualSlider.setText('  ')
+        self.ui_magsurf.configPlasma.setText('   ')
+         #
+        self.ui_magsurf.canvas.figure.clear()
+        self.ui_magsurf.canvas.draw()
+
+    def exitGUI(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.window_magsurf.close()
+    def exitGUI_edge2d(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.edge2d_window.close()
+
+    def exitGUI_eqdsk(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.window_eqdsk.close()
+
+    def plotBoundaryFromSliderReleased(self,button):
+        """
+
+        :param button: slider button, while dragging it shows new time equilibria
+        and plasma shape configuration
+        :return:  plot on main canvs once slider released
+        """
+
+        JPNobj = self.ui_magsurf.plotParam['JPNobj']
+        expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
+        nameListGap = self.ui_magsurf.plotParam['nameListGap']
+        nameListStrikePoints = self.ui_magsurf.plotParam['nameListStrikePoints']
+        expDataDictJPNobj_XLOC = self.ui_magsurf.plotParam['expDataDictJPNobj_XLOC']
+        expDataDictJPNobj_WALLS = self.ui_magsurf.plotParam['expDataDictJPNobj_WALLS']
+        nameListGapWALLS = self.ui_magsurf.plotParam['nameListGapWALLS']
+        offR_XLOC = self.ui_magsurf.plotParam['offR_XLOC']
+        offZ_XLOC = self.ui_magsurf.plotParam['offZ_XLOC']
+        time = self.ui_magsurf.plotParam['time']
+        gapDict = self.ui_magsurf.plotParam['gapDict']
+        xFW= self.ui_magsurf.plotParam['xFW']
+        yFW= self.ui_magsurf.plotParam['yFW']
+        rC= self.ui_magsurf.plotParam['rEFIT']
+        zC= self.ui_magsurf.plotParam['zEFIT']
+        rXLOC= self.ui_magsurf.plotParam['rBND_XLOC_smooth']
+        zXLOC= self.ui_magsurf.plotParam['rzBND_XLOC_smooth']
+        rP_XLOC= self.ui_magsurf.plotParam['rBND_XLOC']
+        zP_XLOC= self.ui_magsurf.plotParam['zBND_XLOC']
+        rXp= self.ui_magsurf.plotParam['rXp']
+        zXp= self.ui_magsurf.plotParam['zXp']
+        rSP= self.ui_magsurf.plotParam['rSP']
+        zSP= self.ui_magsurf.plotParam['zSP']
+        rWALLS= self.ui_magsurf.plotParam['rBND_WALLS']
+        zWALLS= self.ui_magsurf.plotParam['zBND_WALLS']
+        checkFW= self.ui_magsurf.plotParam['checkFW']
+        checkGAP= self.ui_magsurf.plotParam['checkGAP']
+        checkXLOC= self.ui_magsurf.plotParam['checkXLOC']
+        checkWALLS= self.ui_magsurf.plotParam['checkWALLS']
+        checkEFIT= self.ui_magsurf.plotParam['checkEFIT']
+        flagDiverted = self.ui_magsurf.plotParam['flagDiverted']
+
+
+        if button.sliderReleased:
+            print('PLOT @ time ---> ' + str(time[button.value()]))
+
+            timeEquil = time[button.value()]
+
+            rC,zC,\
+            rXLOC,zXLOC,rP_XLOC,zP_XLOC, \
+            rXp,zXp,rSP,zSP, flagDiverted, \
+            rWALLS,zWALLS,iTWALLS    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
+                        nameListGap,nameListStrikePoints,expDataDictJPNobj_XLOC,gapDict,\
+                        offR_XLOC,offZ_XLOC,nameListGapWALLS,expDataDictJPNobj_WALLS)
+
+            if flagDiverted:
+                self.ui_magsurf.configPlasma.setText('diverted')
+            else:
+                self.ui_magsurf.configPlasma.setText('limiter')
+
+
+            self.plotFWGapBoundary(gapDict,xFW, yFW, rC,zC,
+                          rXLOC,zXLOC, rP_XLOC, zP_XLOC, \
+                          rXp,zXp,rSP,zSP, rWALLS,zWALLS,iTWALLS,  \
+                        checkFW,checkGAP,checkXLOC,checkWALLS,checkEFIT,\
+                                      flagDiverted,nameListGapWALLS)
+
+
+    def plotFWGapBoundary(self,gapDict,xFW, yFW, rC,zC,
+                          rXLOC,zXLOC, rP_XLOC, zP_XLOC, \
+                          rXp,zXp,rSP,zSP,rWALLS,zWALLS,iTWALLS, \
+                        flagPlotFW,flagPlotGap,flagPlotXLOC,\
+                          flagPlotWALLS,flagPlotEFIT,flagDiverted,nameListGapWALLS):
+        """
+        Plot: FW, XLOC gap and strike points geometry, XLOC boundary, EFIT boundary,
+        WALLS gap (Inner,Outer and Upper)
+        :param gapDict:
+        :param xFW:
+        :param yFW:
+        :param rC:
+        :param zC:
+        :param rXLOC:
+        :param zXLOC:
+        :param rP_XLOC:
+        :param zP_XLOC:
+        :param rXp:
+        :param zXp:
+        :param rSP:
+        :param zSP:
+        :param rWALLS:
+        :param zWALLS:
+        :param iTWALLS:
+        :param flagPlotFW:
+        :param flagPlotGap:
+        :param flagPlotXLOC:
+        :param flagPlotWALLS:
+        :param flagPlotEFIT:
+        :param flagDiverted:
+        :param nameListGapWALLS:
+        :return:
+        """
+        self.ui_magsurf.canvas.figure.clf() # clear canvas
+        ax = self.ui_magsurf.canvas.figure.add_subplot(111)
+        ax.plot()
+
+        # Gaps
+        if flagPlotGap:
+            nameListGap = gapDict.keys()
+            for jj in nameListGap:
+                if ('RSOGB' in jj) or  ('RSIGB' in jj) or ('ZSIGB' in jj) \
+                    or ('ZSOGB' in jj) or ('WLBSRP' in jj):
+
+                    R1 = gapDict[jj]['R1']
+                    Z1 = gapDict[jj]['Z1']
+                    R2 = gapDict[jj]['R2']
+                    Z2 = gapDict[jj]['Z2']
+                    R3 = gapDict[jj]['R3']
+                    Z3 = gapDict[jj]['Z3']
+                    R4 = gapDict[jj]['R4']
+                    Z4 = gapDict[jj]['Z4']
+                    ax.plot([R1,R2,R3,R4],[Z1,Z2,Z3,Z4],'d-r')
+                else:
+                    R1 = gapDict[jj]['R1']
+                    Z1 = gapDict[jj]['Z1']
+                    R2 = gapDict[jj]['R2']
+                    Z2 = gapDict[jj]['Z2']
+                    ax.plot([R1,R2],[Z1,Z2],'d-r')
+                if 'TOG5' in jj:
+                    ax.text(R1,Z1+0.1,jj,color='red')
+                else:
+                   ax.text(R1,Z1,jj,color='red')
+
+        if flagPlotFW:
+            # FW
+            ax.plot(xFW,yFW,'k')
+
+        if flagPlotEFIT:
+             ax.plot(rC,zC,'-g',label='EFIT')
+
+        if flagPlotXLOC:
+            ax.plot(rXLOC,zXLOC,'-m',label='XLOC')
+            ax.plot(rP_XLOC,zP_XLOC,'*m')
+            if flagDiverted:
+                ax.plot(rXp,zXp,'*c',markersize=16)
+                ax.plot([rSP[0],rXp,rSP[2]],\
+                                [zSP[0],zXp,zSP[2]],'*-m')
+
+        if flagPlotWALLS:
+            #ax.plot(rWALLS,zWALLS,'-b',label='WALLS')
+            ax.plot(rWALLS,zWALLS,'*b')
+            # for jj,vv in enumerate(nameListGapWALLS):
+            #     ax.text(rWALLS[jj],zWALLS[jj],vv,color='b')
+
+        if flagPlotGap or flagPlotFW or flagPlotXLOC or flagPlotEFIT:
+            ax.axis('equal')
+            self.ui_magsurf.canvas.draw()
+
+    def slider_moved(self,position):
+        time = self.ui_magsurf.plotParam['time']
+        self.ui_magsurf.actualSlider.setText(str(time[position]))
+        self.ui_magsurf.timeEdit.setText(str(time[position]))
+
+
+        self.plotBoundaryFromSliderReleased(self.ui_magsurf.horizontalSlider)
+
+
+
+
+    def downloadExpData(self,JPN,JPNobj):
+        """
+        download experimental data
+        :param JPN:
+        :param JPNobj:
+        :return:
+        """
+          # #~~~~~~~~~~~~~~~EXP. DAT from XLOC, EFIT, SC ~~~~~~~~~~~~~~~~~~~~
+        nameSignalsTable_XLOC = 'signalsTable_XLOC' #
+        nameSignals_XLOC = STJET.signalsTableJET(nameSignalsTable_XLOC)
+        expDataDictJPNobj_XLOC = JPNobj.download(JPN,nameSignalsTable_XLOC,nameSignals_XLOC,0)
+        nameSignalsTable_WALLS = 'signalsTable_WALLS' #
+        nameSignals_WALLS = STJET.signalsTableJET(nameSignalsTable_WALLS)
+        expDataDictJPNobj_WALLS= JPNobj.download(JPN,nameSignalsTable_WALLS,\
+                                                 nameSignals_WALLS,0)
+        nameSignalsTable_EFIT = 'signalsTable_EFIT' #
+        nameSignals_EFIT = STJET.signalsTableJET(nameSignalsTable_EFIT)
+        expDataDictJPNobj_EFIT = JPNobj.download(JPN,nameSignalsTable_EFIT,nameSignals_EFIT,0)
+        nameSignalsTable_SC   = 'signalsTable_SC' #
+        nameSignals_SC = STJET.signalsTableJET(nameSignalsTable_SC)
+        expDataDictJPNobj_SC = JPNobj.download(JPN,nameSignalsTable_SC,nameSignals_SC,0)
+        # #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        return expDataDictJPNobj_XLOC, expDataDictJPNobj_WALLS, \
+               expDataDictJPNobj_EFIT, expDataDictJPNobj_SC
+
+
+
+    def findIndexTime(self,tStart,tEnd,timeVector):
+
+        iTimeStart = numpy.where(
+            numpy.abs(tStart - timeVector) < 2 * min(numpy.diff(timeVector)))  # twice of the min of EFIT delta time
+        timeStart = timeVector[iTimeStart[0][0]]
+        iT_Start =  iTimeStart[0][0]
+
+        if max(timeVector)<tEnd: # default 70s is too much, means darta acquired less than 70s
+           tEnd = max(timeVector)
+        iTimeEnd = numpy.where(
+            numpy.abs(tEnd - timeVector) < 2 * min(numpy.diff(timeVector)))  # twice of the min of EFIT delta time
+        timeEnd = timeVector[iTimeEnd[0][0]]
+        iT_End = iTimeEnd[0][0]
+
+
+        return iT_Start,timeStart,iT_End,timeEnd
+
+
+    def readJETgeom(self,JPNobj):
+        """
+
+        :param JPNobj:
+        :return:
+        """
+        gapFileName       = 'gapILW.csv'
+        firstWallFileName = 'FWILW.csv'
+
+        # no ZUP to avoid strange XLOC plot
+        nameListGap = ['GAP32','GAP6','GAP31','GAP30','RIG','GAP29','GAP28','GAP7','GAP27','GAP26',\
+                       'TOG1','GAP25','TOG2','TOG3','TOG4','GAP24','TOG5',\
+                       'GAP2','GAP23','GAP3','GAP22','GAP21','GAP20','ROG','GAP19','GAP4','GAP18','LOG','GAP17']
+
+        nameListStrikePoints = ['RSOGB','ZSOGB','RSIGB','ZSIGB']#,'WLBSRP']
+        #nameListStrikePoints = ['ZSOGB','ZSIGB']#,'WLBSRP']
+
+        nameListGapWALLS = ['IWLG01','IWLG02','IWLG03','IWLG04','IWLG05',\
+                            'IWLG06','IWLG07','IWLG08','IWLG09','IWLG10',\
+                            'IWLG11','IWLG12','IWLG13','IWLG14','IWLG15',\
+                            'IWLG16','IWLG17','IWLG18','IWLG19',\
+                            'UDPG01','UDPG02','UDPG03','UDPG04','UDPG05',\
+                            'UDPG06','UDPG07','UDPG08',\
+                            'WPLG01','WPLG02','WPLG03','WPLG04','WPLG05',\
+                            'WPLG06','WPLG07','WPLG08','WPLG09','WPLG10',\
+                            'WPLG11','WPLG12','WPLG13','WPLG14','WPLG15',\
+                            'WPLG16','WPLG17','WPLG18','WPLG19','WPLG20',\
+                            'WPLG21','WPLG22','WPLG23','WPLG24','WPLG25',\
+                            'UDPG01','UDPG02','UDPG03','UDPG04','UDPG05',\
+                            'UDPG06','UDPG07','UDPG08']
+
+        # nameListGapWALLS = ['IWLGR01','IWLGR02','IWLGR03','IWLGR04','IWLGR05',\
+        #                     'IWLGR06','IWLGR07','IWLGR08','IWLGR09','IWLGR10',\
+        #                     'IWLGR11','IWLGR12','IWLGR13','IWLGR14','IWLGR15',\
+        #                     'IWLGR16','IWLGR17','IWLGR18','IWLGR19',\
+        #                     'IWLGZ01','IWLGZ02','IWLGZ03','IWLGZ04','IWLGZ05',\
+        #                     'IWLGZ06','IWLGZ07','IWLGZ08','IWLGZ09','IWLGZ10',\
+        #                     'IWLGZ11','IWLGZ12','IWLGZ13','IWLGZ14','IWLGZ15',\
+        #                     'IWLGZ16','IWLGZ17','IWLGZ18','IWLGZ19',\
+        #                     'WPLGR01','WPLGR02','WPLGR03','WPLGR04','WPLGR05',\
+        #                     'WPLGR06','WPLGR07','WPLGR08','WPLGR09','WPLGR10',\
+        #                     'WPLGR11','WPLGR12','WPLGR13','WPLGR14','WPLGR15',\
+        #                     'WPLGR16','WPLGR17','WPLGR18','WPLGR19','WPLGR20',\
+        #                     'WPLGR21','WPLGR22','WPLGR23','WPLGR24','WPLGR25',\
+        #                     'WPLGZ01','WPLGZ02','WPLGZ03','WPLGZ04','WPLGZ05',\
+        #                     'WPLGZ06','WPLGZ07','WPLGZ08','WPLGZ09','WPLGZ10',\
+        #                     'WPLGZ11','WPLGZ12','WPLGZ13','WPLGZ14','WPLGZ15',\
+        #                     'WPLGZ16','WPLGZ17','WPLGZ18','WPLGZ19','WPLGZ20',\
+        #                     'WPLGZ21','WPLGZ22','WPLGZ23','WPLGZ24','WPLGZ25',\
+        #                     'UDPGR01','UDPGR02','UDPGR03','UDPGR04','UDPGR05',\
+        #                     'UDPGR06','UDPGR07','UDPGR08',\
+        #                     'UDPGZ01','UDPGZ02','UDPGZ03','UDPGZ04','UDPGZ05',\
+        #                     'UDPGZ06','UDPGZ07','UDPGZ08']
+
+                            # First Wall
+        xFW, yFW,= JPNobj.readFWFile(firstWallFileName)
+
+        # Gap % Strike Points
+        gapDict = JPNobj.readGapFile(gapFileName)
+
+        return gapDict, xFW, yFW, nameListGap, nameListStrikePoints, nameListGapWALLS
+
+
+    def shapeSnapShot(self,JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
+                        nameListGap,nameListStrikePoints,expDataDictJPNobj_XLOC,gapDict,\
+                        offR_XLOC,offZ_XLOC,nameListGapWALLS,expDataDictJPNobj_WALLS):
+
+         # EFIT
+        rC,zC,psiEFIT,rGrid,zGrid,iTEFIT,timeEFIT = \
+            JPNobj.readEFITFlux(expDataDictJPNobj_EFIT,float(timeEquil))
+
+        self.ui_magsurf.timeEFIT_LB.setText(str(timeEFIT[iTEFIT]) + ' s' ) # display timeEquil closest time XLOC
+
+
+        # find if diverted or limiter configuration
+        ctype_v = expDataDictJPNobj_XLOC['CTYPE']['v']
+        ctype_t = expDataDictJPNobj_XLOC['CTYPE']['t']
+
+        iTimeX = numpy.where(
+            numpy.abs(float(timeEquil) - ctype_t) < 2 * min(numpy.diff(ctype_t)))  # twice of the min of EFIT delta time
+
+        iTimeXLOC = iTimeX[0][0]
+        self.ui_magsurf.timeXLOC_LB.setText(str(ctype_t[iTimeXLOC]) + ' s' ) # display timeEquil closest time XLOC
+
+        if ctype_v[iTimeXLOC]==-1: # diverted
+            flagDiverted  = 1
+        else:
+            flagDiverted = 0
+
+
+        # XLOC
+        gapXLOC,rG,zG,iTXLOC  = JPNobj.gapXLOC(nameListGap,expDataDictJPNobj_XLOC,\
+                                               gapDict,float(timeEquil))
+        spXLOC,rSP,zSP,iTXLOC = JPNobj.strikePointsXLOC(nameListStrikePoints,\
+                                expDataDictJPNobj_XLOC,gapDict,float(timeEquil))
+
+        rX_XLOC = expDataDictJPNobj_XLOC['RX']['v']
+        zX_XLOC = expDataDictJPNobj_XLOC['ZX']['v']
+
+        rXp = rX_XLOC[iTXLOC]+offR_XLOC
+        zXp = zX_XLOC[iTXLOC]+offZ_XLOC
+
+        rBND_XLOC = []
+        if flagDiverted:
+            rBND_XLOC.append(rXp)
+        for jj,vv in enumerate(rG):
+            rBND_XLOC.append(rG[jj])
+        if flagDiverted:
+             rBND_XLOC.append(rXp)
+        else:
+            rBND_XLOC.append(rBND_XLOC[0])
+
+        zBND_XLOC = []
+        if flagDiverted:
+            zBND_XLOC.append(zXp)
+        for jj,vv in enumerate(zG):
+            zBND_XLOC.append(zG[jj])
+        if flagDiverted:
+             zBND_XLOC.append(zXp)
+        else:
+            zBND_XLOC.append(zBND_XLOC[0])
+
+        # connect  XLOC boundary points with a cubic
+        # n = 10
+        # i = numpy.arange(len(rBND_XLOC))
+        # # Nx the original number of points
+        # interp_i = numpy.linspace(0, i.max(), n  * i.max())
+        # rBND_XLOC_smooth = interpolate.interp1d(i, rBND_XLOC, kind='cubic')(interp_i)
+        # zBND_XLOC_smooth = interpolate.interp1d(i, zBND_XLOC, kind='cubic')(interp_i)
+
+         # interpolate with splines
+        tck,u = interpolate.splprep([rBND_XLOC,zBND_XLOC], s = 0)
+        rBND_XLOC_smooth, zBND_XLOC_smooth \
+            = interpolate.splev(np.linspace(0,1,1000),tck,der=0)
+
+        # pylab.figure()
+        # pylab.plot(rBND_XLOC,zBND_XLOC,'*m')
+        # pylab.plot(rBND_XLOC_smooth, zBND_XLOC_smooth,'-b')
+        # pylab.axis('equal')
+        # pylab.show()
+
+        rWALLS,zWALLS,iTWALLS  = JPNobj.gapWALLS(nameListGapWALLS,\
+                                                 expDataDictJPNobj_WALLS,float(timeEquil))
+
+        timeWALLS = expDataDictJPNobj_WALLS['IWLGR01']['t']
+        self.ui_magsurf.timeWALLS_LB.setText(str(timeWALLS[iTWALLS]) + ' s')
+
+        return  rC,zC,rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
+                rXp,zXp,rSP,zSP,flagDiverted,rWALLS,zWALLS,iTWALLS
+
+
+    def plotCore(self):
+        core = int(self.ui_magsurf.coreEdit.text())
+        coreStep = float(self.ui_magsurf.coreStepEdit.text())
+
+        JPNobj = self.ui_magsurf.plotParam['JPNobj']
+        expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
+
+        time = self.ui_magsurf.plotParam['time']
+        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+        iCurrentTime = numpy.where(numpy.abs(timeEquil-time)<2*min(numpy.diff(time)))# twice of the min of EFIT delta time
+
+
+        rC, zC, psiEFIT, rGrid, zGrid,iTEFIT,timeEFIT \
+            = JPNobj.readEFITFlux(expDataDictJPNobj_EFIT, float(timeEquil))
+        psiGrid = numpy.reshape(psiEFIT,(len(rGrid),len(rGrid)))
+
+        psiAxis = expDataDictJPNobj_EFIT['FAXS']['v']
+        psiAxisEquil = psiAxis[iCurrentTime[0][0]]
+        rMAG = expDataDictJPNobj_EFIT['RMAG']['v']
+        rMAGEquil = rMAG[iCurrentTime[0][0]]
+        zMAG = expDataDictJPNobj_EFIT['ZMAG']['v']
+        zMAGEquil = zMAG[iCurrentTime[0][0]]
+
+        coreStepPsi = float(self.ui_magsurf.coreStepEdit.text())
+        psiMaxCore = psiAxisEquil+core*coreStepPsi
+        psiCoreLevels = numpy.linspace(psiAxisEquil,psiMaxCore,core+1)
+
+        #
+        # pylab.figure()
+        # pylab.plot(rMAGEquil,zMAGEquil,'*m')
+        # pylab.contour(rGrid,zGrid,psiGrid,psiCoreLevels,colors = 'm')
+        # pylab.axis('equal')
+        # pylab.show()
+
+
+        self.ui_magsurf.canvas.figure.clf() # clear canvas
+        ax = self.ui_magsurf.canvas.figure.add_subplot(111)
+        ax.plot()
+
+        xFW = self.ui_magsurf.plotParam['xFW']
+        yFW = self.ui_magsurf.plotParam['yFW']
+        ax.plot(xFW, yFW, 'k')
+
+        #pylab.plot(rGrid,zGrid,'.b')
+        ax.plot(rMAGEquil,zMAGEquil,'*m')
+        CS = ax.contour(rGrid,zGrid,psiGrid,psiCoreLevels,colors = 'r')
+        ax.clabel(CS,inline = 1,fontsize= 10)
+        ax.axis('equal')
+        self.ui_magsurf.canvas.draw()
+
+
+    def plotSol(self):
+        sol = float(self.ui_magsurf.solEdit.text())
+        Nsol = int(self.ui_magsurf.NsolEdit.text())
+
+        JPNobj = self.ui_magsurf.plotParam['JPNobj']
+        expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
+
+        time = self.ui_magsurf.plotParam['time']
+        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+
+        rC, zC, psiEFIT, rGrid, zGrid,iTEFIT,timeEFIT \
+            = JPNobj.readEFITFlux(expDataDictJPNobj_EFIT, float(timeEquil))
+        psiGrid = numpy.reshape(psiEFIT,(len(rGrid),len(rGrid)))
+
+        FBND_v = expDataDictJPNobj_EFIT['FBND']['v']
+        FBND_t = expDataDictJPNobj_EFIT['FBND']['t']
+
+        iCurrentTime = numpy.where(numpy.abs(timeEquil-time)<2*min(numpy.diff(time)))# twice of the min of EFIT delta time
+
+        FBND_exp = FBND_v[iCurrentTime[0][0]]
+
+        iMax = np.argmax(rC)
+
+        rMidPlaneSOL = []
+        rMidPlaneSOL.append(rC[iMax])
+        zMidPlaneSOL = []
+        zMidPlaneSOL.append(zC[iMax])
+
+        X0 = rMidPlaneSOL[0]
+        Z0 = zMidPlaneSOL[0]
+        points = np.array( (rGrid.flatten(),zGrid.flatten()) ).T
+        values = psiEFIT
+        psiB = interpolate.griddata(points,values,(X0,Z0))
+
+
+        print('PSI @ boundary EXP:' + str(FBND_exp) + '   REC: ' +  str(psiB) )
+        psiSOL = []
+        for jj in np.arange(0,Nsol+1):
+            X0tmp = rC[iMax]+sol*jj/1e2
+            Z0tmp = zC[iMax]
+            rMidPlaneSOL.append(X0tmp)
+            zMidPlaneSOL.append(Z0tmp)
+            psiSOL.append(interpolate.griddata(points,values,(X0tmp,Z0tmp)))
+        #
+        # pylab.figure()
+        # pylab.plot(rC,zC)
+        # pylab.plot(rC[iMax],zC[iMax],'*b')
+        # pylab.plot(rMidPlaneSOL,zMidPlaneSOL,'or')
+        # pylab.contour(rGrid,zGrid,psiGrid,psiSOL,colors = 'm')
+        # pylab.axis('equal')
+        # pylab.show()
+
+        self.ui_magsurf.canvas.figure.clf() # clear canvas
+        ax = self.ui_magsurf.canvas.figure.add_subplot(111)
+        ax.plot()
+
+        xFW = self.ui_magsurf.plotParam['xFW']
+        yFW = self.ui_magsurf.plotParam['yFW']
+        ax.plot(xFW, yFW, 'k')
+
+        ax.plot(rC,zC)
+        ax.plot(rC[iMax],zC[iMax],'*b')
+        ax.plot(rMidPlaneSOL,zMidPlaneSOL,'or')
+        #ax.plot(rGrid,zGrid,'.b')
+        ax.contour(rGrid,zGrid,psiGrid,psiSOL,colors = 'm')
+        ax.axis('equal')
+        self.ui_magsurf.canvas.draw()
+
+
+    def plotIsoPsi(self):
+
+        JPNobj = self.ui_magsurf.plotParam['JPNobj']
+        expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
+
+        time = self.ui_magsurf.plotParam['time']
+        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+
+        deltaPsi = float(self.ui_magsurf.stepPsiEdit.text())
+
+        rC, zC, psiEFIT, rGrid, zGrid,iTEFIT,timeEFIT \
+            = JPNobj.readEFITFlux(expDataDictJPNobj_EFIT, float(timeEquil))
+
+        # rGrid = self.ui_magsurf.plotParam['rGrid']
+        # zGrid = self.ui_magsurf.plotParam['zGrid']
+        # psiGrid = self.ui_magsurf.plotParam['psiGrid']
+        # psiEFIT = self.ui_magsurf.plotParam['psiEFIT']
+
+        psiGrid = numpy.reshape(psiEFIT,(len(rGrid),len(rGrid)))
+        # deltaPsi = 0.1 # step of 0.1V/s
+        psiLevels = numpy.arange(numpy.min(psiEFIT),numpy.max(psiEFIT),deltaPsi)
+
+        self.ui_magsurf.canvas.figure.clf() # clear canvas
+        ax = self.ui_magsurf.canvas.figure.add_subplot(111)
+        ax.plot()
+
+        xFW = self.ui_magsurf.plotParam['xFW']
+        yFW = self.ui_magsurf.plotParam['yFW']
+        ax.plot(xFW, yFW, 'k')
+
+        #pylab.plot(rGrid,zGrid,'.b')
+        CS = ax.contour(rGrid,zGrid,psiGrid,psiLevels,colors = 'r')
+        ax.clabel(CS,inline = 1,fontsize= 10)
+        ax.axis('equal')
+        self.ui_magsurf.canvas.draw()
+
+
+    def plotIsoPsiFill(self):
+
+        JPNobj = self.ui_magsurf.plotParam['JPNobj']
+        expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
+
+        time = self.ui_magsurf.plotParam['time']
+        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+
+        deltaPsi = float(self.ui_magsurf.stepPsiEdit.text())
+
+        rC, zC, psiEFIT, rGrid, zGrid ,iTEFIT,timeEFIT \
+            = JPNobj.readEFITFlux(expDataDictJPNobj_EFIT, float(timeEquil))
+
+        # rGrid = self.ui_magsurf.plotParam['rGrid']
+        # zGrid = self.ui_magsurf.plotParam['zGrid']
+        # psiGrid = self.ui_magsurf.plotParam['psiGrid']
+        # psiEFIT = self.ui_magsurf.plotParam['psiEFIT']
+
+        psiGrid = numpy.reshape(psiEFIT,(len(rGrid),len(rGrid)))
+        # deltaPsi = 0.1 # step of 0.1V/s
+        psiLevels = numpy.arange(numpy.min(psiEFIT),numpy.max(psiEFIT),deltaPsi)
+
+        self.ui_magsurf.canvas.figure.clf() # clear canvas
+        ax = self.ui_magsurf.canvas.figure.add_subplot(111)
+        plt.subplots_adjust(bottom=0.1,right= 0.9,top=0.9)
+        cax = plt.axes([0.85,0.1,0.075,0.8])
+        #cax = self.ui_magsurf.canvas.figure.add_subplot(144)
+
+        ax.plot()
+
+        xFW = self.ui_magsurf.plotParam['xFW']
+        yFW = self.ui_magsurf.plotParam['yFW']
+        ax.plot(xFW, yFW, 'k')
+
+
+        CS = ax.contourf(rGrid,zGrid,psiGrid,psiLevels,cmap=cm.hot)
+        cbar = plt.colorbar(CS,cax,ax,cmap=psiLevels)
+        cbar.ax.tick_params(labelsize=5)
+        ax.axis('equal')
+        self.ui_magsurf.canvas.draw()
+
+
+
+    def goMagSurfGA(self):
+
+        # center of divertor
+        offR_XLOC = 2.6780
+        offZ_XLOC = -1.7120
+
+        # XLOC
+        tStartXLOC = 39.7
+        tEndXLOC = 70
+
+        # EFIT
+        tStartEFIT = 40.25
+        tEndEFIT = 70
+
+        # READ from INTERFACE ~~~~~~~~~~~~~~~~~~~~~~~~
+        JPN = self.ui_magsurf.JPNedit.text()
+        timeEquil = self.ui_magsurf.timeEdit.text()
+
+        checkFW   = self.ui_magsurf.FW_CB.isChecked()
+        checkGAP  = self.ui_magsurf.GAP_CB.isChecked()
+        checkXLOC = self.ui_magsurf.XLOC_CB.isChecked()
+        checkWALLS = self.ui_magsurf.WALLS_CB.isChecked()
+        checkEFIT = self.ui_magsurf.EFIT_CB.isChecked()
+
+        JPNobj = MAGTool(JPN)
+
+        print(JPN + '@' + timeEquil + 's')
+        if self.ui_magsurf.XLOC_CB.isChecked():
+            print('Plot XLOC')
+        if self.ui_magsurf.EFIT_CB.isChecked():
+            print('Plot EFIT')
+
+        # READ JET GEOMETRY FW anf GAPS
+        gapDict, xFW, yFW, nameListGap, nameListStrikePoints, nameListGapWALLS = \
+            self.readJETgeom(JPNobj)
+
+        # RETREIVE EXP DATA
+            # treat with PICKLE
+        expDataDictJPNobj_XLOC, expDataDictJPNobj_WALLS, \
+        expDataDictJPNobj_EFIT, expDataDictJPNobj_SC = \
+            self.downloadExpData(JPN,JPNobj)
+
+        timeXLOC = expDataDictJPNobj_XLOC['ROG']['t']
+        timeEFIT = expDataDictJPNobj_EFIT['PSI']['t']
+        timeWALLS = expDataDictJPNobj_WALLS['IWLGR01']['t']
+
+
+        self.ui_magsurf.plotParam['JPNobj'] = JPNobj
+        self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT'] = expDataDictJPNobj_EFIT
+        self.ui_magsurf.plotParam['nameListGap'] = nameListGap
+        self.ui_magsurf.plotParam['nameListStrikePoints'] = nameListStrikePoints
+        self.ui_magsurf.plotParam['expDataDictJPNobj_XLOC'] = expDataDictJPNobj_XLOC
+        self.ui_magsurf.plotParam['expDataDictJPNobj_WALLS'] = expDataDictJPNobj_WALLS
+        self.ui_magsurf.plotParam['nameListGapWALLS'] = nameListGapWALLS
+        self.ui_magsurf.plotParam['offR_XLOC'] = offR_XLOC
+        self.ui_magsurf.plotParam['offZ_XLOC'] = offZ_XLOC
+
+
+        rEFIT,zEFIT,\
+        rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
+        rXp,zXp,rSP,zSP, flagDiverted,\
+        rWALLS,zWALLS,iTWALLS    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
+                        nameListGap,nameListStrikePoints,expDataDictJPNobj_XLOC,gapDict,\
+                        offR_XLOC,offZ_XLOC,nameListGapWALLS,expDataDictJPNobj_WALLS)
+
+        self.ui_magsurf.plotParam['time'] = timeEFIT
+        self.ui_magsurf.plotParam['gapDict'] = gapDict
+        self.ui_magsurf.plotParam['xFW'] = xFW
+        self.ui_magsurf.plotParam['yFW'] = yFW
+        self.ui_magsurf.plotParam['rEFIT'] = rEFIT
+        self.ui_magsurf.plotParam['zEFIT'] = zEFIT
+        self.ui_magsurf.plotParam['rBND_XLOC_smooth'] = rBND_XLOC_smooth
+        self.ui_magsurf.plotParam['rzBND_XLOC_smooth'] = zBND_XLOC_smooth
+        self.ui_magsurf.plotParam['rBND_XLOC'] = rBND_XLOC
+        self.ui_magsurf.plotParam['zBND_XLOC'] = zBND_XLOC
+        self.ui_magsurf.plotParam['rXp'] = rXp
+        self.ui_magsurf.plotParam['zXp'] = zXp
+        self.ui_magsurf.plotParam['rSP'] = rSP
+        self.ui_magsurf.plotParam['zSP'] = zSP
+        self.ui_magsurf.plotParam['checkFW'] = checkFW
+        self.ui_magsurf.plotParam['checkGAP'] = checkGAP
+        self.ui_magsurf.plotParam['checkXLOC'] = checkXLOC
+        self.ui_magsurf.plotParam['checkWALLS'] = checkWALLS
+        self.ui_magsurf.plotParam['checkEFIT'] = checkEFIT
+        self.ui_magsurf.plotParam['flagDiverted'] = flagDiverted
+
+        #
+        # rGrid = expDataDictJPNobj_EFIT['rGrid']
+        # zGrid = expDataDictJPNobj_EFIT['zGrid']
+        # psiGrid = expDataDictJPNobj_EFIT['psiGrid']
+        # psiEFIT = expDataDictJPNobj_EFIT['psiEFIT']
+        #
+        # self.ui_magsurf.plotParam['rGrid'] = rGrid
+        # self.ui_magsurf.plotParam['zGrid'] = zGrid
+        # self.ui_magsurf.plotParam['psiGrid'] = psiGrid
+        # self.ui_magsurf.plotParam['psiEFIT'] = psiEFIT
+
+
+
+        self.plotFWGapBoundary(gapDict,xFW, yFW,rEFIT,zEFIT,\
+                        rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
+                        rXp,zXp,rSP,zSP,\
+                        rWALLS,zWALLS,iTWALLS,\
+                        checkFW,checkGAP,checkXLOC,checkWALLS,checkEFIT,\
+                                  flagDiverted,nameListGapWALLS)
+
+
+        iT_Start,timeStart,iT_End,timeEnd = \
+            self.findIndexTime(tStartEFIT,tEndEFIT,timeEFIT)
+
+
+        # #updateSlider(self,iT_Start,iT_End,timeEquil,timeEFIT)
+        self.ui_magsurf.horizontalSlider.setMinimum(iT_Start)
+        self.ui_magsurf.horizontalSlider.setMaximum(iT_End)
+        self.ui_magsurf.minSlider.setText(str(timeStart))
+        self.ui_magsurf.maxSlider.setText(str(timeEnd))
+        self.ui_magsurf.actualSlider.setText(str(timeEquil))
+        iPosition = numpy.where(
+            numpy.abs(float(timeEquil) - timeEFIT) < 2 * min(numpy.diff(timeEFIT)))  # twice of the min of EFIT delta time=
+        self.ui_magsurf.horizontalSlider.setSliderPosition(iPosition[0][0])
+        print('pos: ' + str(iPosition[0][0])  + \
+              ' ---> time ' + str(timeEFIT[iPosition[0][0]]))
+        lenSamples = numpy.round((self.ui_magsurf.horizontalSlider.maximum()\
+                                  -self.ui_magsurf.horizontalSlider.minimum())/10)
+        self.ui_magsurf.horizontalSlider.setTickPosition(2)
+        self.ui_magsurf.horizontalSlider.setTickInterval(lenSamples)
+
+
+        # freqXLOC = int(numpy.max(1/numpy.diff(timeXLOC)))
+        # freqEFIT = int(numpy.max(1/numpy.diff(timeEFIT)))
+
+
+
+
+
+
+        # sampling frequency
+        # pylab.figure()
+        # pylab.plot(timeXLOC[0:-1],1/numpy.diff(timeXLOC),label='XLOC')
+        # pylab.plot(timeEFIT[0:-1],1/numpy.diff(timeEFIT),label='EFIT')
+        # pylab.legend(loc='best',prop={'size':12})
+        # pylab.show()
+
+        # plot CTYPE
+        # pylab.figure()
+        # pylab.plot(expDataDictJPNobj_XLOC['CTYPE']['t'],expDataDictJPNobj_XLOC['CTYPE']['v'],label='XLOC CTYPE')
+        # pylab.show()
+        #
+
+
+
+
+
+
+    # ---------------------------
+    def selectstandardset(self):
+        # qfd = QtGui.QFileDialog()
+        # path = "/"
+        # filter = "JSON(*.json)"
+        # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
+        self.JSONSS = QtGui.QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+
+        self.JSONSS = os.path.basename(self.JSONSS)
+        logging.debug('you have chosen {}'.format(self.JSONSS))
+        os.chdir(self.home)
+        return self.JSONSS
+
+
+
+    # ---------------------------
+    def plotdata(self):
+        pulselist = self.ui_plotdata.textEdit_pulselist.toPlainText()
+        pulselist = pulselist.split(',')
+        if self.ui_plotdata.savefigure_checkBox.isChecked():
+            save = True
+        else:
+            save = False
+
+        # pulselist = pulselist.rstrip()
+
+        pulselist = [int(i) for i in pulselist]
+        # pulselist = list(map(int, pulselist))
+        # colorlist = self.ui_plotdata.textEdit_colorlist.toPlainText()
+        # colorlist = colorlist.split(',')
+        # colorlist = colorlist.rstrip()
+
+        inputlist = []
+        for i,j in enumerate(pulselist):
+            # print(i,j)
+            # inputlist.append([pulselist[i],colorlist[i].strip()])
+            inputlist.append([pulselist[i]])
+        #
+        #
+        plot_time_traces(self.JSONSS, inputlist,save=save)
+        plt.show()
+
+
+
 
     # ----------------------------
     def handle_exit_button(self):
@@ -92,6 +1295,215 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logging.info('\n')
         logging.info('Exit now')
         sys.exit()
+
+
+
+    def handle_add_sim(self):
+
+
+        # print(self.seq)
+        simul = sim(self.shot,self.date,(self.seq.split('#')[1]),'work/Python/EDGE2D',self.user)
+        name='/'.join([self.owner,self.shot, self.date,self.seq.split('#')[1]])
+        label = self.ui_edge2d.lineEdit_var_3.text()
+        if name in self.namelist:
+            pass
+        else:
+
+
+            self.ui_edge2d.textEdit_message.append(
+                str(name))
+
+            self.namelist.append(name)
+            self.simlist.append([simul,label])
+
+
+            # self.ui_edge2d.textEdit_message.setText(name)
+
+
+    def handle_run(self):
+        if not self.ui_edge2d.textEdit_message2.toPlainText():
+            logging.error('Attempt to run without selecting an input dictionary')
+        self.inputJson = self.ui_edge2d.textEdit_message2.toPlainText()
+        # jsonlist=[]
+        # jsonlist.append(self.inputJson)
+        # for i,j in enumerate(jsonlist):
+        dictionary = self.inputJson.split(',')
+        # dictionary =   self.inputJson
+        self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
+
+        self.location = self.ui_edge2d.lineEdit_var_2.text().split(',')
+
+
+
+        # print(dictionary[0],var, loc)
+        # for i,j in enumerate(dictionary):
+        #     print(i,j)
+        os.chdir(self.edge2dfold)
+        # print(os.curdir)
+        # print(dictionary[0])
+        # if len(dictionary) ==1:
+        #     shot.compare_multi_shots_simdata(dictionary[0], ms=None,lw=None, var=var, loc=loc)
+        # else:
+        for i,dicti in enumerate(dictionary):
+            for j,vari in enumerate(self.variable):
+                for t, loca in enumerate(self.location):
+                    logging.info(
+                        'plotting {} profiles at {}'.format(str(vari), str(loca)))
+                    shot.compare_multi_shots_simdata(dicti, ms=None, lw=None,
+                                             var=vari, loc=loca)
+
+        # shot.compare_multi_shots_simdata('input_dict_84600.json', ms=None,lw=None, var='denel', loc='ot')
+        plt.show(block=True)
+        os.chdir(self.workfold)
+
+
+    def handle_runanalyze_button(self):
+        if self.ui_edge2d.enablecompare_check.isChecked() == False:
+            logging.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
+            os.chdir(self.edge2dfold)
+            os.system(
+                'run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1))
+            os.chdir(self.home)
+        if self.ui_edge2d.enablecompare_check.isChecked() ==  True:
+            logging.debug('running edge2d_analyze on {} and {}'.format(self.JSONSS1, self.JSONSS2))
+            os.chdir(self.edge2dfold)
+            os.system(
+                'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2))
+            os.chdir(self.home)
+
+
+
+    # ----------------------------
+    def checkprintstate(self, button):
+        """
+        option to compare pulse reading a second JSON
+
+        """
+        if button.isChecked() == True:
+            self.ui_edge2d.select_json2.setEnabled(True)
+            self.ui_edge2d.lineEdit_2nd.setEnabled(True);
+        else:
+            self.ui_edge2d.select_json2.setEnabled(False)
+            self.ui_edge2d.lineEdit_2nd.setEnabled(False);
+
+
+    def checkstateJSON(self, button):
+        if button.isChecked() == True:
+            if button.text() == "edit JSON1":
+
+                os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
+
+                self.ui_edge2d.edit_JSON1.setChecked(False)
+            if button.text() == "edit JSON2":
+                os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
+                self.ui_edge2d.edit_JSON2.setChecked(False)
+
+
+
+    def handle_selectjson1(self):
+        self.JSONSS1 = QtGui.QFileDialog.getOpenFileName(None,'Select PULSE JSON',self.edge2dfold,'JSON Files(*.json)')
+
+        self.JSONSS1 = os.path.basename(self.JSONSS1)
+        self.ui_edge2d.lineEdit_1st.setText(self.JSONSS1)
+
+        logging.debug('you have chosen {}'.format(self.JSONSS1))
+        os.chdir(self.home)
+        return self.JSONSS1
+
+    def handle_selectjson2(self):
+        self.JSONSS2 = QtGui.QFileDialog.getOpenFileName(None,'Select PULSE JSON',self.edge2dfold,'JSON Files(*.json)')
+
+        self.JSONSS2 = os.path.basename(self.JSONSS2)
+        self.ui_edge2d.lineEdit_2nd.setText(self.JSONSS2)
+        logging.debug('you have chosen {}'.format(self.JSONSS2))
+        os.chdir(self.home)
+        return self.JSONSS1
+
+    def getsimnames(self):
+        import eproc as ep
+
+
+        logging.info('here are the variables stored in the tran file of the selected simulation')
+        if self.ui_edge2d.checkBox_profile.isChecked() == True:
+            if self.PathTranfile is None:
+                logging.error('choose a simulation first')
+            else:
+
+                names = ep.names(self.PathTranfile, 1, 0, 0, 0, 1)
+        if self.ui_edge2d.checkBox_time.isChecked() == True:
+            if self.PathTranfile is None:
+                logging.error('choose a simulation first')
+            else:
+                names = ep.names(self.PathTranfile, 0, 1, 0, 0, 1)
+        if self.ui_edge2d.checkBox_flux.isChecked() == True:
+            if self.PathTranfile is None:
+                logging.error('choose a simulation first')
+            else:
+                names = ep.names(self.PathTranfile, 0, 0, 1, 0, 1)
+        if self.ui_edge2d.checkBox_geom.isChecked() == True:
+            if self.PathTranfile is None:
+                logging.error('choose a simulation first')
+            else:
+                names = ep.names(self.PathTranfile, 0, 0, 0, 1, 1)
+
+        if (self.ui_edge2d.checkBox_profile.isChecked() == False &
+            self.ui_edge2d.checkBox_time.isChecked() == False &
+            self.ui_edge2d.checkBox_flux.isChecked() == False &
+            self.ui_edge2d.checkBox_geom.isChecked() == False ):
+            if self.PathTranfile is None:
+                logging.error('choose a simulation first')
+            else:
+                names = ep.names(self.PathTranfile, 1, 1, 1, 1, 1)
+
+
+
+
+
+
+
+
+    def ScanName(self,i):
+            self.user = self.ui_edge2d.comboBox_Name.itemText(i)
+            self.Name =  self.PathCatalog +"/"+self.ui_edge2d.comboBox_Name.itemText(i)+"/cmg/catalog/edge2d"
+            fsm = Qt.QFileSystemModel()
+            index = fsm.setRootPath(self.Name)
+            self.ui_edge2d.comboBox_Machine.setModel(fsm)
+            self.ui_edge2d.comboBox_Machine.setRootModelIndex(index)
+    # def ProgramE2dFunc(self,i):
+    #         self.Name4 =  self.Name +"/"+self.ProgramE2d.itemText(i)
+    #         fsm = Qt.QFileSystemModel()
+    #         index = fsm.setRootPath(self.Name4)
+    #         self.Machine.setModel(fsm)
+    #         self.Machine.setRootModelIndex(index)
+    def MachineFunc(self,i):
+            self.machine = self.ui_edge2d.comboBox_Machine.itemText(i)
+            self.Name5 =  self.Name +"/"+self.ui_edge2d.comboBox_Machine.itemText(i)
+            fsm = Qt.QFileSystemModel()
+            index = fsm.setRootPath(self.Name5)
+            self.ui_edge2d.comboBox_Shot.setModel(fsm)
+            self.ui_edge2d.comboBox_Shot.setRootModelIndex(index)
+    def ShotFunc(self,i):
+            self.shot = self.ui_edge2d.comboBox_Shot.itemText(i)
+            self.Name6 =  self.Name5 +"/"+self.ui_edge2d.comboBox_Shot.itemText(i)
+            fsm = Qt.QFileSystemModel()
+            index = fsm.setRootPath(self.Name6)
+            self.ui_edge2d.comboBox_Date.setModel(fsm)
+            self.ui_edge2d.comboBox_Date.setRootModelIndex(index)
+    def DatagFunc(self,i):
+            self.date = self.ui_edge2d.comboBox_Date.itemText(i)
+            self.Name7 =  self.Name6 +"/"+self.ui_edge2d.comboBox_Date.itemText(i)
+            fsm = Qt.QFileSystemModel()
+            index = fsm.setRootPath(self.Name7)
+            self.ui_edge2d.comboBox_Seq.setModel(fsm)
+            self.ui_edge2d.comboBox_Seq.setRootModelIndex(index)
+    def SeqFunc(self,i):
+            self.seq = self.ui_edge2d.comboBox_Seq.itemText(i)
+            # if self.seq != '/':
+            #     self.seq =self.seq.split('#')[1]
+            self.Name8 =  self.Name7 +"/"+self.seq
+            if self.ui_edge2d.comboBox_Seq.itemText(i) != "/":
+                self.PathTranfile = self.Name8
+            # print(self.seq)
 
 
 # ----------------------------
@@ -144,17 +1556,22 @@ def main():
     logger.info("Running bruvio tool.")
     import sys
     app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = bruvio_tool()
-    ui.setupUi(MainWindow)
+    MainWindow = bruvio_tool()
     MainWindow.show()
-    sys.exit(app.exec_())
+    app.exec_()
+
+    # app = QtGui.QApplication(sys.argv)
+    # MainWindow = QtGui.QMainWindow()
+    # ui = bruvio_tool()
+    # ui.setupUi(MainWindow)
+    # MainWindow.show()
+    # sys.exit(app.exec_())
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Run GO_bruvio_tools')
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
-                            " 3: Error; \n default level is INFO", default=0)
+                            " 3: Error; \n default level is INFO", default=2)
     parser.add_argument("-doc", "--documentation", type=str,
                         help="Make documentation. yes/no", default='no')
 
