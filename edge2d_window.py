@@ -26,6 +26,8 @@ class Ui_edge2d_window(object):
     def setupUi(self, edge2d_window):
         edge2d_window.setObjectName(_fromUtf8("edge2d_window"))
         edge2d_window.resize(1049, 493)
+        edge2d_window.setMinimumSize(QtCore.QSize(1049, 493))
+        edge2d_window.setMaximumSize(QtCore.QSize(1049, 493))
         self.centralwidget = QtGui.QWidget(edge2d_window)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.edge2d_exit = QtGui.QPushButton(self.centralwidget)

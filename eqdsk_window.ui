@@ -6,86 +6,347 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>223</height>
+    <width>630</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>eqdsk tools</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QCheckBox" name="savefigure_checkBox">
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>611</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>EQDSK</string>
+    </property>
+    <widget class="QLineEdit" name="lineEdit_eqdskname">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="select_eqdsk">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>40</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>20</y>
+       <width>131</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>source</string>
+     </property>
+     <widget class="QRadioButton" name="radioButton_efit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>101</width>
+        <height>20</height>
+       </rect>
+      </property>
       <property name="text">
-       <string>save Figure</string>
+       <string>eFit</string>
       </property>
      </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="plotbutton">
+     <widget class="QRadioButton" name="radioButton_other">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
       <property name="text">
-       <string>plot time traces</string>
+       <string>other</string>
       </property>
      </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="selectfile">
+    </widget>
+    <widget class="QPushButton" name="pushButton_read">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>111</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>read</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_psioffset">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>7.4032</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_writematrix">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>40</y>
+       <width>141</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>write_input_matrix</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_lcmsmap">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>110</y>
+       <width>111</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>run LCMSmap</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_solmap">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>170</y>
+       <width>111</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>run SOLmap</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>430</x>
+       <y>10</y>
+       <width>171</width>
+       <height>191</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>mapping tools</string>
+     </property>
+     <widget class="QPushButton" name="pushButton_openinputfile">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>111</width>
+        <height>25</height>
+       </rect>
+      </property>
       <property name="text">
-       <string>select eqdsk</string>
+       <string>open input file</string>
       </property>
      </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QFormLayout" name="formLayout_2">
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="KG1L_radio_2">
-         <property name="toolTip">
-          <string extracomment="runs KG1L code for selected pulse and debug level"/>
-         </property>
-         <property name="whatsThis">
-          <string extracomment="runs KG1L code for selected pulse and debug level"/>
-         </property>
-         <property name="text">
-          <string>KG1L</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="KG1H_radio_2">
-         <property name="toolTip">
-          <string extracomment="run KG1H code (at the moment is bugged to print to screen!)"/>
-         </property>
-         <property name="whatsThis">
-          <string extracomment="run KG1H code (at the moment is bugged to print to screen!)"/>
-         </property>
-         <property name="text">
-          <string>KG1H</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="eqdsk_exit">
-      <property name="text">
-       <string>exit</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_labelIN">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>210</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>LFE_81472</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_labelOUT">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>240</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>LFEexp_JET_python</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>210</y>
+       <width>59</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>label IN</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>240</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>label OUT</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="eqdsk_exit">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>320</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>exit</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_lcmsmapX">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>140</y>
+       <width>111</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>run LCMSXmap</string>
+     </property>
+    </widget>
+    <zorder>groupBox_2</zorder>
+    <zorder>groupBox</zorder>
+    <zorder>lineEdit_eqdskname</zorder>
+    <zorder>select_eqdsk</zorder>
+    <zorder>pushButton_read</zorder>
+    <zorder>lineEdit_psioffset</zorder>
+    <zorder>pushButton_writematrix</zorder>
+    <zorder>pushButton_lcmsmap</zorder>
+    <zorder>pushButton_solmap</zorder>
+    <zorder>lineEdit_labelIN</zorder>
+    <zorder>lineEdit_labelOUT</zorder>
+    <zorder>label</zorder>
+    <zorder>label_2</zorder>
+    <zorder>eqdsk_exit</zorder>
+    <zorder>pushButton_lcmsmapX</zorder>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>411</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>magnetic data</string>
+    </property>
+    <widget class="QPushButton" name="pushButton_writemagneticdata">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>141</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>write magnetic data</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_invert">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>88</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>invert</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_normalize">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>88</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>normalize</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_getmagneticdata">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>141</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>get magnetic data</string>
+     </property>
+    </widget>
+   </widget>
+   <zorder>groupBox_4</zorder>
+   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>284</width>
+     <width>630</width>
      <height>20</height>
     </rect>
    </property>

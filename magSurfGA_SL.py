@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'magSurfGA_SL.ui'
+# Form implementation generated from reading ui file 'magSurfGA_SL_V1.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -1157,6 +1157,9 @@ class Ui_magsurf_window(object):
         font.setWeight(75)
         self.maxSlider_2.setFont(font)
         self.maxSlider_2.setObjectName(_fromUtf8("maxSlider_2"))
+        self.SP_CB = QtGui.QCheckBox(self.centralwidget)
+        self.SP_CB.setGeometry(QtCore.QRect(670, 170, 101, 21))
+        self.SP_CB.setObjectName(_fromUtf8("SP_CB"))
         magsurf_window.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(magsurf_window)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 835, 20))
@@ -1183,7 +1186,7 @@ class Ui_magsurf_window(object):
         self.maxSlider.setText(_translate("magsurf_window", "max", None))
         self.actualSlider.setText(_translate("magsurf_window", "actual", None))
         self.FW_CB.setText(_translate("magsurf_window", "FW ", None))
-        self.GAP_CB.setText(_translate("magsurf_window", "GAP geom.", None))
+        self.GAP_CB.setText(_translate("magsurf_window", "GAP", None))
         self.label_3.setText(_translate("magsurf_window", "configuration:", None))
         self.configPlasma.setText(_translate("magsurf_window", "status", None))
         self.isopsiPB.setText(_translate("magsurf_window", "isopsi", None))
@@ -1201,5 +1204,6 @@ class Ui_magsurf_window(object):
         self.timeEFIT_LB.setText(_translate("magsurf_window", "status", None))
         self.label_9.setText(_translate("magsurf_window", "Time Equil:", None))
         self.maxSlider_2.setText(_translate("magsurf_window", "mail:gartaserse@gmail.com", None))
+        self.SP_CB.setText(_translate("magsurf_window", "Strike Points", None))
 
 from canvas import Canvas

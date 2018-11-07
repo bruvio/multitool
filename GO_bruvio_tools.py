@@ -36,7 +36,8 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 
 sys.path.append('../')
 from EDGE2D.class_sim import sim
-from EDGE2D.EDGE2DAnalyze import shot,read_json
+from EDGE2D.library import *
+from EDGE2D.EDGE2DAnalyze import shot
 from kg1_tools.kg1_tools_gui.utility import plot_time_traces
 # from kg1_tools.kg1_tools_gui.GO_kg1_tools import handle_readdata_button
 # from reqco.test_reqco_ver01 import *
@@ -67,7 +68,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.workfold = cwd
         self.home = cwd
         parent= Path(self.home)
-        print(parent.parent)
+        # print(parent.parent)
+
         self.edge2dfold = str(parent.parent)+'/EDGE2D'
         if "USR" in os.environ:
             logging.debug('USR in env')
@@ -151,7 +153,39 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_eqdsk.setupUi(self.window_eqdsk)
         self.window_eqdsk.show()
 
+        self.ui_eqdsk.checkBox_invert.setChecked(True)
+        self.ui_eqdsk.checkBox_normalize.setChecked(True)
+
         self.ui_eqdsk.eqdsk_exit.clicked.connect(self.exitGUI_eqdsk)
+
+        # self.ui_eqdsk.lineEdit_eqdskname.setText('select eqdsk file')
+        self.ui_eqdsk.lineEdit_eqdskname.setText('g_p92121_t49.445_mod.eqdsk')
+        # self.eqdsk = []
+        self.eqdsk = '/work/bviola/JET/m15-20/exp/g_p92121_t49.445_mod.eqdsk'
+
+        self.ui_eqdsk.radioButton_efit.setChecked(True)
+        self.ui_eqdsk.radioButton_other.setChecked(False)
+        self.ui_eqdsk.lineEdit_psioffset.setText('7.4032')
+        self.ui_eqdsk.lineEdit_labelIN.setText('LFE_81472')
+        self.ui_eqdsk.lineEdit_labelOUT.setText('LFEexp_JET_python')
+
+
+
+
+        self.ui_eqdsk.select_eqdsk.clicked.connect(self.handle_select_eqdsk)
+        self.ui_eqdsk.pushButton_read.clicked.connect(self.handle_readeqdsk)
+        self.ui_eqdsk.pushButton_lcmsmap.clicked.connect(self.handle_lcmsmap)
+        self.ui_eqdsk.pushButton_lcmsmapX.clicked.connect(self.handle_lcmsmapX)
+        self.ui_eqdsk.pushButton_solmap.clicked.connect(self.handle_solmap)
+        self.ui_eqdsk.pushButton_getmagneticdata.clicked.connect(self.handle_getmagneticdata)
+        self.ui_eqdsk.pushButton_writemagneticdata.clicked.connect(self.handle_writemagneticdata)
+        self.ui_eqdsk.pushButton_writematrix.clicked.connect(self.handle_writematrix)
+        self.ui_eqdsk.pushButton_openinputfile.clicked.connect(self.handle_openinputfile)
+
+
+
+        self.vesselfile = '/u/bviola/work/JET/m15-20/exp/vessel_JET_csv.txt'
+
 
 
     def handle_edge2d_button(self):
@@ -174,11 +208,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_edge2d.pushButton_powerbalance.clicked.connect(self.handle_powerbalance)
         self.ui_edge2d.pushButton_print.clicked.connect(self.handle_print)
         self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
+        self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
         self.ui_edge2d.pushButton_radiation.clicked.connect(self.handle_radiation)
 
-
-
-
+        # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
 
 
         self.ui_edge2d.lineEdit_1st.setText('input_dict_84600.json')
@@ -272,13 +305,21 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # os.chdir(self.home)
 
     def handle_magsurf_button(self):
-        self.window_magsurf = QtGui.QMainWindow()
+        self.magsurf_window = QtGui.QMainWindow()
         self.ui_magsurf = Ui_magsurf_window()
-        self.ui_magsurf.setupUi(self.window_magsurf)
-        self.window_magsurf.show()
-        # self.ui_magsurf.setupUi(self.ui_magsurf)
-        toolBar = NavigationToolbar(self.ui_magsurf.canvas, self.window_magsurf)
-        self.window_magsurf.addToolBar(toolBar)
+        self.ui_magsurf.setupUi(self.magsurf_window)
+        plt.close()
+        self.magsurf_window.show()
+        #
+        toolBar = NavigationToolbar(self.ui_magsurf.canvas, self.magsurf_window)
+        self.magsurf_window.addToolBar(toolBar)
+
+        #
+        initpulse = pdmsht()
+        self.ui_magsurf.JPNedit.setText(str(initpulse))
+
+
+
         #
         # #
         self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
@@ -287,8 +328,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.solPB.clicked.connect(self.plotSol)
         self.ui_magsurf.corePB.clicked.connect(self.plotCore)
         #
-        initpulse = pdmsht()
-        self.ui_magsurf.JPNedit.setText(str(initpulse))
+
 
         self.ui_magsurf.timeEdit.setText('50')  # s
         self.ui_magsurf.stepPsiEdit.setText('0.1')  # V/s
@@ -361,17 +401,175 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.horizontalSlider.sliderReleased.connect(
             lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
 
+    def handle_select_eqdsk(self):
+        self.eqdsk = QtGui.QFileDialog.getOpenFileName(None,'Select EQDSK',self.edge2dfold,'EQDSK Files(*.eqdsk)')
+
+        # self.eqdsk = os.path(self.eqdsk)
+        self.ui_eqdsk.lineEdit_eqdskname.setText(os.path.basename(self.eqdsk))
+
+        logging.debug('you have chosen {}'.format(os.path.basename(self.eqdsk)))
+        os.chdir(self.home)
+        return self.eqdsk
+    #
+    # def handle_readeqdsk(self):
+    #     if not self.eqdsk:
+    #         logging.error('select eqdsk first')
+    #     else:
+    #         if self.ui_eqdsk.radioButton_efit.isChecked() == True:
+    #             input_dict = {'fixfree': False, 'efit': True}
+    #         if self.ui_eqdsk.radioButton_other.isChecked() == True:
+    #             input_dict = {'fixfree': True, 'efit': False}
+    #         rdim, rleft, zmid, zdim, bcentr, current, rcentr, sibry, simag, fpol, rlim, zlim, fpol, rbbbs, zbbbs, psirzm, psinorm, nrgr, nzgr, rmax, rmin, zmax, zmin, Smoothpsirz, r_rect, z_rect, rmaxis, zmaxis = read_eqdsk(
+    #             self.eqdsk, input_dict)
+
+
+    def handle_openinputfile(self):
+        inputfilefortran = '/work/bviola/Fortran/tokmagnmap_mac/tokinfo.txt'
+        logging.info('opening input file to Fortran code')
+        os.system('kate {}'.format(inputfilefortran))
+
+
+
+    def handle_lcmsmap(self):
+        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        logging.info('running LCMS map')
+
+        os.system('toksepmap')
+        os.chdir(self.home)
+        logging.info('done')
+
+    def handle_lcmsmapX(self):
+        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        logging.info('running LCMS X map')
+
+        os.system('toksepmapx')
+        os.chdir(self.home)
+        logging.info('done')
+
+
+
+
+    def handle_solmap(self):
+        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        logging.info('running SOL map')
+
+        os.system('toksolmap')
+        os.chdir(self.home)
+        logging.info('done')
+
+
+
+
+    def handle_getmagneticdata(self):
+
+        if not self.eqdsk:
+            logging.error('select eqdsk first')
+        else:
+            if self.ui_eqdsk.radioButton_efit.isChecked() == True:
+                input_dict = {'fixfree': False, 'efit': True}
+            if self.ui_eqdsk.radioButton_other.isChecked() == True:
+                input_dict = {'fixfree': True, 'efit': False}
+            name = self.ui_eqdsk.lineEdit_labelIN.text()
+            os.chdir(self.edge2dfold)
+            B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2D, z2D, r_rect, z_rect, rmaxis, zmaxis = get_magnetic_data_from_eqdsk(
+                self.eqdsk, input_dict, name)
+            os.chdir(self.home)
+            logging.info('magnetic data computed!')
+            self.ui_eqdsk.pushButton_writemagneticdata.setEnabled(True);
+
+    def handle_readeqdsk(self):
+        if not self.eqdsk:
+            logging.error('select eqdsk first')
+        else:
+            psioffset = float(self.ui_eqdsk.lineEdit_psioffset.text())
+
+            if self.ui_eqdsk.radioButton_efit.isChecked() == True:
+                input_dict = {'fixfree': False, 'efit': True}
+            if self.ui_eqdsk.radioButton_other.isChecked() == True:
+                input_dict = {'fixfree': True, 'efit': False}
+            rdim, rleft, zmid, zdim, bcentr, current, rcentr, sibry, simag, fpol, rlim, zlim, fpol, rbbbs, zbbbs, psirzm, psinorm, nrgr, nzgr, rmax, rmin, zmax, zmin, Smoothpsirz, r_rect, z_rect, rmaxis, zmaxis = read_eqdsk(
+                self.eqdsk, input_dict)
+            r_ves, z_ves = read_vessel(self.vesselfile)
+            from math import pi
+            fig, ax = plt.subplots()
+            CS = ax.contour(r_rect, z_rect, -(psirzm + sibry) + psioffset,180)
+            plt.clabel(CS, inline=1, fontsize=10)
+            ax.contour(r_rect,z_rect,psirzm,100)
+            ax.plot(r_ves, z_ves, "k")
+            ax.plot(rbbbs, zbbbs, "ro")
+            ax.plot(rlim, zlim, "bo")
+            plt.show(block=True)
+            logging.info('EQDSK read done')
+
+    def handle_writemagneticdata(self):
+        if not self.eqdsk:
+            logging.error('select eqdsk first')
+        else:
+            psioffset = float(self.ui_eqdsk.lineEdit_psioffset.text())
+            nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
+            nameOUT = self.ui_eqdsk.lineEdit_labelOUT.text()
+            if self.ui_eqdsk.checkBox_normalize.isChecked():
+                normalize = True
+            else:
+                normalize = False
+            if self.ui_eqdsk.checkBox_invert.isChecked():
+                invert = True
+            else:
+                invert = False
+
+            os.chdir(self.edge2dfold)
+            if os.path.isfile(nameIN):
+                B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2, z2D, \
+                r_rect, z_rect, rmaxis, zmaxis = write_magnetic_data(nameIN,
+                                                                 nameOUT,
+                                                                 psioffset,
+                                                                 invert=invert,
+                                                                 normalize=normalize)
+                os.chdir(self.home)
+                logging.info('magnetic data written')
+            else:
+                logging.error('generate magnetic data first!')
+                self.ui_eqdsk.pushButton_writemagneticdata.setEnabled(False);
+
+            self.ui_eqdsk.pushButton_writematrix.setEnabled(True);
+
+
+    def handle_writematrix(self):
+        if not self.eqdsk:
+            logging.error('select eqdsk first')
+        else:
+            nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
+            os.chdir(self.edge2dfold)
+            if os.path.isfile(nameIN) :
+                R, Z, PSI, BR, Bz, dPSIdR, dPSIdz, dBRdR, dBRdz, dBzdR, dBzdz = define_input_matrix_for_mesh(
+                    nameIN)
+
+                os.chdir(self.home)
+                logging.info('matrix written to file')
+            else:
+                logging.error('generate input files first!')
+                self.ui_eqdsk.pushButton_writematrix.setEnabled(False);
 
 
     def handle_pumpcurrents(self):
         if not self.simlist:
             logging.error('choose a simulation first')
         else:
-            logging.info('function not yet available')
+            # logging.info('function not yet available')
+            self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
+            # for index1 in range(0, len(self.simlist)):
+            logging.info('analyzing sim {}'.format(self.namelist[index1]))
+
+            sim.write_eirene_cur2file(self.simlist, self.edge2dfold + '/e2d_data', self.targetfilename)
+
+
+
+
     def handle_contour(self):
         if not self.simlist:
             logging.error('choose a simulation first')
         else:
+            os.chdir(self.edge2dfold)
             self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
             for index1 in range(0, len(self.simlist)):
                 logging.info('analyzing sim {}'.format(self.namelist[index1]))
@@ -387,6 +585,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                     # variable = -np.trim_zeros(variable, 'b')
                     # simu.contour(vari, vari.lower()+'_' + label)
                     plt.show(block=True)
+            os.chdir(self.home)
 
 
     def handle_powerbalance(self):
@@ -432,9 +631,11 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         else:
             # for index1 in range(0, len(self.simlist)):
             #     simu = self.simlist[index1][0]
+                os.chdir(self.edge2dfold)
                 upper = input('enter upper bound in exp notation \n')
                 sim.contour_rad_power(self.simlist, float(upper))
                 plt.show(block=True)
+                os.chdir(self.home)
 
 
     def updateLineedit(self,lineedit):
