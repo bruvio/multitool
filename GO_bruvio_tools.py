@@ -317,29 +317,25 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         #
         initpulse = pdmsht()
         self.ui_magsurf.JPNedit.setText(str(initpulse))
+        self.ui_magsurf.timeEdit.setText('50')  # s
+        self.ui_magsurf.stepPsiEdit.setText('0.1') # V/s
+        self.ui_magsurf.solEdit.setText('1') # cm
+        self.ui_magsurf.NsolEdit.setText('5') # integer, nr of SOL lines
+        self.ui_magsurf.coreEdit.setText('5') # integer, nr of CORE lines
+        self.ui_magsurf.coreStepEdit.setText('0.1') # V/s
 
 
 
         #
         # #
-        self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
-        self.ui_magsurf.isopsiPB.clicked.connect(self.plotIsoPsi)
-        self.ui_magsurf.isopsiFillPB.clicked.connect(self.plotIsoPsiFill)
-        self.ui_magsurf.solPB.clicked.connect(self.plotSol)
-        self.ui_magsurf.corePB.clicked.connect(self.plotCore)
-        #
 
 
-        self.ui_magsurf.timeEdit.setText('50')  # s
-        self.ui_magsurf.stepPsiEdit.setText('0.1')  # V/s
-        self.ui_magsurf.solEdit.setText('1')  # cm
-        self.ui_magsurf.NsolEdit.setText('5')  # integer, nr of SOL lines
-        self.ui_magsurf.coreEdit.setText('5')  # integer, nr of CORE lines
-        self.ui_magsurf.coreStepEdit.setText('0.1')  # V/s
-        #
+
         self.ui_magsurf.FW_CB.setChecked(True)
         self.ui_magsurf.GAP_CB.setChecked(True)
         self.ui_magsurf.GAP_CB.setStyleSheet("color:red")
+        self.ui_magsurf.SP_CB.setChecked(True)
+        self.ui_magsurf.SP_CB.setStyleSheet("color:cyan")
         self.ui_magsurf.XLOC_CB.setChecked(True)
         self.ui_magsurf.XLOC_CB.setStyleSheet("color:magenta")
         self.ui_magsurf.WALLS_CB.setChecked(True)
@@ -369,37 +365,59 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             'expDataDictJPNobj_WALLS': None,
             'offR_XLOC': None,
             'offZ_XLOC': None,
-            'time': None,
-            'gapDict': None,
-            'xFW': None,
-            'yFW': None,
-            'rEFIT': None,
-            'zEFIT': None,
-            'rBND_XLOC_smooth': None,
-            'zBND_XLOC_smooth': None,
-            'rBND_XLOC': None,
-            'zBND_XLOC': None,
-            'rXp': None,
-            'zXp': None,
-            'rSP': None,
-            'zSP': None,
+            'time' : None,
+            'gapDict' : None,
+            'xFW' : None,
+            'yFW' : None,
+            'rEFIT' : None,
+            'zEFIT' : None,
+            'rBND_XLOC_smooth' : None,
+            'zBND_XLOC_smooth' : None,
+            'rBND_XLOC' : None,
+            'zBND_XLOC' : None,
+            'rXp' : None,
+            'zXp' : None,
+            'rSP' : None,
+            'zSP' : None,
             'rBND_WALLS': None,
             'zBND_WALLS': None,
-            'checkFW': None,
-            'checkGAP': None,
-            'checkXLOC': None,
-            'checkWALLS': None,
-            'checkEFIT': None,
-            'flagDiverted': None,
+            'checkFW' : None,
+            'checkGAP' : None,
+            'checkSP'  : None,
+            'checkXLOC' : None,
+            'checkWALLS':None,
+            'checkEFIT' : None,
+            'flagDiverted' :  None,
             'rGrid': None,
             'zGrid': None,
             'psiGrid': None,
-            'psiEFIT': None
+            'psiEFIT':None
         }
 
+
+        #
+        self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
+        self.ui_magsurf.isopsiPB.clicked.connect(self.plotIsoPsi)
+        self.ui_magsurf.isopsiFillPB.clicked.connect(self.plotIsoPsiFill)
+        self.ui_magsurf.solPB.clicked.connect(self.plotSol)
+        self.ui_magsurf.corePB.clicked.connect(self.plotCore)
+
+        self.ui_magsurf.runPB.released.connect(self.button_released)
+        self.ui_magsurf.isopsiPB.released.connect(self.button_released)
+        self.ui_magsurf.isopsiFillPB.released.connect(self.button_released)
+        self.ui_magsurf.solPB.released.connect(self.button_released)
+        self.ui_magsurf.corePB.released.connect(self.button_released)
+
+
+        self.SenderActual=[]
+
         self.ui_magsurf.horizontalSlider.valueChanged.connect(self.slider_moved)
-        self.ui_magsurf.horizontalSlider.sliderReleased.connect(
-            lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
+        # self.ui_magsurf.horizontalSlider.sliderReleased.connect(
+        #    lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
+
+
+
+
 
     def handle_select_eqdsk(self):
         self.eqdsk = QtGui.QFileDialog.getOpenFileName(None,'Select EQDSK',self.edge2dfold,'EQDSK Files(*.eqdsk)')
@@ -644,6 +662,34 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if lineedit.objectName() == "lineEdit_var_5":
             self.ui_edge2d.lineEdit_var.setText(self.ui_edge2d.lineEdit_var_5.text())
 
+    def exitGUI(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.magsurf_window.close()
+    def exitGUI_edge2d(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.edge2d_window.close()
+
+    def exitGUI_eqdsk(self):
+        """
+        close the GUI
+        :return:
+        """
+        self.window_eqdsk.close()
+
+
+
+############################################
+    def button_released(self):
+        sending_button = self.sender()
+        print('%s Clicked!' % str(sending_button.objectName()))
+        self.SenderActual= sending_button.objectName()
+        return sending_button
 
 
     def defaultGUI(self):
@@ -662,6 +708,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         #
         self.ui_magsurf.FW_CB.setChecked(True)
         self.ui_magsurf.GAP_CB.setChecked(True)
+        self.ui_magsurf.SP_CB.setChecked(True)
         self.ui_magsurf.XLOC_CB.setChecked(True)
         self.ui_magsurf.WALLS_CB.setChecked(True)
         self.ui_magsurf.EFIT_CB.setChecked(True)
@@ -695,6 +742,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         #
         self.ui_magsurf.FW_CB.setChecked(False)
         self.ui_magsurf.GAP_CB.setChecked(False)
+        self.ui_magsurf.SP_CB.setChecked(False)
         self.ui_magsurf.XLOC_CB.setChecked(False)
         self.ui_magsurf.WALLS_CB.setChecked(False)
         self.ui_magsurf.EFIT_CB.setChecked(False)
@@ -707,25 +755,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.canvas.figure.clear()
         self.ui_magsurf.canvas.draw()
 
-    def exitGUI(self):
-        """
-        close the GUI
-        :return:
-        """
-        self.window_magsurf.close()
-    def exitGUI_edge2d(self):
-        """
-        close the GUI
-        :return:
-        """
-        self.edge2d_window.close()
 
-    def exitGUI_eqdsk(self):
-        """
-        close the GUI
-        :return:
-        """
-        self.window_eqdsk.close()
 
     def plotBoundaryFromSliderReleased(self,button):
         """
@@ -754,17 +784,18 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         zXLOC= self.ui_magsurf.plotParam['rzBND_XLOC_smooth']
         rP_XLOC= self.ui_magsurf.plotParam['rBND_XLOC']
         zP_XLOC= self.ui_magsurf.plotParam['zBND_XLOC']
-        rXp= self.ui_magsurf.plotParam['rXp']
-        zXp= self.ui_magsurf.plotParam['zXp']
-        rSP= self.ui_magsurf.plotParam['rSP']
-        zSP= self.ui_magsurf.plotParam['zSP']
-        rWALLS= self.ui_magsurf.plotParam['rBND_WALLS']
-        zWALLS= self.ui_magsurf.plotParam['zBND_WALLS']
-        checkFW= self.ui_magsurf.plotParam['checkFW']
-        checkGAP= self.ui_magsurf.plotParam['checkGAP']
-        checkXLOC= self.ui_magsurf.plotParam['checkXLOC']
-        checkWALLS= self.ui_magsurf.plotParam['checkWALLS']
-        checkEFIT= self.ui_magsurf.plotParam['checkEFIT']
+        rXp = self.ui_magsurf.plotParam['rXp']
+        zXp = self.ui_magsurf.plotParam['zXp']
+        rSP = self.ui_magsurf.plotParam['rSP']
+        zSP = self.ui_magsurf.plotParam['zSP']
+        rWALLS   = self.ui_magsurf.plotParam['rBND_WALLS']
+        zWALLS   = self.ui_magsurf.plotParam['zBND_WALLS']
+        checkFW  = self.ui_magsurf.plotParam['checkFW']
+        checkGAP = self.ui_magsurf.plotParam['checkGAP']
+        checkSP  = self.ui_magsurf.plotParam['checkSP']
+        checkXLOC = self.ui_magsurf.plotParam['checkXLOC']
+        checkWALLS = self.ui_magsurf.plotParam['checkWALLS']
+        checkEFIT = self.ui_magsurf.plotParam['checkEFIT']
         flagDiverted = self.ui_magsurf.plotParam['flagDiverted']
 
 
@@ -776,7 +807,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             rC,zC,\
             rXLOC,zXLOC,rP_XLOC,zP_XLOC, \
             rXp,zXp,rSP,zSP, flagDiverted, \
-            rWALLS,zWALLS,iTWALLS    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
+            rWALLS,zWALLS,iTWALLS,gapXLOC,spXLOC    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
                         nameListGap,nameListStrikePoints,expDataDictJPNobj_XLOC,gapDict,\
                         offR_XLOC,offZ_XLOC,nameListGapWALLS,expDataDictJPNobj_WALLS)
 
@@ -789,15 +820,15 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             self.plotFWGapBoundary(gapDict,xFW, yFW, rC,zC,
                           rXLOC,zXLOC, rP_XLOC, zP_XLOC, \
                           rXp,zXp,rSP,zSP, rWALLS,zWALLS,iTWALLS,  \
-                        checkFW,checkGAP,checkXLOC,checkWALLS,checkEFIT,\
-                                      flagDiverted,nameListGapWALLS)
+                        checkFW,checkGAP,checkSP,checkXLOC,checkWALLS,checkEFIT,\
+                                      flagDiverted,nameListGapWALLS,gapXLOC,spXLOC)
 
 
     def plotFWGapBoundary(self,gapDict,xFW, yFW, rC,zC,
                           rXLOC,zXLOC, rP_XLOC, zP_XLOC, \
                           rXp,zXp,rSP,zSP,rWALLS,zWALLS,iTWALLS, \
-                        flagPlotFW,flagPlotGap,flagPlotXLOC,\
-                          flagPlotWALLS,flagPlotEFIT,flagDiverted,nameListGapWALLS):
+                        flagPlotFW,flagPlotGap,flagPlotSP,flagPlotXLOC,\
+                          flagPlotWALLS,flagPlotEFIT,flagDiverted,nameListGapWALLS,gapXLOC,spXLOC):
         """
         Plot: FW, XLOC gap and strike points geometry, XLOC boundary, EFIT boundary,
         WALLS gap (Inner,Outer and Upper)
@@ -819,43 +850,106 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         :param iTWALLS:
         :param flagPlotFW:
         :param flagPlotGap:
+        :param flagPlotSP:
         :param flagPlotXLOC:
         :param flagPlotWALLS:
         :param flagPlotEFIT:
         :param flagDiverted:
         :param nameListGapWALLS:
+        :param gapXLOC:
+        :param spXLOC:
         :return:
         """
         self.ui_magsurf.canvas.figure.clf() # clear canvas
         ax = self.ui_magsurf.canvas.figure.add_subplot(111)
         ax.plot()
 
-        # Gaps
-        if flagPlotGap:
-            nameListGap = gapDict.keys()
-            for jj in nameListGap:
+        gapItems = gapXLOC.items() # return tupla
+        minGAP = min(gapItems,key=lambda x:x[1])
+
+        iTimeStart = numpy.where(min(gapXLOC.values()))
+
+
+        nameListGap = []
+        nameListSP  = []
+        nameListGapSP = gapDict.keys()
+        for jj in nameListGapSP:
+                #print(jj)
                 if ('RSOGB' in jj) or  ('RSIGB' in jj) or ('ZSIGB' in jj) \
                     or ('ZSOGB' in jj) or ('WLBSRP' in jj):
+                    nameListSP.append(jj) # its a strike point      \zxdasdasasdas
+                else:
+                    nameListGap.append(jj) # its a gap
 
-                    R1 = gapDict[jj]['R1']
-                    Z1 = gapDict[jj]['Z1']
-                    R2 = gapDict[jj]['R2']
-                    Z2 = gapDict[jj]['Z2']
-                    R3 = gapDict[jj]['R3']
-                    Z3 = gapDict[jj]['Z3']
-                    R4 = gapDict[jj]['R4']
-                    Z4 = gapDict[jj]['Z4']
-                    ax.plot([R1,R2,R3,R4],[Z1,Z2,Z3,Z4],'d-r')
+
+        #axPLT = plt.gca().axes
+        # plot Gaps
+        if flagPlotGap:
+            for jj in nameListGap:
+                R1 = gapDict[jj]['R1']
+                Z1 = gapDict[jj]['Z1']
+                R2 = gapDict[jj]['R2']
+                Z2 = gapDict[jj]['Z2']
+                ax.plot([R1,R2],[Z1,Z2],'d-r')
+                ax.plot(R1,Z1,'o-b')
+
+
+                # m = (y1-y2)/(x1-x2)
+                # P2(x2,y2) starting point (from inside VACUUM), opposite to gap definition which start from FW
+                # P1(x1,y1) ending point
+
+                # angular coefficient
+                if R2==R1:
+                    mm= numpy.pi/2
                 else:
-                    R1 = gapDict[jj]['R1']
-                    Z1 = gapDict[jj]['Z1']
-                    R2 = gapDict[jj]['R2']
-                    Z2 = gapDict[jj]['Z2']
-                    ax.plot([R1,R2],[Z1,Z2],'d-r')
-                if 'TOG5' in jj:
-                    ax.text(R1,Z1+0.1,jj,color='red')
-                else:
-                   ax.text(R1,Z1,jj,color='red')
+                    mm = numpy.arctan((Z1-Z2)/(R1-R2))
+
+                pt = np.array([R1,Z1]).reshape((1,2))
+                gapAngle = numpy.degrees(mm)
+                gapAngleCorr=ax.transData.transform_angles(np.array((gapAngle,)),pt)[0]
+
+                    #numpy.arctan(mm*180/numpy.pi) # deg
+                #print(gapDict[jj])
+                #print([jj + ' : ' + str(gapAngle) + ' deg' + '---> corrected in : ' + str(gapAngleCorr) ])
+
+                #gapAngle=gapAngleCorr
+
+                sizeLabel = 7
+                if jj in gapXLOC.keys():
+                     if jj == minGAP[0]:
+                        ax.text(R1,Z1,jj + ' (' + str(round(gapXLOC[jj],2)) + ')',color='g',\
+                                fontsize=sizeLabel,weight='bold',rotation=gapAngle,rotation_mode='anchor')
+                     elif gapXLOC[jj]<4.5e-2:
+                         ax.text(R1,Z1,jj + ' (' + str(round(gapXLOC[jj],2)) + ')',\
+                                 color='r',fontsize=sizeLabel,rotation=gapAngle,rotation_mode='anchor')
+                     else:
+                         ax.text(R1,Z1,jj + ' (' + str(round(gapXLOC[jj],2)) + ')',color='k',\
+                                 fontsize=sizeLabel,rotation=gapAngle,rotation_mode='anchor')
+                     # if 'TOG5' in jj:
+                     #     if gapXLOC[jj]<4.5e-2:
+                     #        ax.text(R1,Z1+0.1,jj + '(' + str(round(gapXLOC[jj],2)) + ')',color='r',\
+                     #                fontsize=sizeLabel,rotation=gapAngle,rotation_mode='anchor')
+                     #     else:
+                     #        ax.text(R1,Z1+0.1,jj + ' (' + str(round(gapXLOC[jj],2)) + ')',color='k',\
+                     #                fontsize=sizeLabel,rotation=gapAngle,rotation_mode='anchor')
+
+
+        # plot strike points
+        if flagPlotSP:
+            for jj in nameListSP:
+                R1 = gapDict[jj]['R1']
+                Z1 = gapDict[jj]['Z1']
+                R2 = gapDict[jj]['R2']
+                Z2 = gapDict[jj]['Z2']
+                R3 = gapDict[jj]['R3']
+                Z3 = gapDict[jj]['Z3']
+                R4 = gapDict[jj]['R4']
+                Z4 = gapDict[jj]['Z4']
+
+                ax.plot([R1,R2,R3,R4],[Z1,Z2,Z3,Z4],'-c')
+                if jj in spXLOC.keys():
+                    ax.text(R1,Z1,jj + ' (' + str(round(spXLOC[jj],2)) + ')',color='c',fontsize=sizeLabel)
+
 
         if flagPlotFW:
             # FW
@@ -878,7 +972,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             # for jj,vv in enumerate(nameListGapWALLS):
             #     ax.text(rWALLS[jj],zWALLS[jj],vv,color='b')
 
-        if flagPlotGap or flagPlotFW or flagPlotXLOC or flagPlotEFIT:
+        if flagPlotGap or flagPlotSP or flagPlotFW or flagPlotXLOC or flagPlotEFIT:
             ax.axis('equal')
             self.ui_magsurf.canvas.draw()
 
@@ -888,9 +982,38 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.timeEdit.setText(str(time[position]))
 
 
-        self.plotBoundaryFromSliderReleased(self.ui_magsurf.horizontalSlider)
+        #position = self.ui_magsurf.horizontalSlider.value()
 
+        if self.SenderActual=='runPB':
+           print('clicked inside slider moved RUNPB')
 
+           self.plotBoundaryFromSliderReleased(self.ui_magsurf.horizontalSlider)
+
+        elif self.SenderActual=='isopsiPB':
+            print('clicked inside slider moved RUNisopsi')
+
+            self.plotIsoPsi(position)
+
+        elif self.SenderActual=='isopsiFillPB':
+            print('clicked inside slider moved RUNisopsiFill')
+
+            self.plotIsoPsiFill(position)
+
+        elif self.SenderActual=='solPB':
+            print('clicked inside slider moved RUNSOLPSI')
+
+            self.plotSol(position)
+
+        elif self.SenderActual=='corePB':
+            print('clicked inside slider moved RUNcorePSI')
+
+            self.plotCore(position)
+
+        #    self.ui_magsurf.runPB.released.connect(self.button_released)
+        # self.ui_magsurf.isopsiPB.released.connect(self.button_released)
+        # self.ui_magsurf.isopsiFillPB.released.connect(self.button_released)
+        # self.ui_magsurf.solPB.released.connect(self.button_released)
+        # self.ui_magsurf.corePB.released.connect(self.button_released)
 
 
     def downloadExpData(self,JPN,JPNobj):
@@ -1086,10 +1209,12 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.timeWALLS_LB.setText(str(timeWALLS[iTWALLS]) + ' s')
 
         return  rC,zC,rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
-                rXp,zXp,rSP,zSP,flagDiverted,rWALLS,zWALLS,iTWALLS
+                rXp,zXp,rSP,zSP,flagDiverted,rWALLS,zWALLS,iTWALLS,gapXLOC,spXLOC
 
 
-    def plotCore(self):
+    def plotCore(self,*args):
+        position = self.ui_magsurf.horizontalSlider.value()
+
         core = int(self.ui_magsurf.coreEdit.text())
         coreStep = float(self.ui_magsurf.coreStepEdit.text())
 
@@ -1097,7 +1222,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
 
         time = self.ui_magsurf.plotParam['time']
-        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+        timeEquil = time[position]
         iCurrentTime = numpy.where(numpy.abs(timeEquil-time)<2*min(numpy.diff(time)))# twice of the min of EFIT delta time
 
 
@@ -1140,7 +1265,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.canvas.draw()
 
 
-    def plotSol(self):
+    def plotSol(self,*args):
+        position = self.ui_magsurf.horizontalSlider.value()
+
         sol = float(self.ui_magsurf.solEdit.text())
         Nsol = int(self.ui_magsurf.NsolEdit.text())
 
@@ -1148,7 +1275,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
 
         time = self.ui_magsurf.plotParam['time']
-        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+        timeEquil = time[position]
 
         rC, zC, psiEFIT, rGrid, zGrid,iTEFIT,timeEFIT \
             = JPNobj.readEFITFlux(expDataDictJPNobj_EFIT, float(timeEquil))
@@ -1209,13 +1336,14 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.canvas.draw()
 
 
-    def plotIsoPsi(self):
+    def plotIsoPsi(self,*args):
 
+        position = self.ui_magsurf.horizontalSlider.value()
         JPNobj = self.ui_magsurf.plotParam['JPNobj']
         expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
 
         time = self.ui_magsurf.plotParam['time']
-        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+        timeEquil = time[position]
 
         deltaPsi = float(self.ui_magsurf.stepPsiEdit.text())
 
@@ -1246,13 +1374,16 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.canvas.draw()
 
 
-    def plotIsoPsiFill(self):
+    def plotIsoPsiFill(self,*args):
+
+        position = self.ui_magsurf.horizontalSlider.value()
+
 
         JPNobj = self.ui_magsurf.plotParam['JPNobj']
         expDataDictJPNobj_EFIT = self.ui_magsurf.plotParam['expDataDictJPNobj_EFIT']
 
         time = self.ui_magsurf.plotParam['time']
-        timeEquil = time[self.ui_magsurf.horizontalSlider.value()]
+        timeEquil = time[position]
 
         deltaPsi = float(self.ui_magsurf.stepPsiEdit.text())
 
@@ -1309,6 +1440,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         checkFW   = self.ui_magsurf.FW_CB.isChecked()
         checkGAP  = self.ui_magsurf.GAP_CB.isChecked()
+        checkSP = self.ui_magsurf.SP_CB.isChecked()
         checkXLOC = self.ui_magsurf.XLOC_CB.isChecked()
         checkWALLS = self.ui_magsurf.WALLS_CB.isChecked()
         checkEFIT = self.ui_magsurf.EFIT_CB.isChecked()
@@ -1350,7 +1482,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         rEFIT,zEFIT,\
         rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
         rXp,zXp,rSP,zSP, flagDiverted,\
-        rWALLS,zWALLS,iTWALLS    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
+        rWALLS,zWALLS,iTWALLS,gapXLOC,spXLOC    = self.shapeSnapShot(JPNobj,timeEquil,expDataDictJPNobj_EFIT,\
                         nameListGap,nameListStrikePoints,expDataDictJPNobj_XLOC,gapDict,\
                         offR_XLOC,offZ_XLOC,nameListGapWALLS,expDataDictJPNobj_WALLS)
 
@@ -1370,6 +1502,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_magsurf.plotParam['zSP'] = zSP
         self.ui_magsurf.plotParam['checkFW'] = checkFW
         self.ui_magsurf.plotParam['checkGAP'] = checkGAP
+        self.ui_magsurf.plotParam['checkSP']  = checkSP
         self.ui_magsurf.plotParam['checkXLOC'] = checkXLOC
         self.ui_magsurf.plotParam['checkWALLS'] = checkWALLS
         self.ui_magsurf.plotParam['checkEFIT'] = checkEFIT
@@ -1392,19 +1525,19 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                         rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
                         rXp,zXp,rSP,zSP,\
                         rWALLS,zWALLS,iTWALLS,\
-                        checkFW,checkGAP,checkXLOC,checkWALLS,checkEFIT,\
-                                  flagDiverted,nameListGapWALLS)
+                        checkFW,checkGAP,checkSP,checkXLOC,checkWALLS,checkEFIT,\
+                                  flagDiverted,nameListGapWALLS,gapXLOC,spXLOC)
 
 
         iT_Start,timeStart,iT_End,timeEnd = \
             self.findIndexTime(tStartEFIT,tEndEFIT,timeEFIT)
 
 
-        # #updateSlider(self,iT_Start,iT_End,timeEquil,timeEFIT)
+        # #self.updateSlider(iT_Start,iT_End,timeEquil,timeEFIT)
         self.ui_magsurf.horizontalSlider.setMinimum(iT_Start)
         self.ui_magsurf.horizontalSlider.setMaximum(iT_End)
-        self.ui_magsurf.minSlider.setText(str(timeStart))
-        self.ui_magsurf.maxSlider.setText(str(timeEnd))
+        self.ui_magsurf.minSlider.setText(str(timeStart)) # from PSI EFIT time
+        self.ui_magsurf.maxSlider.setText(str(timeEnd))  # from PSI EFIT time
         self.ui_magsurf.actualSlider.setText(str(timeEquil))
         iPosition = numpy.where(
             numpy.abs(float(timeEquil) - timeEFIT) < 2 * min(numpy.diff(timeEFIT)))  # twice of the min of EFIT delta time=
@@ -1441,6 +1574,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
 
+
+
+
+############################################
 
 
     # ---------------------------

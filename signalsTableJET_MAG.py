@@ -1,4 +1,7 @@
 def signalsTableJET(signalsTableName):
+
+    sigTable = []
+
     if signalsTableName == 'signalsTable_XLOC_KC1D':
            sigTable = {
            # keys  Values
@@ -20,7 +23,7 @@ def signalsTableJET(signalsTableName):
            'CZ15' :'DA/C2-CX15',   # oct. 3 IDC
            'CZ16' :'DA/C2-CX16',   # oct. 3 IDC
            'CZ17' :'DA/C2-CX17',   # oct. 3 IDC
-           'CZ18' :'DA/C2-CY18',   # oct. 3 IDC
+           'CZ18' :'DA/C2-CY18',   # oct. 7 IDC
            # KC1D JPF IDC OCT.3 saddle loops
            'SZ01' :'DA/C2-SX01',   # oct. 3 Saddle Loops
            'SZ02' :'DA/C2-SX02',   # oct. 3 Saddle Loops
@@ -97,7 +100,7 @@ def signalsTableJET(signalsTableName):
            'CZ15' :'DA/C2Z-CX15',   # oct. 3 IDC
            'CZ16' :'DA/C2Z-CX16',   # oct. 3 IDC
            'CZ17' :'DA/C2Z-CX17',   # oct. 3 IDC
-           'CZ18' :'DA/C2Z-CY18',   # oct. 3 IDC
+           'CZ18' :'DA/C2Z-CY18',   # oct. 7 IDC
            # KC1Z JPF IDC OCT.3 saddle loops
            'SZ01' :'DA/C2Z-SX01',   # oct. 3 Saddle Loops
            'SZ02' :'DA/C2Z-SX02',   # oct. 3 Saddle Loops
@@ -484,43 +487,53 @@ def signalsTableJET(signalsTableName):
            # ODD and EVEN TF currents KC1Z
            #'TFEVN' :'DA/C2Z-ITFEVN',   # TF current odd
            #'TFODD' :'DA/C2Z-ITFODD',   # TF current even
-           'TFEVN' :'DA/C2Z-TFCI1',   # TF current odd
-           'TFODD' :'DA/C2Z-TFCI2',   # TF current even
+           'TFODD' :'DA/C2Z-TFCI1',   # TF current odd
+           'TFEVN' :'DA/C2Z-TFCI2',   # TF current even
            }
     elif signalsTableName == 'signalsTable_TF_KC1E':
            sigTable = {
            # ODD and EVEN TF currents KC1E
            #'TFEVN' :'DA/CDE-ITFEV',   # TF current odd
            #'TFODD' :'DA/CDE-ITFOD',   # TF current even
-           'TFEVN' :'DA/C2E-TFCI1',   # TF current odd # use after #69199
-           'TFODD' :'DA/C2E-TFCI2',   # TF current even  # use after #69199
+           'TFODD' :'DA/C2E-TFCI1',   # TF current odd # use after #69199
+           'TFEVN' :'DA/C2E-TFCI2',   # TF current even  # use after #69199
            }
+    elif signalsTableName == 'signalsTable_TF_KC1E_CDE':
+           sigTable = {
+           # ODD and EVEN TF currents KC1E
+           #'TFEVN' :'DA/CDE-ITFEV',   # TF current odd
+           #'TFODD' :'DA/CDE-ITFOD',   # TF current even
+           'TFODD' :'DA/CDE-TFCI1',   # TF current odd # use after #69199
+           'TFEVN' :'DA/CDE-TFCI2',   # TF current even  # use after #69199
+           }
+
     elif signalsTableName == 'signalsTable_EFIT':
            sigTable = {
-           # EFIT
-           'BPCA' :'PPF/EFIT/BPCA',   # simulated p-poloidal
-           'BPME' :'PPF/EFIT/BPME',   # MEASURED p-poloidal
-           'FLCA' :'PPF/EFIT/FLCA',   # simulated FLUX AND SADDLE
-           'FLME' :'PPF/EFIT/FLME',   # MEASURED FLUX AND SADDLE
-           'RBND' :'PPF/EFIT/RBND',   # r coordinate of boundary
-           'ZBND' :'PPF/EFIT/ZBND',   # z coordinate of boundary
-           'PSI'  :'PPF/EFIT/PSI',    # 1089x989 psi gse solution  [33x33=1089]
-           'PSIR' :'PPF/EFIT/PSIR',   # 33 psi r grid
-           'PSIZ' :'PPF/EFIT/PSIZ',   # 33 psi r grid
-           'FBND' :'PPF/EFIT/FBND',   # psi at boundary
-           'RSIL' :'PPF/EFIT/RSIL',   # R inner lower strike (r of RSIGB)
-           'RSIU' :'PPF/EFIT/RSIU',   # R inner upper strike (r of ZSIGB)
-           'ZSIL' :'PPF/EFIT/ZSIL',   # Z inner lower strike (z of RSIGB)
-           'ZSIU' :'PPF/EFIT/ZSIU',   # Z inner upper strike (z of ZSIGB)
-           'RSOL' :'PPF/EFIT/RSOL',   # R outer lower strike (r of RSOGB)
-           'RSOU' :'PPF/EFIT/RSOU',   # R outer upper strike (r of ZSOGB)
-           'ZSOL' :'PPF/EFIT/ZSOL',   # Z outer lower strike (z of RSOGB)
-           'ZSOU' :'PPF/EFIT/ZSOU',   # Z outer upper strike (z of ZSOGB)
-           'NBND' :'PPF/EFIT/NBND',   # actual points of RBND,ZBND
-           'FAXS' :'PPF/EFIT/FAXS',   # psi at magnetic axis
-           'RMAG' :'PPF/EFIT/RMAG',   # r coordinate of magnetic axis
-           'ZMAG' :'PPF/EFIT/ZMAG',   # z coordinate of magnetic axis
-   }
+                  # EFIT
+                  'BPCA': 'PPF/EFIT/BPCA',  # simulated p-poloidal
+                  'BPME': 'PPF/EFIT/BPME',  # MEASURED p-poloidal
+                  'FLCA': 'PPF/EFIT/FLCA',  # simulated FLUX AND SADDLE
+                  'FLME': 'PPF/EFIT/FLME',  # MEASURED FLUX AND SADDLE
+                  'RBND': 'PPF/EFIT/RBND',  # r coordinate of boundary
+                  'ZBND': 'PPF/EFIT/ZBND',  # z coordinate of boundary
+                  'PSI':  'PPF/EFIT/PSI',  # 1089x989 psi gse solution  [33x33=1089]
+                  'PSIR': 'PPF/EFIT/PSIR',  # 33 psi r grid
+                  'PSIZ': 'PPF/EFIT/PSIZ',  # 33 psi r grid
+                  'FBND': 'PPF/EFIT/FBND',  # psi at boundary
+                  'RSIL': 'PPF/EFIT/RSIL',  # R inner lower strike (r of RSIGB)
+                  'RSIU': 'PPF/EFIT/RSIU',  # R inner upper strike (r of ZSIGB)
+                  'ZSIL': 'PPF/EFIT/ZSIL',  # Z inner lower strike (z of RSIGB)
+                  'ZSIU': 'PPF/EFIT/ZSIU',  # Z inner upper strike (z of ZSIGB)
+                  'RSOL': 'PPF/EFIT/RSOL',  # R outer lower strike (r of RSOGB)
+                  'RSOU': 'PPF/EFIT/RSOU',  # R outer upper strike (r of ZSOGB)
+                  'ZSOL': 'PPF/EFIT/ZSOL',  # Z outer lower strike (z of RSOGB)
+                  'ZSOU': 'PPF/EFIT/ZSOU',  # Z outer upper strike (z of ZSOGB)
+                  'NBND': 'PPF/EFIT/NBND',  # actual points of RBND,ZBND
+                  'FAXS': 'PPF/EFIT/FAXS',  # psi at magnetic axis
+                  'RMAG': 'PPF/EFIT/RMAG',  # r coordinate of magnetic axis
+                  'ZMAG': 'PPF/EFIT/ZMAG',  # z coordinate of magnetic axis
+           }
+
     # ********************************************************
     # commissioning MAG JET restart 2018
     # ********************************************************
@@ -1092,16 +1105,35 @@ def signalsTableJET(signalsTableName):
            'S514' :'DA/C2E-S514',
            'S714' :'DA/C2E-S714',
            }
+    elif signalsTableName == 'signalsTable_KC1E_CDE_LOCA':
+           sigTable = {
+           # keys  Values
+           # KC1E JPF saddle loops 5kHz
+           'S101' :'DA/CDE-S101',
+           'S301' :'DA/CDE-S301',
+           'S501' :'DA/CDE-S501',
+           'S701' :'DA/CDE-S701',
+           'S114' :'DA/CDE-S114',
+           'S314' :'DA/CDE-S314',
+           'S514' :'DA/CDE-S514',
+           'S714' :'DA/CDE-S714',
+           }
     elif signalsTableName == 'signalsTable_extra':
            sigTable = {
            # keys  Values
+           # KC1Z
            'LOCA_KC1Z' :'DA/C2Z-LOCA>',
            'MHDF_KC1Z' :'DA/C2Z-MHDF>',
            'MHDG_KC1Z' :'DA/C2Z-MHDG>',
             # keys  Values
+           # KC1E 500Hz
            'LOCA_KC1E' :'DA/C2E-LOCA:001',
            #'LOCA_KC1E' :'DA/C2E-LOCA:002',
+           # KC1E 5lHz
+           'LOCA_KC1E_CDE' :'DA/CDE-LOCA:001',
+           #'LOCA_KC1E_CDE' :'DA/CDE-LOCA:002',
            # keys  Values
+           # KC1D
            'LOCA_KC1D' :'DA/C2-LOCA',
            #'LOCA_KC1D' :'DA/C2-LOCA:001',
            #'LOCA_KC1D' :'DA/C2-LOCA:002',
@@ -1186,7 +1218,8 @@ def signalsTableJET(signalsTableName):
            'ID3'    :  'PF/SC-ID3<MS'  ,  #       'D3 curr'
            'ID4'    :  'PF/SC-ID4<MS'  ,  #       'D4 curr'
            'IP'     :  'PF/SC-IP<MS'   ,  #       'Plasma curr'
-       }
+           }
+
     elif signalsTableName == 'signalsTable_WALLS':
            sigTable = {
               # keys  Values
@@ -1300,6 +1333,81 @@ def signalsTableJET(signalsTableName):
               'UDPGZ07':'PF/WA-UDPGZ<XS:007',
               'UDPGZ08':'PF/WA-UDPGZ<XS:008',
        }
+
+    elif signalsTableName == 'signalsTable_PFC_ITF':
+           sigTable = {
+              # keys  Values
+           'IPRIM'  :  'PF/SC-IP1<MS'  ,  #       'P1 Ext curr'
+           'IP4T'   :  'PF/SC-IP4<MS'  ,  #       'P4 total curr'
+           'IP4IM'  :  'PF/SC-IIM<MS'  ,  #       'P4 Imb curr'
+           'IPFX'   :  'PF/SC-IFX<MS'  ,  #       'PFX curr'
+           'ISHP'   :  'PF/SC-ISH<MS'  ,  #       'Shaping curr'
+           'ID1'    :  'PF/SC-ID1<MS'  ,  #       'D1 curr'
+           'ID2'    :  'PF/SC-ID2<MS'  ,  #       'D2 curr'
+           'ID3'    :  'PF/SC-ID3<MS'  ,  #       'D3 curr'
+           'ID4'    :  'PF/SC-ID4<MS'  ,  #       'D4 curr'
+           'ITF'    :  'PF/SC-ITF<MS'  ,  #
+           'ISU'    :  'PF/SC-ISU<MS'  ,  #
+           'IFRFA'  :  'PF/V5-IFRFA<ADC', #  ERFA current from V5
+           #'IP'     :  'PF/SC-IP<MS'   ,  #       'Plasma curr'
+                  #
+            # ODD and EVEN TF currents KC1D
+           'TFODD_KC1D' :'DA/C2-TFCI1B',   # TF current odd  # use for LOCA use after #67531
+           'TFEVN_KC1D' :'DA/C2-TFCI2B',   # TF current even # use for LOCA use after #67531
+           #'TFEVN' :'DA/C2-ITFEVN',   # TF current odd # use before  #67531
+           #'TFODD' :'DA/C2-ITFODD',   # TF current even # use before  #67531
+           #'ITFB'  :'DA/C2-ITFB'  # TF current = [C2-ITFODD + C2-ITFEVN]/2
+                  # KC1Z
+           #'TFEVN' :'DA/C2Z-ITFEVN',   # TF current odd
+           #'TFODD' :'DA/C2Z-ITFODD',   # TF current even
+           'TFODD_KC1Z' :'DA/C2Z-TFCI1',   # TF current odd
+           'TFEVN_KC1Z' :'DA/C2Z-TFCI2',   # TF current even
+                  #
+           'TFODD_KC1E' :'DA/C2E-TFCI1',   # TF current odd # use after #69199
+           'TFEVN_KC1E' :'DA/C2E-TFCI2',   # TF current even  # use after #69199
+       }
+    elif  signalsTableName == 'signalsTable_MHD_KC1M':
+          sigTable = {
+             # keys values
+             # 'H301' : 'DA/C1M-H301' ,   # HRCA: High Resolution Coils Array
+             # 'H302' : 'DA/C1M-H302' ,   # HRCA: High Resolution Coils Array
+             # 'H303' : 'DA/C1M-H303' ,   # HRCA: High Resolution Coils Array
+             # 'H304' : 'DA/C1M-H304' ,   # HRCA: High Resolution Coils Array
+             # 'H305' : 'DA/C1M-H305' ,   # HRCA: High Resolution Coils Array
+             # 'H306' : 'DA/C1M-H306' ,   # HRCA: High Resolution Coils Array
+             # 'H307' : 'DA/C1M-H307' ,   # HRCA: High Resolution Coils Array
+             #
+             'I801' : 'DA/C1M-I801' ,   # IC: Internal COils
+             'I802' : 'DA/C1M-I802' ,   # IC: Internal COils
+             'I803' : 'DA/C1M-I803' ,   # IC: Internal COils
+             #
+             # 'P402'  : 'DA/C1M-P402'  , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'P802'  : 'DA/C1M-P802'  , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # #
+             # 'PP401' : 'DA/C1M-PP401' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP402' : 'DA/C1M-PP402' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP403' : 'DA/C1M-PP403' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP404' : 'DA/C1M-PP404' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP405' : 'DA/C1M-PP405' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP406' : 'DA/C1M-PP406' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP407' : 'DA/C1M-PP407' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # #
+             # 'PP801' : 'DA/C1M-PP801' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP802' : 'DA/C1M-PP802' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP803' : 'DA/C1M-PP803' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP804' : 'DA/C1M-PP804' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP805' : 'DA/C1M-PP805' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP806' : 'DA/C1M-PP806' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # 'PP807' : 'DA/C1M-PP807' , # OPLTC: Outer Poloidal Limiter Tangential Coils
+             # #
+             # 'T001' : 'DA/C1M- T001' ,  # Toroidal Coil Array
+             # 'T002' : 'DA/C1M- T002' ,  # Toroidal Coil Array
+             # 'T006' : 'DA/C1M- T006' ,  # Toroidal Coil Array
+             # 'T007' : 'DA/C1M- T007' ,  # Toroidal Coil Array
+             # 'T008' : 'DA/C1M- T008' ,  # Toroidal Coil Array
+             # 'T009' : 'DA/C1M- T009' ,  # Toroidal Coil Array
+
+             }
 
 
     return sigTable
