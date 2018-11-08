@@ -1002,9 +1002,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
             self.plotIsoPsiFill(position)
 
+
         elif self.SenderActual=='solPB':
             print('clicked inside slider moved RUNSOLPSI')
-
 
             self.plotSol(position)
 
@@ -1214,6 +1214,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         return  rC,zC,rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
                 rXp,zXp,rSP,zSP,flagDiverted,rWALLS,zWALLS,iTWALLS,gapXLOC,spXLOC
+
 
     def plotCore(self,*args):
         position = self.ui_magsurf.horizontalSlider.value()
