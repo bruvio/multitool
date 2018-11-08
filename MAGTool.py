@@ -1173,11 +1173,10 @@ class MAGTool:
             iTimeXLOC = numpy.where(numpy.abs(timeEquil-timeXLOC)<50*min(numpy.diff(timeXLOC)))# twice of the min of XLOC delta time
 
         iTXLOC = iTimeXLOC[0][0]
-        print(timeXLOC[iTXLOC])
-        SP0 = []
+        print('Time XLOC:' + str(timeXLOC[iTXLOC]))
+        SP0 = {}
         rSP0 = []
         zSP0 = []
-        count = 0
 
         for jj in nameListSP2Extract:
             vSP = expDataXLOC[jj]['v']
@@ -1187,7 +1186,7 @@ class MAGTool:
                 pylab.plot(tSP,vSP)
                 pylab.title(str(jj))
                 pylab.show()
-            SP0.append(vSP[iTXLOC])
+            SP0[jj]=vSP[iTXLOC] #as dictionary
             print(jj + ': ' + str(vSP[iTXLOC]))
 
             R1 = geomInfoGapXLOC[jj]['R1']
@@ -1212,13 +1211,10 @@ class MAGTool:
             mapList = [M1,M2,M3,M4]
             rList = [R1,R2,R3,R4]
             zList = [Z1,Z2,Z3,Z4]
-            rSP = numpy.interp(SP0[count],mapList,rList)
-            zSP = numpy.interp(SP0[count],mapList,zList)
+            rSP = numpy.interp(SP0[jj],mapList,rList)
+            zSP = numpy.interp(SP0[jj],mapList,zList)
             rSP0.append(rSP)
             zSP0.append(zSP)
-            count = count + 1
-
-
 
 
         return SP0,rSP0,zSP0,iTXLOC
@@ -1238,14 +1234,14 @@ class MAGTool:
 
 
         iTXLOC = iTimeXLOC[0][0]
-        print(timeXLOC[iTXLOC])
-        gap0 = []
+        print('Time XLOC:' + str(timeXLOC[iTXLOC]))
+        gap0 = {}
         rG0 = []
         zG0 = []
         count = 0
         for jj in nameListGap:
             vGAP = expDataXLOC[jj]['v']
-            gap0.append(vGAP[iTXLOC])
+            gap0[jj]=vGAP[iTXLOC] # as dictionary
             print(jj + ': ' + str(vGAP[iTXLOC]))
 
             R1 = geomInfoGapXLOC[jj]['R1']
@@ -1253,11 +1249,10 @@ class MAGTool:
             Z1 = geomInfoGapXLOC[jj]['Z1']
             Z2 = geomInfoGapXLOC[jj]['Z2']
 
-            rG = R1+gap0[count]*(R2-R1)/numpy.sqrt((R2-R1)**2+(Z2-Z1)**2)
-            zG = Z1+gap0[count]*(Z2-Z1)/numpy.sqrt((R2-R1)**2+(Z2-Z1)**2)
+            rG = R1+gap0[jj]*(R2-R1)/numpy.sqrt((R2-R1)**2+(Z2-Z1)**2)
+            zG = Z1+gap0[jj]*(Z2-Z1)/numpy.sqrt((R2-R1)**2+(Z2-Z1)**2)
             rG0.append(rG)
             zG0.append(zG)
-            count = count + 1
 
 
         return gap0,rG0,zG0,iTXLOC
