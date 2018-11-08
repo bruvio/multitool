@@ -138,8 +138,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
         self.ui_plotdata.savefigure_checkBox.setChecked(False)
 
-        self.JSONSS = 'PLASMA_main_parameters_new.json'
-        logging.debug('default set is {}'.format(self.JSONSS))
+        self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
+        self.JSONSSname = os.path.basename(self.JSONSS)
+
+        logging.debug('default set is {}'.format(self.JSONSSname))
         logging.info('select a standard set')
         logging.info('\n')
         logging.info('type in a list of pulses')
@@ -994,6 +996,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
             self.plotIsoPsi(position)
 
+
         elif self.SenderActual=='isopsiFillPB':
             print('clicked inside slider moved RUNisopsiFill')
 
@@ -1001,6 +1004,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         elif self.SenderActual=='solPB':
             print('clicked inside slider moved RUNSOLPSI')
+
 
             self.plotSol(position)
 
@@ -1211,9 +1215,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         return  rC,zC,rBND_XLOC_smooth,zBND_XLOC_smooth,rBND_XLOC,zBND_XLOC, \
                 rXp,zXp,rSP,zSP,flagDiverted,rWALLS,zWALLS,iTWALLS,gapXLOC,spXLOC
 
-
     def plotCore(self,*args):
         position = self.ui_magsurf.horizontalSlider.value()
+
 
         core = int(self.ui_magsurf.coreEdit.text())
         coreStep = float(self.ui_magsurf.coreStepEdit.text())
@@ -1586,10 +1590,11 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # path = "/"
         # filter = "JSON(*.json)"
         # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
+        os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
         self.JSONSS = QtGui.QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
 
-        self.JSONSS = os.path.basename(self.JSONSS)
-        logging.debug('you have chosen {}'.format(self.JSONSS))
+        self.JSONSSname = os.path.basename(self.JSONSS)
+        logging.debug('you have chosen {}'.format(self.JSONSSname))
         os.chdir(self.home)
         return self.JSONSS
 
@@ -1619,8 +1624,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             inputlist.append([pulselist[i]])
         #
         #
-        plot_time_traces(self.JSONSS, inputlist,save=save)
-        plt.show()
+        os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
+        plot_time_traces(self.JSONSSname, inputlist,save=save)
+        plt.show(block=True)
+        os.chdir(self.home)
 
 
 
