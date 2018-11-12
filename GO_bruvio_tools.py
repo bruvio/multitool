@@ -490,7 +490,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             if self.ui_eqdsk.radioButton_other.isChecked() == True:
                 input_dict = {'fixfree': True, 'efit': False}
             name = self.ui_eqdsk.lineEdit_labelIN.text()
-            os.chdir(self.edge2dfold)
+            if self.owner == 'bviola':
+                os.chdir(self.edge2dfold)
+            # os.chdir(self.edge2dfold)
             B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2D, z2D, r_rect, z_rect, rmaxis, zmaxis = get_magnetic_data_from_eqdsk(
                 self.eqdsk, input_dict, name)
             os.chdir(self.home)
@@ -536,8 +538,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                 invert = True
             else:
                 invert = False
-
-            os.chdir(self.edge2dfold)
+            if self.owner == 'bviola':
+                os.chdir(self.edge2dfold)
+            # os.chdir(self.edge2dfold)
             if os.path.isfile(nameIN):
                 B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2, z2D, \
                 r_rect, z_rect, rmaxis, zmaxis = write_magnetic_data(nameIN,
@@ -559,7 +562,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             logging.error('select eqdsk first')
         else:
             nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
-            os.chdir(self.edge2dfold)
+            # os.chdir(self.edge2dfold)
+            if self.owner == 'bviola':
+                os.chdir(self.edge2dfold)
             if os.path.isfile(nameIN) :
                 R, Z, PSI, BR, Bz, dPSIdR, dPSIdz, dBRdR, dBRdz, dBzdR, dBzdz = define_input_matrix_for_mesh(
                     nameIN)
@@ -589,7 +594,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if not self.simlist:
             logging.error('choose a simulation first')
         else:
-            os.chdir(self.edge2dfold)
+            if self.owner == 'bviola':
+
+                os.chdir(self.edge2dfold)
+
             self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
             for index1 in range(0, len(self.simlist)):
                 logging.info('analyzing sim {}'.format(self.namelist[index1]))
@@ -651,7 +659,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         else:
             # for index1 in range(0, len(self.simlist)):
             #     simu = self.simlist[index1][0]
-                os.chdir(self.edge2dfold)
+                if self.owner == 'bviola':
+                    os.chdir(self.edge2dfold)
+
                 upper = input('enter upper bound in exp notation \n')
                 sim.contour_rad_power(self.simlist, float(upper))
                 plt.show(block=True)
@@ -1625,7 +1635,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             inputlist.append([pulselist[i]])
         #
         #
-        os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
+        if self.owner =='bviola':
+            os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
+
         plot_time_traces(self.JSONSSname, inputlist,save=save)
         plt.show(block=True)
         os.chdir(self.home)
