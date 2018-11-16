@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_plotdata_window(object):
     def setupUi(self, plotdata_window):
         plotdata_window.setObjectName(_fromUtf8("plotdata_window"))
-        plotdata_window.resize(284, 223)
+        plotdata_window.resize(300, 268)
         self.centralwidget = QtGui.QWidget(plotdata_window)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
@@ -45,9 +45,12 @@ class Ui_plotdata_window(object):
         self.selectfile = QtGui.QPushButton(self.centralwidget)
         self.selectfile.setObjectName(_fromUtf8("selectfile"))
         self.gridLayout.addWidget(self.selectfile, 2, 0, 1, 1)
+        self.checkBox = QtGui.QCheckBox(self.centralwidget)
+        self.checkBox.setObjectName(_fromUtf8("checkBox"))
+        self.gridLayout.addWidget(self.checkBox, 2, 1, 1, 1)
         plotdata_window.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(plotdata_window)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 284, 20))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 300, 20))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         plotdata_window.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(plotdata_window)
@@ -63,4 +66,5 @@ class Ui_plotdata_window(object):
         self.savefigure_checkBox.setText(_translate("plotdata_window", "save Figure", None))
         self.plotbutton.setText(_translate("plotdata_window", "plot time traces", None))
         self.selectfile.setText(_translate("plotdata_window", "select dataset", None))
+        self.checkBox.setText(_translate("plotdata_window", "edit_JSON", None))
 

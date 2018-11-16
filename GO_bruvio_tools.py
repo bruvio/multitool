@@ -137,6 +137,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
         self.ui_plotdata.savefigure_checkBox.setChecked(False)
+        self.ui_plotdata.checkBox.setChecked(False)
+        self.ui_plotdata.checkBox.toggled.connect(
+            lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
 
         self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
         self.JSONSSname = os.path.basename(self.JSONSS)
@@ -1755,6 +1758,12 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             if button.text() == "edit JSON2":
                 os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
                 self.ui_edge2d.edit_JSON2.setChecked(False)
+
+            if button.isChecked() == True:
+                if button.text() == "edit_JSON":
+                    os.system(
+                        'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
+                    self.ui_plotdata.checkBox.setChecked(False)
 
 
 
