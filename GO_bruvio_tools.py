@@ -33,12 +33,16 @@ from scipy import interpolate
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+import subprocess
+
+
 
 sys.path.append('../')
 from EDGE2D.class_sim import sim
 from EDGE2D.library import *
 from EDGE2D.EDGE2DAnalyze import shot
-from kg1_tools.kg1_tools_gui.utility import plot_time_traces
+from kg1_tools.kg1_tools_gui.utility import *
+# from kg1_tools.kg1_tools_gui.toggle import * # unlock fig from subplot
 # from kg1_tools.kg1_tools_gui.GO_kg1_tools import handle_readdata_button
 # from reqco.test_reqco_ver01 import *
 # from smtpexample_fork import mail
@@ -449,7 +453,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
     def handle_openinputfile(self):
         inputfilefortran = '/work/bviola/Fortran/tokmagnmap_mac/tokinfo.txt'
         logging.info('opening input file to Fortran code')
-        os.system('kate {}'.format(inputfilefortran))
+        # os.system('kate {}'.format(inputfilefortran))
+        subprocess.Popen('kate {}'.format(inputfilefortran), shell=True)
 
 
 
@@ -457,7 +462,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
         logging.info('running LCMS map')
 
-        os.system('toksepmap')
+        # os.system('toksepmap')
+        subprocess.Popen('toksepmap', shell=True)
         os.chdir(self.home)
         logging.info('done')
 
@@ -465,7 +471,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
         logging.info('running LCMS X map')
 
-        os.system('toksepmapx')
+        # os.system('toksepmapx')
+        subprocess.Popen('toksepmapx', shell=True)
         os.chdir(self.home)
         logging.info('done')
 
@@ -476,7 +483,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
         logging.info('running SOL map')
 
-        os.system('toksolmap')
+        # os.system('toksolmap')
+        subprocess.Popen('toksolmap', shell=True)
         os.chdir(self.home)
         logging.info('done')
 
@@ -1642,8 +1650,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
 
         plot_time_traces(self.JSONSSname, inputlist,save=save)
-        plt.show(block=True)
-        os.chdir(self.home)
+        #plt.show(block=True)
+        if self.owner == 'bviola':
+            os.chdir(self.home)
 
 
 
@@ -1722,14 +1731,17 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if self.ui_edge2d.enablecompare_check.isChecked() == False:
             logging.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
             os.chdir(self.edge2dfold)
-            os.system(
-                'run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1))
+            # os.system(
+            #     'run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1))
+            subprocess.Popen('run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1), shell=True)
             os.chdir(self.home)
         if self.ui_edge2d.enablecompare_check.isChecked() ==  True:
             logging.debug('running edge2d_analyze on {} and {}'.format(self.JSONSS1, self.JSONSS2))
             os.chdir(self.edge2dfold)
-            os.system(
-                'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2))
+            # os.system(
+                # 'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2))
+            subprocess.Popen(
+                'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2), shell=True)
             os.chdir(self.home)
 
 
@@ -1752,17 +1764,21 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if button.isChecked() == True:
             if button.text() == "edit JSON1":
 
-                os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
+                # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
+                subprocess.Popen('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1), shell=True)
 
                 self.ui_edge2d.edit_JSON1.setChecked(False)
             if button.text() == "edit JSON2":
-                os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
+                # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
+                subprocess.Popen('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2), shell=True)
                 self.ui_edge2d.edit_JSON2.setChecked(False)
 
             if button.isChecked() == True:
                 if button.text() == "edit_JSON":
-                    os.system(
-                        'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
+                    # os.system(
+                    #     'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
+
+                    subprocess.Popen('kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSSname), shell=True)
                     self.ui_plotdata.checkBox.setChecked(False)
 
 
