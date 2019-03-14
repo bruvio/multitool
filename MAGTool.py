@@ -97,10 +97,10 @@ class MAGTool:
                    dtype = signalsPath[9:]
 
                    if dda == 'EFIT':
-                       ihdat,iwdat,data,x,t,ier = ppf.ppfget(JPN,dda,dtype,fix0=0,reshape=0,no_x=0,no_t=0)
+                       ihdat,iwdat,data,x,t,ier = ppf.ppfget(int(JPN),dda,dtype,fix0=0,reshape=0,no_x=0,no_t=0)
                        print(' NO RESHAPE of ' + signalsPath   + ' WARNING if is BPCA!!!!!!!!!!!')
                    else:
-                       ihdat,iwdat,data,x,t,ier = ppf.ppfget(JPN,dda,dtype,fix0=0,reshape=1,no_x=0,no_t=0)
+                       ihdat,iwdat,data,x,t,ier = ppf.ppfget(int(JPN),dda,dtype,fix0=0,reshape=1,no_x=0,no_t=0)
                        print('RESHAPE of ' + signalsPath)
 
 

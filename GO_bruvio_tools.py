@@ -594,7 +594,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             # logging.info('function not yet available')
             self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
             # for index1 in range(0, len(self.simlist)):
-            logging.info('analyzing sim {}'.format(self.namelist[index1]))
+            for index1 in range(0, len(self.simlist)):
+                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+
 
             sim.write_eirene_cur2file(self.simlist, self.edge2dfold + '/e2d_data', self.targetfilename)
 
