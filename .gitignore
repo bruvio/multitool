@@ -8,10 +8,16 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+*.o
+*.pyc
+*.xml
+*.iml
+*~
 build/
 develop-eggs/
 dist/
 downloads/
+logFile/
 eggs/
 .eggs/
 lib/

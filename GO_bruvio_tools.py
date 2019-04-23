@@ -16,6 +16,7 @@ import eproc as ep
 import argparse
 from pathlib import Path
 import logging
+from logging import handlers
 import pathlib
 import numpy as np
 from ppf import *
@@ -51,6 +52,9 @@ from utility import *
 
 import matplotlib.pyplot as plt
 plt.rcParams["savefig.directory"] = os.chdir(os.getcwd())
+myself = lambda: inspect.stack()[1][3]
+logger = logging.getLogger(__name__)
+
 
 class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
     """
@@ -69,7 +73,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         import os
         super(bruvio_tool, self).__init__(parent)
         self.setupUi(self)
-        logging.debug('start')
+        logger.debug('start')
         cwd = os.getcwd()
         self.workfold = cwd
         self.home = cwd
@@ -78,22 +82,22 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.edge2dfold = str(parent.parent)+'/EDGE2D'
         if "USR" in os.environ:
-            logging.debug('USR in env')
+            logger.debug('USR in env')
             #self.owner = os.getenv('USR')
             self.owner = os.getlogin()
         else:
-            logging.debug('using getuser to authenticate')
+            logger.debug('using getuser to authenticate')
             import getpass
             self.owner = getpass.getuser()
 
-        logging.debug('this is your username {}'.format(self.owner))
+        logger.debug('this is your username {}'.format(self.owner))
         self.homefold = os.path.join(os.sep, 'u', self.owner)
-        logging.debug('this is your homefold {}'.format(self.homefold))
-        logging.debug('this is edge2d fold {}'.format(self.edge2dfold))
+        logger.debug('this is your homefold {}'.format(self.homefold))
+        logger.debug('this is edge2d fold {}'.format(self.edge2dfold))
         home = str(Path.home())
 
 
-        logging.debug('we are in %s', cwd)
+        logger.debug('we are in %s', cwd)
 
 
         pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
@@ -122,8 +126,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         :return:
         """
 
-        logging.info('\n')
-        logging.info('plotting tool')
+        logger.info('\n')
+        logger.info('plotting tool')
 
         self.window_plotdata = QtGui.QMainWindow()
         self.ui_plotdata = Ui_plotdata_window()
@@ -147,14 +151,14 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
         self.JSONSSname = os.path.basename(self.JSONSS)
 
-        logging.debug('default set is {}'.format(self.JSONSSname))
-        logging.info('select a standard set')
-        logging.info('\n')
-        logging.info('type in a list of pulses')
+        logger.debug('default set is {}'.format(self.JSONSSname))
+        logger.info('select a standard set')
+        logger.info('\n')
+        logger.info('type in a list of pulses')
 
     def handle_eqdsk_button(self):
-        logging.info('\n')
-        logging.info('eqdsk tool')
+        logger.info('\n')
+        logger.info('eqdsk tool')
 
         self.window_eqdsk = QtGui.QMainWindow()
         self.ui_eqdsk = Ui_eqdsk_window()
@@ -197,8 +201,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_edge2d_button(self):
-        logging.info('\n')
-        logging.info('edge2d tool')
+        logger.info('\n')
+        logger.info('edge2d tool')
         self.Inputcode = 0
         self.ExtraInput = 0
         self.PathCatalog = '/home'
@@ -309,7 +313,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         #                                                 'JSON Files(*.json)')
         #
         # self.inputJSONSS = os.path.basename(self.inputJSONSS)
-        # logging.debug('you have chosen {}'.format(self.inputJSONSS))
+        # logger.debug('you have chosen {}'.format(self.inputJSONSS))
         # os.chdir(self.home)
 
     def handle_magsurf_button(self):
@@ -433,13 +437,13 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # self.eqdsk = os.path(self.eqdsk)
         self.ui_eqdsk.lineEdit_eqdskname.setText(os.path.basename(self.eqdsk))
 
-        logging.debug('you have chosen {}'.format(os.path.basename(self.eqdsk)))
+        logger.debug('you have chosen {}'.format(os.path.basename(self.eqdsk)))
         os.chdir(self.home)
         return self.eqdsk
     #
     # def handle_readeqdsk(self):
     #     if not self.eqdsk:
-    #         logging.error('select eqdsk first')
+    #         logger.error('select eqdsk first')
     #     else:
     #         if self.ui_eqdsk.radioButton_efit.isChecked() == True:
     #             input_dict = {'fixfree': False, 'efit': True}
@@ -451,7 +455,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_openinputfile(self):
         inputfilefortran = '/work/bviola/Fortran/tokmagnmap_mac/tokinfo.txt'
-        logging.info('opening input file to Fortran code')
+        logger.info('opening input file to Fortran code')
         # os.system('kate {}'.format(inputfilefortran))
         subprocess.Popen('kate {}'.format(inputfilefortran), shell=True)
 
@@ -459,33 +463,33 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_lcmsmap(self):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
-        logging.info('running LCMS map')
+        logger.info('running LCMS map')
 
         # os.system('toksepmap')
         subprocess.Popen('toksepmap', shell=True)
         os.chdir(self.home)
-        logging.info('done')
+        logger.info('done')
 
     def handle_lcmsmapX(self):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
-        logging.info('running LCMS X map')
+        logger.info('running LCMS X map')
 
         # os.system('toksepmapx')
         subprocess.Popen('toksepmapx', shell=True)
         os.chdir(self.home)
-        logging.info('done')
+        logger.info('done')
 
 
 
 
     def handle_solmap(self):
         os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
-        logging.info('running SOL map')
+        logger.info('running SOL map')
 
         # os.system('toksolmap')
         subprocess.Popen('toksolmap', shell=True)
         os.chdir(self.home)
-        logging.info('done')
+        logger.info('done')
 
 
 
@@ -493,7 +497,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
     def handle_getmagneticdata(self):
 
         if not self.eqdsk:
-            logging.error('select eqdsk first')
+            logger.error('select eqdsk first')
         else:
             if self.ui_eqdsk.radioButton_efit.isChecked() == True:
                 input_dict = {'fixfree': False, 'efit': True}
@@ -506,12 +510,12 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2D, z2D, r_rect, z_rect, rmaxis, zmaxis = get_magnetic_data_from_eqdsk(
                 self.eqdsk, input_dict, name)
             os.chdir(self.home)
-            logging.info('magnetic data computed!')
+            logger.info('magnetic data computed!')
             self.ui_eqdsk.pushButton_writemagneticdata.setEnabled(True);
 
     def handle_readeqdsk(self):
         if not self.eqdsk:
-            logging.error('select eqdsk first')
+            logger.error('select eqdsk first')
         else:
             psioffset = float(self.ui_eqdsk.lineEdit_psioffset.text())
 
@@ -531,7 +535,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             ax.plot(rbbbs, zbbbs, "ro")
             ax.plot(rlim, zlim, "bo")
             plt.show(block=True)
-            logging.info('EQDSK read done')
+            logger.info('EQDSK read done')
 
     def handle_writemagneticdata(self):
         """
@@ -540,7 +544,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         """
         import os
         if not self.eqdsk:
-            logging.error('select eqdsk first')
+            logger.error('select eqdsk first')
         else:
             psioffset = float(self.ui_eqdsk.lineEdit_psioffset.text())
             nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
@@ -554,7 +558,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             else:
                 invert = False
             os.chdir(self.home)
-            if [file for file in os.listdir(self.home) if name in file]
+            if [file for file in os.listdir(self.home) if name in file]:
             # if os.path.isfile(nameIN):
                 B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2, z2D, \
                 r_rect, z_rect, rmaxis, zmaxis = write_magnetic_data(nameIN,
@@ -563,19 +567,19 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                                                                  invert=invert,
                                                                  normalize=normalize)
                 os.chdir(self.home)
-                logging.info('magnetic data written')
+                logger.info('magnetic data written')
             else:
-                logging.error('generate magnetic data first!')
+                logger.error('generate magnetic data first!')
                 self.ui_eqdsk.pushButton_writemagneticdata.setEnabled(False);
 
             self.ui_eqdsk.pushButton_writematrix.setEnabled(True);
-            logging.info('copy output files in correct folder before running Mapping tools')
+            logger.info('copy output files in correct folder before running Mapping tools')
 
 
 
     def handle_writematrix(self):
         if not self.eqdsk:
-            logging.error('select eqdsk first')
+            logger.error('select eqdsk first')
         else:
             nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
             os.chdir(self.home)
@@ -585,21 +589,21 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                     nameIN)
 
                 os.chdir(self.home)
-                logging.info('matrix written to file')
+                logger.info('matrix written to file')
             else:
-                logging.error('generate input files first!')
+                logger.error('generate input files first!')
                 self.ui_eqdsk.pushButton_writematrix.setEnabled(False);
 
 
     def handle_pumpcurrents(self):
         if not self.simlist:
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
 
             self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
 
             for index1 in range(0, len(self.simlist)):
-                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+                logger.info('analyzing sim {}'.format(self.namelist[index1]))
 
 
             sim.write_eirene_cur2file(self.simlist, self.edge2dfold + '/e2d_data', self.targetfilename)
@@ -609,7 +613,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_contour(self):
         if not self.simlist:
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
             if self.owner == 'bviola':
 
@@ -617,9 +621,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
             self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
             for index1 in range(0, len(self.simlist)):
-                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+                logger.info('analyzing sim {}'.format(self.namelist[index1]))
                 for j, vari in enumerate(self.variable):
-                    logging.info(
+                    logger.info(
                         'collection {} data'.format(vari))
                     simu = self.simlist[index1][0]
                     label = self.simlist[index1][1]
@@ -635,11 +639,11 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_powerbalance(self):
         if not self.simlist:
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
-            logging.info('computing power balance')
+            logger.info('computing power balance')
             for index1 in range(0, len(self.simlist)):
-                logging.info('analyzing sim {}'.format(self.namelist[index1]))
+                logger.info('analyzing sim {}'.format(self.namelist[index1]))
                 simu = self.simlist[index1][0]
                 label = self.simlist[index1][1]
                 simu_pb = simu.read_print_file_edge2d()
@@ -650,29 +654,29 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_print(self):
         if not self.simlist:
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
             self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
             # for index1 in range(0, len(self.simlist)):
                 # print(simlist[i][0].fullpath)
-            logging.info('writing print-file data to csv file')
-            # logging.info('analyzing sim {}'.format(self.namelist[index1]))
+            logger.info('writing print-file data to csv file')
+            # logger.info('analyzing sim {}'.format(self.namelist[index1]))
             sim.write_print2file(self.simlist, self.edge2dfold+'/e2d_data', self.targetfilename)
 
-            logging.info('done')
+            logger.info('done')
 
     def handle_profiles(self):
         if not self.simlist:
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
-            logging.info('writing simulation profiles to file')
+            logger.info('writing simulation profiles to file')
             sim.write_edge2d_profiles1(self.simlist, 'e2dprofiles_python')
-            logging.info('done')
+            logger.info('done')
 
 
     def handle_radiation(self):
         if not self.simlist :
-            logging.error('choose a simulation first')
+            logger.error('choose a simulation first')
         else:
             # for index1 in range(0, len(self.simlist)):
             #     simu = self.simlist[index1][0]
@@ -1622,7 +1626,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.JSONSS = QtGui.QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
 
         self.JSONSSname = os.path.basename(self.JSONSS)
-        logging.debug('you have chosen {}'.format(self.JSONSSname))
+        logger.debug('you have chosen {}'.format(self.JSONSSname))
         os.chdir(self.home)
         return self.JSONSS
 
@@ -1668,8 +1672,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         """
         Exit the application
         """
-        logging.info('\n')
-        logging.info('Exit now')
+        logger.info('\n')
+        logger.info('Exit now')
         sys.exit()
 
 
@@ -1698,7 +1702,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_run(self):
         if not self.ui_edge2d.textEdit_message2.toPlainText():
-            logging.error('Attempt to run without selecting an input dictionary')
+            logger.error('Attempt to run without selecting an input dictionary')
         self.inputJson = self.ui_edge2d.textEdit_message2.toPlainText()
         # jsonlist=[]
         # jsonlist.append(self.inputJson)
@@ -1723,7 +1727,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         for i,dicti in enumerate(dictionary):
             for j,vari in enumerate(self.variable):
                 for t, loca in enumerate(self.location):
-                    logging.info(
+                    logger.info(
                         'plotting {} profiles at {}'.format(str(vari), str(loca)))
                     shot.compare_multi_shots_simdata(dicti, ms=None, lw=None,
                                              var=vari, loc=loca)
@@ -1735,14 +1739,14 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_runanalyze_button(self):
         if self.ui_edge2d.enablecompare_check.isChecked() == False:
-            logging.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
+            logger.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
             os.chdir(self.edge2dfold)
             # os.system(
             #     'run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1))
             subprocess.Popen('run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1), shell=True)
             os.chdir(self.home)
         if self.ui_edge2d.enablecompare_check.isChecked() ==  True:
-            logging.debug('running edge2d_analyze on {} and {}'.format(self.JSONSS1, self.JSONSS2))
+            logger.debug('running edge2d_analyze on {} and {}'.format(self.JSONSS1, self.JSONSS2))
             os.chdir(self.edge2dfold)
             # os.system(
                 # 'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2))
@@ -1795,7 +1799,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.JSONSS1 = os.path.basename(self.JSONSS1)
         self.ui_edge2d.lineEdit_1st.setText(self.JSONSS1)
 
-        logging.debug('you have chosen {}'.format(self.JSONSS1))
+        logger.debug('you have chosen {}'.format(self.JSONSS1))
         os.chdir(self.home)
         return self.JSONSS1
 
@@ -1804,7 +1808,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.JSONSS2 = os.path.basename(self.JSONSS2)
         self.ui_edge2d.lineEdit_2nd.setText(self.JSONSS2)
-        logging.debug('you have chosen {}'.format(self.JSONSS2))
+        logger.debug('you have chosen {}'.format(self.JSONSS2))
         os.chdir(self.home)
         return self.JSONSS1
 
@@ -1812,26 +1816,26 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         import eproc as ep
 
 
-        logging.info('here are the variables stored in the tran file of the selected simulation')
+        logger.info('here are the variables stored in the tran file of the selected simulation')
         if self.ui_edge2d.checkBox_profile.isChecked() == True:
             if self.PathTranfile is None:
-                logging.error('choose a simulation first')
+                logger.error('choose a simulation first')
             else:
 
                 names = ep.names(self.PathTranfile, 1, 0, 0, 0, 1)
         if self.ui_edge2d.checkBox_time.isChecked() == True:
             if self.PathTranfile is None:
-                logging.error('choose a simulation first')
+                logger.error('choose a simulation first')
             else:
                 names = ep.names(self.PathTranfile, 0, 1, 0, 0, 1)
         if self.ui_edge2d.checkBox_flux.isChecked() == True:
             if self.PathTranfile is None:
-                logging.error('choose a simulation first')
+                logger.error('choose a simulation first')
             else:
                 names = ep.names(self.PathTranfile, 0, 0, 1, 0, 1)
         if self.ui_edge2d.checkBox_geom.isChecked() == True:
             if self.PathTranfile is None:
-                logging.error('choose a simulation first')
+                logger.error('choose a simulation first')
             else:
                 names = ep.names(self.PathTranfile, 0, 0, 0, 1, 1)
 
@@ -1950,35 +1954,56 @@ def main():
     app.exec_()
     
 
-    # app = QtGui.QApplication(sys.argv)
-    # MainWindow = QtGui.QMainWindow()
-    # ui = bruvio_tool()
-    # ui.setupUi(MainWindow)
-    # MainWindow.show()
-    # sys.exit(app.exec_())
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Run GO_bruvio_tools')
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
-                            " 3: Error; \n default level is INFO", default=2)
+                             " 3: Error, 4: Debug Plus; \n default level is INFO",
+                        default=4)
+    # parser.add_argument("-d", "--debug", type=int,
+    #                     help="Debug level. 0: Info, 1: Warning, 2: Debug,"
+    #                         " 3: Error; \n default level is INFO", default=2)
     parser.add_argument("-doc", "--documentation", type=str,
                         help="Make documentation. yes/no", default='no')
 
 
 
     args = parser.parse_args(sys.argv[1:])
+    # debug_map = {0: logging.INFO,
+    #             1: logging.WARNING,
+    #             2: logging.DEBUG,
+    #             3: logging.ERROR}
+    #
+    # logger = logging.getLogger(__name__)
+    # fmt = MyFormatter()
+    # hdlr = logging.StreamHandler(sys.stdout)
+    #
+    # hdlr.setFormatter(fmt)
+    # logging.root.addHandler(hdlr)
+    #
+    # logging.root.setLevel(level=debug_map[args.debug])
+    # main()
+
     debug_map = {0: logging.INFO,
-                1: logging.WARNING,
-                2: logging.DEBUG,
-                3: logging.ERROR}
-
+                 1: logging.WARNING,
+                 2: logging.DEBUG,
+                 3: logging.ERROR,
+                 4: 5}
+    #this plots logger twice (black plus coloured)
+    logging.addLevelName(5, "DEBUG_PLUS")
     logger = logging.getLogger(__name__)
+    logging.basicConfig(level=debug_map[args.debug])
+    # logger.setLevel(debug_map[args.debug])
+
     fmt = MyFormatter()
-    hdlr = logging.StreamHandler(sys.stdout)
+    # hdlr = logging.StreamHandler(sys.stdout)
 
-    hdlr.setFormatter(fmt)
-    logging.root.addHandler(hdlr)
 
-    logging.root.setLevel(level=debug_map[args.debug])
+    # hdlr.setFormatter(fmt)
+    # logging.root.addHandler(hdlr)
+    fh = handlers.RotatingFileHandler('./LOGFILE.DAT', mode = 'w',maxBytes=(1048576*5), backupCount=7)
+    fh.setFormatter(fmt)
+    logging.root.addHandler(fh)
     main()
