@@ -21,12 +21,12 @@ import numpy as np
 from ppf import *
 import bruvio_tools
 from MAGTool import *  # Magnetics Tool
-# from PyQt4 import QtGui
+
 from PyQt4 import Qt, QtCore,QtGui
 from magSurfGA_SL import Ui_magsurf_window
 from edge2d_window import Ui_edge2d_window
 from eqdsk_window import Ui_eqdsk_window
-# from goMagSurfGA_SL import *
+
 from matplotlib import cm
 from plotdata import Ui_plotdata_window
 from scipy import interpolate
@@ -37,15 +37,17 @@ import subprocess
 
 
 
-sys.path.append('../')
-from EDGE2D.class_sim import sim
-from EDGE2D.library import *
-from EDGE2D.EDGE2DAnalyze import shot
-from kg1_tools.kg1_tools_gui.utility import *
-# from kg1_tools.kg1_tools_gui.toggle import * # unlock fig from subplot
-# from kg1_tools.kg1_tools_gui.GO_kg1_tools import handle_readdata_button
-# from reqco.test_reqco_ver01 import *
-# from smtpexample_fork import mail
+# sys.path.append('../')
+# from EDGE2D.class_sim import sim
+# from EDGE2D.library import *
+# from EDGE2D.EDGE2DAnalyze import shot
+# from kg1_tools.kg1_tools_gui.utility import *
+# sys.path.append('../')
+from class_sim import sim
+from library import *
+from EDGE2DAnalyze import shot
+from utility import *
+
 
 import matplotlib.pyplot as plt
 plt.rcParams["savefig.directory"] = os.chdir(os.getcwd())
@@ -90,12 +92,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logging.debug('this is edge2d fold {}'.format(self.edge2dfold))
         home = str(Path.home())
 
-        # cwd = os.getcwd()
-        # self.home = cwd
-        # print(self.home)
-        # print(owner)
+
         logging.debug('we are in %s', cwd)
-        # psrint(homefold + os.sep+ folder)
+
 
         pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
         pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
@@ -167,9 +166,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.ui_eqdsk.eqdsk_exit.clicked.connect(self.exitGUI_eqdsk)
 
-        # self.ui_eqdsk.lineEdit_eqdskname.setText('select eqdsk file')
+
         self.ui_eqdsk.lineEdit_eqdskname.setText('g_p92121_t49.445_mod.eqdsk')
-        # self.eqdsk = []
+
         self.eqdsk = '/work/bviola/JET/m15-20/exp/g_p92121_t49.445_mod.eqdsk'
 
         self.ui_eqdsk.radioButton_efit.setChecked(True)
@@ -501,8 +500,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             if self.ui_eqdsk.radioButton_other.isChecked() == True:
                 input_dict = {'fixfree': True, 'efit': False}
             name = self.ui_eqdsk.lineEdit_labelIN.text()
-            if self.owner == 'bviola':
-                os.chdir(self.edge2dfold)
+            # if self.owner == 'bviola':
+            #     os.chdir(self.edge2dfold)
             # os.chdir(self.edge2dfold)
             B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2D, z2D, r_rect, z_rect, rmaxis, zmaxis = get_magnetic_data_from_eqdsk(
                 self.eqdsk, input_dict, name)
@@ -535,6 +534,11 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             logging.info('EQDSK read done')
 
     def handle_writemagneticdata(self):
+        """
+        write magnetic data to file
+        :return:
+        """
+        import os
         if not self.eqdsk:
             logging.error('select eqdsk first')
         else:
@@ -549,10 +553,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                 invert = True
             else:
                 invert = False
-            if self.owner == 'bviola':
-                os.chdir(self.edge2dfold)
-            # os.chdir(self.edge2dfold)
-            if os.path.isfile(nameIN):
+            os.chdir(self.home)
+            if [file for file in os.listdir(self.home) if name in file]
+            # if os.path.isfile(nameIN):
                 B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2, z2D, \
                 r_rect, z_rect, rmaxis, zmaxis = write_magnetic_data(nameIN,
                                                                  nameOUT,
@@ -566,6 +569,8 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                 self.ui_eqdsk.pushButton_writemagneticdata.setEnabled(False);
 
             self.ui_eqdsk.pushButton_writematrix.setEnabled(True);
+            logging.info('copy output files in correct folder before running Mapping tools')
+
 
 
     def handle_writematrix(self):
@@ -573,10 +578,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             logging.error('select eqdsk first')
         else:
             nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
-            # os.chdir(self.edge2dfold)
-            if self.owner == 'bviola':
-                os.chdir(self.edge2dfold)
-            if os.path.isfile(nameIN) :
+            os.chdir(self.home)
+            if [file for file in os.listdir(self.home) if name in file]:
+            # if os.path.isfile(nameIN) :
                 R, Z, PSI, BR, Bz, dPSIdR, dPSIdz, dBRdR, dBRdz, dBzdR, dBzdz = define_input_matrix_for_mesh(
                     nameIN)
 
@@ -591,9 +595,9 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if not self.simlist:
             logging.error('choose a simulation first')
         else:
-            # logging.info('function not yet available')
+
             self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
-            # for index1 in range(0, len(self.simlist)):
+
             for index1 in range(0, len(self.simlist)):
                 logging.info('analyzing sim {}'.format(self.namelist[index1]))
 
@@ -1944,6 +1948,7 @@ def main():
     MainWindow = bruvio_tool()
     MainWindow.show()
     app.exec_()
+    
 
     # app = QtGui.QApplication(sys.argv)
     # MainWindow = QtGui.QMainWindow()
