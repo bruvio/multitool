@@ -1,22 +1,24 @@
 import logging
 logger = logging.getLogger(__name__)
 from class_sim import sim
-
+import gzip
 from types import SimpleNamespace
 
 class Eirene():
     
     def __init__(self,folder):
         self.runfolder = folder
-        self.NPLS = 27
-        self.NMOL = 11
-        self.NION = 7
-        self.NMISC = 11
+        self.NPLSdataname = 27
+        self.NMOLdataname = 11
+        self.NATMdataName = 15
+        self.NIONdataname = 7
+        self.NMISCdataname = 11
 
 
         self.ATM = SimpleNamespace()
         self.MOL = SimpleNamespace()
         self.ION = SimpleNamespace()
+        self.PLS = SimpleNamespace()
         self.MISC = SimpleNamespace()
 
         self.geom = SimpleNamespace()
@@ -30,11 +32,20 @@ class Eirene():
 
         self.MOL.dataName = []
         self.MOL.unitName =  []
+        self.MOL.names ={}
+
         self.ION.dataName = []
         self.ION.unitName= []
+        self.ION.names ={}
+
+        self.PLS.dataName = []
+        self.PLS.unitName= []
+        self.PLS.names ={}
+
+
         self.MISC.dataName= []
         self.MISC.unitName= []
-
+        self.MISC.names = {}
         self.ATM.dataName.append('pdena - atom density')
         self.ATM.dataName.append('vxdena - atom momentum density (x)')
         self.ATM.dataName.append('vydena - atom momentum density (y)')
@@ -150,7 +161,8 @@ class Eirene():
             lines = f.readlines()
             text_atoms_spec = '** 4a NEUTRAL ATOMS SPECIES CARDS:'
             text_mole_spec = '** 4b NEUTRAL MOLECULES SPECIES CARDS'
-
+            text_ion_spec = '**4c TEST ION SPECIES CARDS:'
+            text_bulk = '*** 5. DATA FOR PLASMA-BACKGROUND'
             for index, line in enumerate(lines):
                 if text_atoms_spec in str(line):
                     index = index +1
@@ -159,13 +171,106 @@ class Eirene():
 
                     for i in range(0,self.natm):
                         index = index + 1
-                        dummy=lines(index).split()
+                        dummy=lines[index].split()
                         self.ATM.names{i} = dummy[1]
+                        nreac = dummy[9]
+                        for j in range(0,2*nreac-1):
+                            index = index+1
 
-
+                        
+                        
 
                 if text_mole_spec in str(line):
-                    dummy = lines[index+1].split()
-                    self.natm = dummy[0]
+                    index = index +1
+                    dummy = lines[index].split()
+                    self.nmol = dummy[0]
 
+                    for i in range(0,self.nmol):
+                        index = index + 1
+                        dummy=lines(index).split()
+                        self.MOL.names{i} = dummy[1]
+                        nreac = dummy[9]
+                        for j in range(0,2*nreac-1):
+                            index = index+1
+                        
+                if text_ion_spec in str(line):
+                    index = index +1
+                    dummy = lines[index].split()
+                    self.nion = dummy[0]
 
+                    for i in range(0,self.nion):
+                        index = index + 1
+                        dummy=lines(index).split()
+                        self.ION.names{i} = dummy[1]
+                        nreac = dummy[9]
+                        for j in range(0,2*nreac-1):
+                            index = index+1
+
+                if text_bulk_spec in str(line):
+                    index = index +1
+                    dummy = lines[index].split()
+                    self.npls = dummy[0]
+
+                    for i in range(0,self.npls):
+                        index = index + 1
+                        dummy=lines(index).split()
+                        self.PLS.names{i} = dummy[1]
+                        nreac = dummy[9]
+                        for j in range(0,2*nreac-1):
+                            index = index+1
+                f.close()
+                
+        exists = os.path.isfile(self.runfolder + 'eirene.transfer.gz')
+
+        if exists:
+
+            f = gzip.open(self.runfolder + 'eirene.transfer.gz', 'rb')            
+
+        else:
+            f = open(self.runfolder + 'eirene.transfer', 'rb')              
+
+        
+        lines = f.readlines()
+        text = '* nlimps,nlim,nsts,nlmpgs:'
+        for index, line in enumerate(lines):
+            if text in str(line):
+                index=index+1
+                dummy=lines[index].split()
+                self.nlimps = dummy[0]
+                self.nlim = dummy[1] 
+                self.nsts = dummy[2]
+        row_to_skip=index
+        PLS.data = np.zeros(self.npls,self.NPLSdataname,size(self.geom.trimap, axis=0))
+                # 5          27        6086
+        for i in range(0,self.npls):        
+            PLS.data[i,:,:] = pd.read_csv(self.runfolder + 'eirene.transfer', dtype=float , skiprows=row_to_skip, nrows=size(self.geom.trimap, axis=0))
+
+        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+
+        ATM.data = np.zeros(self.natm,self.NATMdataName,size(self.geom.trimap, axis=0))
+                # 5          27        6086
+        for i in range(0,self.natm):        
+            ATM.data[i,:,:] = pd.read_csv(self.runfolder + 'eirene.transfer', dtype=float , skiprows=row_to_skip, nrows=size(self.geom.trimap, axis=0))
+
+        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+
+        MOL.data = np.zeros(self.nmol,self.NMOLdataname,size(self.geom.trimap, axis=0))
+                # 5          27        6086
+        for i in range(0,self.nmol):        
+            MOL.data[i,:,:] = pd.read_csv(self.runfolder + 'eirene.transfer', dtype=float , skiprows=row_to_skip, nrows=size(self.geom.trimap, axis=0))
+
+        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+
+        ION.data = np.zeros(self.nion,self.NIONdataname,size(self.geom.trimap, axis=0))
+                # 5          27        6086
+        for i in range(0,self.nion):        
+            ION.data[i,:,:] = pd.read_csv(self.runfolder + 'eirene.transfer', dtype=float , skiprows=row_to_skip, nrows=size(self.geom.trimap, axis=0))
+
+        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+
+        MISC.data = np.zeros(self.NMISCdataname,size(self.geom.trimap, axis=0))
+                # 5          27        6086
+        for i in range(0,self.npls):        
+            MISC.data[i,:,:] = pd.read_csv(self.runfolder + 'eirene.transfer', dtype=float , skiprows=12, nrows=size(self.geom.trimap, axis=0))
+
+                        

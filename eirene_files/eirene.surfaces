@@ -1,0 +1,35 @@
+isurf   type   material
+     1      1      0 * fuel puff surface
+     2      1      0 * fuel puff surface
+     3      1      0 * fuel puff surface
+     4      1      0 * fuel puff surface
+     5      1      0 * fuel puff surface
+     6      1      0 * fuel puff surface
+     7      1      0 * fuel puff surface
+     8      1      0 * fuel puff surface
+     9      1      0 * fuel puff surface
+    10      2      0 * pump surface
+    11      2      0 * pump surface
+    12      2      0 * pump surface
+    13      2      0 * pump surface
+    14      2      0 * pump surface
+    15      2      0 * pump surface
+    16      2      0 * pump surface
+    17      2      0 * pump surface
+    18      2      0 * pump surface
+    19      2      0 * pump surface
+    20      2      0 * pump surface
+    21      2      0 * pump surface
+    22      2      0 * pump surface
+    23      2      0 * pump surface
+    24      2      0 * pump surface
+    25      3      0 * core boundary, absorbing (EDGE2D)
+    26      4      0 * outer target (EDGE2D)
+    27      4      0 * inner target (EDGE2D)
+    28      5      0 * radial SOL (EDGE2D)
+    29      5      0 * radial PFR (EDGE2D) part 1 (OT)
+    30      5      0 * radial PFR (EDGE2D) part 2 (IT)
+    31      6      0 * material surface - main chamber
+    32      6      0 * material surface - main chamber (target mat.)
+    33      6      0 * material surface - private
+    34      0      0 * time surface
