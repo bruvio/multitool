@@ -1,0 +1,5108 @@
+ *** 1. DATA FOR OPERATING MODE 
+ *** 3A. DATA FOR NON DEFAULT STANDARD SURFACES
+ *** 3B. DATA FOR ADDITIONAL SURFACES           
+ *** 4. DATA FOR SPECIES SPECIFICATION AND   
+        ATOMIC PHYSICS MODULE                
+        ATOMIC REACTION CARDS, NREACI DATA FIELDS
+ *4A.   NEUTRAL ATOMS SPECIES CARDS, NATMI SPECIES
+ *4B.   NEUTRAL MOLECULE SPECIES CARDS, NMOLI SPECIES
+ *4C.   TEST IONS SPECIES CARDS, NIONI SPECIES 
+ *4D.   PHOTONS SPECIES CARDS, NPHOTI SPECIES 
+ *** 5. DATA FOR PLASMA BACKGROUND            
+ *5A.   BULK ION SPECIES CARDS, NPLSI SPECIES 
+ *** 6. GENERAL DATA FOR REFLECTION MODEL    
+ *** 7. DATA FOR PRIMARY SOURCES, NSTRAI STRATA
+ *** 8. ADDITIONAL DATA FOR SPECIFIC ZONES 
+ *** 9. DATA FOR STATISTIC AND NONANALOG MODEL 
+        CARDS FOR STANDARD DEVIATION 
+ *** 10. DATA FOR ADDITIONAL TALLIES, COLLISION   
+         ESTIMATORS  AND ALGEBRAIC EXPRESSIONS  
+ *** 10A. DATA FOR ADDITIONAL TALLIES           
+ *** 10B. DATA FOR COLLISION ESTIMATORS         
+ *** 10C. DATA FOR ALGEBRAIC EXPRESSIONS     
+ *** 10D. DATA FOR ADDITIONAL SURFACE TALLIES   
+ *** 10E. DATA FOR ALGEBRAIC SURFACE TALLIES 
+ *** 10F. DATA FOR SPECTRA 
+ *** 11. DATA FOR NUMERICAL AND GRAPHICAL OUTPUT  
+ *** 12. DATA FOR DIAGNOSTIC MODULE 
+ *** 13. DATA FOR ITERATIVE AND TIME DEP. OPTION 
+ *** 14. DATA FOR INTERFACING ROUTINE "INFCOP" 
+ N1ST =          5738
+ N2ND =             1
+ N3RD =             1
+ NADD =             0
+ NTOR =            50
+ NRTAL =             0
+ NLIM =            24
+ NSTS =            10
+ NPLG =             1
+ NPPART =             1
+ NKNOT =          3204
+ NTRI =          5738
+ NTETRA =             1
+ NCOORD =             1
+ NOPTIM =             1
+ NOPTM1 =             1
+ NSTRA =             8
+ NSRFS =            14
+ NSTEP =             5
+ NATM =             1
+ NMOL =             1
+ NION =             1
+ NPLS =             1
+ NADV =             0
+ NADS =             0
+ NCLV =             0
+ NSNV =             0
+ NALV =             0
+ NALS =             0
+ NAIN =             3
+ NCOP =             4
+ NBGK =             0
+ NSD =             1
+ NSDW =             1
+ NCV =             1
+ NREAC =            28
+ NREC =             1
+ NRDS =             1
+ NRCX =             1
+ NREL =             1
+ NRPI =             1
+ NGEOM_USR =             0
+ NCOUP_INPUT =             0
+ NSMSTRA =             1
+ NSTORAM =             9
+ NGSTAL =             1
+ NRPES  =             1
+  Number of PEs             1
+ GRNXTB CALLED FROM EIRENE.F
+ K,IFRST1,IFRST2             3            1            0
+      
+      
+ DATE:  10  4 2019
+ TIME:  13 22 56
+      
+      
+ * CMOD (OSM-EIRENE INTERFACE) TEMPLATE                                  
+      
+ *                                                                       
+      
+ * Aquired from DR in 02.2005                                            
+      
+ *                                                                       
+      
+      
+      
+      
+ *** 1. DATA FOR OPERATING MODE                   
+      
+        EIRENE RUN ON IBM                       
+      
+        EIRENE RUN AS STAND ALONE CODE          
+        INTERFACING ROUTINE INFCOP IS NOT CALLED
+      
+        EIRENE ASSUMES A TOTAL CPUTIME 
+        OF         30000  SECONDS
+      
+      
+      
+      
+      
+      
+        EIRENE RUN IN NONITERATIVE MODE     
+      
+        EIRENE RUN IN TIME DEP. MODE.       
+        TIME CYCLES:             1  TO             1
+        SUBROUTINE "TMSUSR" IS CALLED AFTER EACH
+        TIME CYCLE 
+      
+ *** 2. DATA FOR STANDARD MESH                
+      
+ *** 3A. DATA FOR NON DEFAULT STANDARD SURFACES
+         NSTSI=             9
+      
+ *** 3B. DATA FOR ADDITIONAL SURFACES           
+         NLIMI=            24
+      
+ * puff (wall)      1                                                    
+ * puff (wall)      2                                                    
+ * puff (wall)      4                                                    
+ * puff (wall)      5                                                    
+ * puff (wall)      7                                                    
+ * puff (wall)      9                                                    
+ * puff (wall)     11                                                    
+ * puff (wall)     12                                                    
+ * puff (wall)     14                                                    
+ * pump surface     1                                                    
+ * pump surface     2                                                    
+ * pump surface     3                                                    
+ * pump surface     4                                                    
+ * pump surface     5                                                    
+ * pump surface     6                                                    
+ * pump surface     7                                                    
+ * pump surface     8                                                    
+ * pump surface     9                                                    
+ * pump surface    10                                                    
+ * pump surface    11                                                    
+ * pump surface    12                                                    
+ * pump surface    13                                                    
+ * pump surface    14                                                    
+ * pump surface    15                                                    
+ *** 4. DATA FOR SPECIES SPECIFICATION AND   
+        ATOMIC PHYSICS MODULE                
+      
+        ATOMIC REACTION CARDS, NREACI DATA FIELDS
+        NREACI=            23
+      
+ *4A.   NEUTRAL ATOMS SPECIES CARDS, NATMI SPECIES
+        NATMI=             1
+      
+ *4B.   NEUTRAL MOLECULE SPECIES CARDS, NMOLI SPECIES
+        NMOLI=             1
+      
+ *4C.   TEST IONS SPECIES CARDS, NIONI SPECIES 
+        NIONI=             1
+      
+ *4D.   NEUTRAL PHOTONS SPECIES CARDS, NPHOTI SPECIES
+        NPHOTI=             0
+      
+ *** 5. DATA FOR PLASMA BACKGROUND            
+      
+ *5A.   BULK ION SPECIES CARDS, NPLSI SPECIES 
+        NPLSI=             1
+      
+ *5B.   PLASMA BACKGROUND DATA                
+ ONE INPUT LINE MISSING IN BLOCK 5 
+ AUTOMATIC CORRECTION PERFORMED 
+ *** 6. GENERAL DATA FOR REFLECTION MODEL    
+      
+  PATH = ./EireneDatabase/Surfacedata/TRIM/                          
+  NFR =            1  FILNAM = C_on_C  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/C_on_C                                        
+  NFR =            2  FILNAM = D_on_C  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/D_on_C                                        
+  NFR =            3  FILNAM = He_on_C 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/He_on_C                                       
+  NFR =            4  FILNAM = Ne_on_C 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/Ne_on_C                                       
+  NFR =            5  FILNAM = Be_on_C 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/Be_on_C                                       
+  NFR =            6  FILNAM = W_on_C  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/W_on_C                                        
+  NFR =            7  FILNAM = C_on_W  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/C_on_W                                        
+  NFR =            8  FILNAM = H_on_W  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/H_on_W                                        
+  NFR =            9  FILNAM = D_on_W  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/D_on_W                                        
+  NFR =           10  FILNAM = T_on_W  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/T_on_W                                        
+  NFR =           11  FILNAM = He_on_W 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/He_on_W                                       
+  NFR =           12  FILNAM = W_on_W  
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/W_on_W                                        
+  NFR =           13  FILNAM = Be_on_Be
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/Be_on_Be                                      
+  NFR =           14  FILNAM = D_on_Be 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/D_on_Be                                       
+  NFR =           15  FILNAM = Ne_on_Be
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/Ne_on_Be                                      
+  NFR =           16  FILNAM = C_on_Be 
+  FILE = 
+ ./EireneDatabase/Surfacedata/TRIM/C_on_Be                                       
+ SURFACE MODEL "MAINCH" DEFINED
+ SURFACE MODEL "DIVERT" DEFINED
+ SURFACE MODEL "MAINCH_TARMAT" DEFINED
+ SURFACE MODEL "TARGET" DEFINED
+ SURFACE MODEL "PUMP01" DEFINED
+ SURFACE MODEL "PUMP02" DEFINED
+ SURFACE MODEL "PUMP03" DEFINED
+ SURFACE MODEL "PUMP04" DEFINED
+ SURFACE MODEL "PUMP05" DEFINED
+ SURFACE MODEL "PUMP06" DEFINED
+ SURFACE MODEL "PUMP07" DEFINED
+ SURFACE MODEL "PUMP08" DEFINED
+ SURFACE MODEL "PUMP09" DEFINED
+ SURFACE MODEL "PUMP10" DEFINED
+ SURFACE MODEL "PUMP11" DEFINED
+ SURFACE MODEL "PUMP12" DEFINED
+ SURFACE MODEL "PUMP13" DEFINED
+ SURFACE MODEL "PUMP14" DEFINED
+ SURFACE MODEL "PUMP15" DEFINED
+ *** 7. DATA FOR PRIMARY SOURCES, NSTRAI STRATA   
+        NSTRAI=             7
+      
+ *** 8. ADDITIONAL DATA FOR SPECIFIC ZONES 
+        NZADD=             0
+      
+ *** 9. DATA FOR STATISTIC AND NONANALOG MODEL   
+      
+        CARDS FOR STANDARD DEVIATION 
+        NSIGVI,NSIGSI,NSIGCI=             0            0            0
+        NSIGI_BGK,NSIGI_COP =             0            1
+        NSIGI_SPC           =             0
+      
+ *** 10. DATA FOR ADDITIONAL TALLIES, COLLISION   
+         ESTIMATORS  AND ALGEBRAIC EXPRESSIONS    
+         NADVI,NCLVI,NALVI=             0            0            0
+         NADSI,NALSI,NADSPC=             0            0            0
+      
+ *** 10A. DATA FOR ADDITIONAL TALLIES           
+ *** 10B. DATA FOR COLLISION ESTIMATORS         
+ *** 10C. DATA FOR ALGEBRAIC EXPRESSIONS     
+ *** 10D. DATA FOR ADDITIONAL SURFACE TALLIES   
+ *** 10E. DATA FOR ALGEBRAIC SURFACE TALLIES 
+      
+ *** 11. DATA FOR NUMERICAL AND GRAPHICAL OUTPUT  
+         NVOLPR=            19
+      
+         NSURPR=            33
+      
+         NVOLPL=             0
+      
+ *** 12. DATA FOR DIAGNOSTIC MODULE              
+         NCHORI,NCHENI=             0            0
+      
+ *** 13. DATA FOR ITERATIVE AND TIME DEP. OPTION
+         NPRNLI=             0
+      
+      
+1         
+  PH_ALLOC_XSECTPH: no calculations for photons possible 
+ *** 14. DATA FOR INTERFACING ROUTINE "INFCOP"   
+         SUBR. INFCOP NOT CALLED. 
+         NAINI, NCOPI =             3            4
+1         
+      
+      
+      
+      
+ SUBROUTINE WRMESH CALLED 
+      
+ NUMBER OF CONTOURS FOR FEM MESH:             0
+      
+  VOLTOT         65646373.90093648     
+  VOLTOT_TAL     65646373.90093648     
+ STEPFUNCTION NO. ISTEP=             1  INITIALISED
+      
+ STEPFUNCTION NO. ISTEP=             2  INITIALISED
+      
+ STEPFUNCTION NO. ISTEP=             3  INITIALISED
+      
+ STEPFUNCTION NO. ISTEP=             4  INITIALISED
+      
+ STEPFUNCTION NO. ISTEP=             5  INITIALISED
+      
+ * EIR_PLAUSR: Warning
+Found obsolete neutral flux file: eirene.chemFluxDep; version:      1.200000
+but actual neutral flux file should be version:      1.200000
+ Ignoring neutral flux from previous run
+ * EIR_PLAUSR: Warning end
+      
+
+
+
+************************************                                            
+*                                  *                                            
+*  ATOMIC SPECIES IATM = D         *                                            
+*                                  *                                            
+************************************                                            
+
+
+
+      
+      
+ ELEC. IMPACT REACTION NO. IREI=             1
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, ENERGY RANGE: EEL_MIN,EEL_MAX
+ EL        1.0000E+00 -6.7953E+05 -1.0000E+00
+  imin =          1689  imax =          1691
+ BULK IONS: PPLDS 
+ D+        1.0000E+00
+ ENERGY: EPLDS 
+   1.0000E+00 * E0 +   0.0000E+00
+      
+ TEST PARTICLE SECONDARIES:
+ NONE
+      
+      
+      
+      
+ CHARGE EXCHANGE REACTION NO. IRCX=             1
+      
+ CHARGE EXCHANGE WITH BULK IONS IPLS:
+ 1ST AND 2ND NEXT GEN. SPECIES I2ND1, I2ND2:
+ IPLS= D+      I2ND1= D       I2ND2= D+      
+      
+      
+ NO ELASTIC COLLISIONS WITH BULK IONS
+      
+      
+      
+      
+ NO GENERAL ION IMPACT COLLISIONS 
+      
+      
+      
+      
+ WARNING FROM SUBR. XSTEL 
+ MODIFIED TREATMENT OF ELASTIC COLLISIONS 
+ SAMPLE FROM MAXWELLIAN WITH T =     2.694020000000000     
+ RATHER THEN WITH T = TIIN 
+      
+      
+ WARNING: TR.L.EST NOT AVAILABLE FOR MOM.-BALANCE 
+ IREL =             1
+ AUTOMATICALLY RESET TO COLLISION ESTIMATOR 
+      
+ WARNING: TR.L.EST NOT AVAILABLE FOR EN.-BALANCE 
+ IREL =             1
+ AUTOMATICALLY RESET TO COLLISION ESTIMATOR 
+
+
+
+***************************************                                         
+*                                     *                                         
+*  MOLECULAR SPECIES IMOL = D2        *                                         
+*                                     *                                         
+***************************************                                         
+
+
+
+      
+      
+ CHARGE EXCHANGE REACTION NO. IRCX=             2
+      
+ CHARGE EXCHANGE WITH BULK IONS IPLS:
+ 1ST AND 2ND NEXT GEN. SPECIES I2ND1, I2ND2:
+ IPLS= D+      I2ND1= D       I2ND2= D2+     
+      
+      
+ ELEC. IMPACT REACTION NO. IREI=             2
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL        1.0000E+00 -1.5400E+01
+  imin =             1  imax =             1
+ BULK IONS: NONE
+      
+ TEST PARTICLE SECONDARIES:
+ TEST IONS: PIODS 
+ D2+       1.0000E+00
+ ENERGY: EIODS 
+   1.0000E+00 * E0 +   1.0000E+00
+      
+ ELEC. IMPACT REACTION NO. IREI=             3
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL        0.0000E+00 -1.0500E+01
+  imin =             1  imax =             1
+ BULK IONS: NONE
+      
+ TEST PARTICLE SECONDARIES:
+ ATOMS    : PATDS 
+ D         2.0000E+00
+ ENERGY: EATDS 
+   1.0000E+00 * E0 +   6.0000E+00
+      
+ ELEC. IMPACT REACTION NO. IREI=             4
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL        1.0000E+00 -2.5000E+01
+  imin =             1  imax =             1
+ BULK IONS: PPLDS 
+ D+        1.0000E+00
+ ENERGY: EPLDS 
+   5.0000E-01 * E0 +   5.0000E+00
+      
+ TEST PARTICLE SECONDARIES:
+ ATOMS    : PATDS 
+ D         1.0000E+00
+ ENERGY: EATDS 
+   5.0000E-01 * E0 +   5.0000E+00
+      
+ ELASTIC COLLISION NO. IREL=             1
+      
+ ELASTIC COLLISION WITH BULK IONS IPLS:
+ IPLS= D+      
+      
+      
+      
+      
+
+
+
+**************************************                                          
+*                                    *                                          
+*  TEST ION SPECIES IION = D2+       *                                          
+*                                    *                                          
+**************************************                                          
+
+
+
+      
+      
+ NO CHARGE EXCHANGE WITH BULK IONS
+      
+      
+ ELEC. IMPACT REACTION NO. IREI=             5
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL        1.0000E+00 -1.5500E+01
+  imin =             1  imax =             1
+ BULK IONS: PPLDS 
+ D+        2.0000E+00
+ ENERGY: EPLDS 
+   1.0000E+00 * E0 +   5.0000E-01
+      
+ TEST PARTICLE SECONDARIES:
+ NONE
+      
+      
+ ELEC. IMPACT REACTION NO. IREI=             6
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL        0.0000E+00 -1.0500E+01
+  imin =             1  imax =             1
+ BULK IONS: PPLDS 
+ D+        1.0000E+00
+ ENERGY: EPLDS 
+   5.0000E-01 * E0 +   4.3000E+00
+      
+ TEST PARTICLE SECONDARIES:
+ ATOMS    : PATDS 
+ D         1.0000E+00
+ ENERGY: EATDS 
+   5.0000E-01 * E0 +   4.3000E+00
+      
+ ELEC. IMPACT REACTION NO. IREI=             7
+      
+ BACKGROUND SECONDARIES:
+ ELECTRONS: PELDS, CONSTANT ENERGY: EEL
+ EL       -1.0000E+00  0.0000E+00
+  imin =             1  imax =             1
+ BULK IONS: NONE
+      
+ TEST PARTICLE SECONDARIES:
+ ATOMS    : PATDS 
+ D         2.0000E+00
+ ENERGY: EATDS 
+   1.0000E+00 * E0 +   1.0000E+00
+      
+      
+ NO ELASTIC COLLISIONS WITH BULK IONS
+      
+  BREMSSTRAHLUNG =    8.9866317024525220E+018
+
+
+
+**************************************                                          
+*                                    *                                          
+*  BULK ION SPECIES IPLS = D+        *                                          
+*                                    *                                          
+**************************************                                          
+
+
+
+      
+ RECOMBINATION NO. IRRC=             1
+ RECOMBINATION INTO SPECIES:
+ ATOM     IATM= D       
+      
+ TEST ION D2+      CAN BE CONDENSED
+      
+      
+  LIST OF CONTRIBUTIONS TO BACKGROUND SPECIES 
+      
+      
+ COEFFICIENTS FOR ADDITIONAL SURFACES
+ THIS IS AFTER GEOUSR, SETEQ AND SETFIT ARE CALLED 
+      
+      
+ * puff (wall)      1                                                    
+      
+ A0           185.1021164180993     
+ A1,A2,A3   -0.9945288754685686       -0.1044620307060142      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)      2                                                    
+      
+ A0           185.0861008558244     
+ A1,A2,A3   -0.9945166317458398       -0.1045785311663427      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)      4                                                    
+      
+ A0           183.1220232171868     
+ A1,A2,A3   -0.9875122389188827       -0.1575423053830790      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)      5                                                    
+      
+ A0           180.3975937709255     
+ A1,A2,A3   -0.9791677045611628       -0.2030532106232832      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)      7                                                    
+      
+ A0           180.4411796589716     
+ A1,A2,A3   -0.9794162378834090       -0.2018510167680843      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)      9                                                    
+      
+ A0           175.7074265840956     
+ A1,A2,A3   -0.9667534198079432       -0.2557104325006055      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)     11                                                    
+      
+ A0           173.3268836262338     
+ A1,A2,A3   -0.9605912453408036       -0.2779648527684822      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)     12                                                    
+      
+ A0           173.4244185200111     
+ A1,A2,A3   -0.9610004267328299       -0.2765468853907397      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * puff (wall)     14                                                    
+      
+ A0           173.5561473772502     
+ A1,A2,A3   -0.9614078601895695       -0.2751271094707195      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     1                                                    
+      
+ A0           129.7771537419296     
+ A1,A2,A3    0.1326464060433112        0.9911634229347817      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     2                                                    
+      
+ A0           1.567971785359834     
+ A1,A2,A3    0.4712869808726578        0.8819799213473825      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     3                                                    
+      
+ A0          -52.45887734272129     
+ A1,A2,A3    0.5966155860351422        0.8025271599764982      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     4                                                    
+      
+ A0          -144.7597307452143     
+ A1,A2,A3    0.7860341345037406        0.6181830953649213      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     5                                                    
+      
+ A0          -209.0394188584244     
+ A1,A2,A3    0.8954482185892636        0.4451656858129505      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     6                                                    
+      
+ A0          -280.3907598240586     
+ A1,A2,A3    0.9825702456970709        0.1858916681048344      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     7                                                    
+      
+ A0          -316.9800000000000     
+ A1,A2,A3     1.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     8                                                    
+      
+ A0          -328.2996632424741     
+ A1,A2,A3    0.9967921019156946       -8.0034402343565875E-002 
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface     9                                                    
+      
+ A0          -339.9868943866828     
+ A1,A2,A3    0.9825191535266581       -0.1861615238261101      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    10                                                    
+      
+ A0          -344.8972992369305     
+ A1,A2,A3    0.8036107081283728       -0.5951552988770370      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             1
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    11                                                    
+      
+ A0          -313.5345124438113     
+ A1,A2,A3    0.6160979579846727       -0.7876695412208832      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    12                                                    
+      
+ A0          -287.3573687414770     
+ A1,A2,A3    0.4977624697109840       -0.8673133941933686      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    13                                                    
+      
+ A0          -260.5936489391352     
+ A1,A2,A3    0.3901490341841382       -0.9207517206745716      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    14                                                    
+      
+ A0          -212.1107659709095     
+ A1,A2,A3    0.2145794657276432       -0.9767065336568805      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+ * pump surface    15                                                    
+      
+ A0          -163.4041908299311     
+ A1,A2,A3    5.4464493159870724E-002  -0.9985157079309460      
+    0.000000000000000     
+ A4,A5,A6     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ A7,A8,A9     0.000000000000000         0.000000000000000      
+    0.000000000000000     
+ JUMLIM             2
+ ISWICH(1),ISWICH(2),ISWICH(3),ISWICH(4),ISWICH(5),ISWICH(6)
+            0            0            0            0            0            0
+      
+      
+
+
+
+ IGJUM0 
+
+      I 1234567890 1234567890 1234567890 1234
+ --------------------------------------------------
+    1 I 0000000000 0000000000 0000000000 0000
+      
+
+
+
+ IGJUM1 
+
+      I 1234567890 1234567890 1234567890 1234
+ --------------------------------------------------
+    1 I 1000000000 0000000000 0000000000 0000
+    2 I 0100000000 0000000000 0000000000 0000
+    3 I 0010000000 0000000000 0000000000 0000
+    4 I 0001000000 0000000000 0000000000 0000
+    5 I 0000100000 0000000000 0000000000 0000
+    6 I 0000010000 0000000000 0000000000 0000
+    7 I 0000001000 0000000000 0000000000 0000
+    8 I 0000000100 0000000000 0000000000 0000
+    9 I 0000000010 0000000000 0000000000 0000
+   10 I 0000000001 0000000000 0000000000 0000
+   11 I 0000000000 1000000000 0000000000 0000
+   12 I 0000000000 0100000000 0000000000 0000
+   13 I 0000000000 0010000000 0000000000 0000
+   14 I 0000000000 0001000000 0000000000 0000
+   15 I 0000000000 0000100000 0000000000 0000
+   16 I 0000000000 0000010000 0000000000 0000
+   17 I 0000000000 0000001000 0000000000 0000
+   18 I 0000000000 0000000100 0000000000 0000
+   19 I 0000000000 0000000010 0000000000 0000
+   20 I 0000000000 0000000001 0000000000 0000
+   21 I 0000000000 0000000000 1000000000 0000
+   22 I 0000000000 0000000000 0100000000 0000
+   23 I 0000000000 0000000000 0010000000 0000
+   24 I 0000000000 0000000000 0001000000 0000
+   25 I 0000000000 0000000000 0000000000 0000
+   26 I 0000000000 0000000000 0000000000 0000
+   27 I 0000000000 0000000000 0000000000 0000
+   28 I 0000000000 0000000000 0000000000 0000
+   29 I 0000000000 0000000000 0000000000 0000
+   30 I 0000000000 0000000000 0000000000 0000
+   31 I 0000000000 0000000000 0000000000 0000
+   32 I 0000000000 0000000000 0000000000 0000
+   33 I 0000000000 0000000000 0000000000 0000
+   34 I 0000000000 0000000000 0000000000 0000
+      
+
+
+
+ IGJUM2 
+
+      I 1234567890 1234567890 1234567890 1234
+ --------------------------------------------------
+    1 I 1000000000 0000000000 0000000000 0000
+    2 I 0100000000 0000000000 0000000000 0000
+    3 I 0010000000 0000000000 0000000000 0000
+    4 I 0001000000 0000000000 0000000000 0000
+    5 I 0000100000 0000000000 0000000000 0000
+    6 I 0000010000 0000000000 0000000000 0000
+    7 I 0000001000 0000000000 0000000000 0000
+    8 I 0000000100 0000000000 0000000000 0000
+    9 I 0000000010 0000000000 0000000000 0000
+   10 I 0000000001 0000000000 0000000000 0000
+   11 I 0000000000 1000000000 0000000000 0000
+   12 I 0000000000 0100000000 0000000000 0000
+   13 I 0000000000 0010000000 0000000000 0000
+   14 I 0000000000 0001000000 0000000000 0000
+   15 I 0000000000 0000100000 0000000000 0000
+   16 I 0000000000 0000010000 0000000000 0000
+   17 I 0000000000 0000001000 0000000000 0000
+   18 I 0000000000 0000000100 0000000000 0000
+   19 I 0000000000 0000000010 0000000000 0000
+   20 I 0000000000 0000000001 0000000000 0000
+   21 I 0000000000 0000000000 1000000000 0000
+   22 I 0000000000 0000000000 0100000000 0000
+   23 I 0000000000 0000000000 0010000000 0000
+   24 I 0000000000 0000000000 0001000000 0000
+   25 I 0000000000 0000000000 0000100000 0000
+   26 I 0000000000 0000000000 0000010000 0000
+   27 I 0000000000 0000000000 0000001000 0000
+   28 I 0000000000 0000000000 0000000100 0000
+   29 I 0000000000 0000000000 0000000010 0000
+   30 I 0000000000 0000000000 0000000001 0000
+   31 I 0000000000 0000000000 0000000000 1000
+   32 I 0000000000 0000000000 0000000000 0100
+   33 I 0000000000 0000000000 0000000000 0010
+   34 I 0000000000 0000000000 0000000000 0001
+      
+
+
+
+ IGJUM3 
+
+      I 1234567890 1234567890 1234567890 1234
+ --------------------------------------------------
+    1 I 0000000000 0000000000 0000000000 0000
+      
+ J,NLIMII,NLIMIE               1        1       24
+ CPU-TIME CONSUMED IN INPUT:    0.8662090301513672       SEC
+      
+      
+ NRCXI,NRCX             2            2
+ NRELI,NREL             1            1
+ NRPII,NRPI             0            1
+ NREII,NREI             7            7
+ NRRCI,NREC             1            1
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PLASMA TEMPERATURE                                                      
+ SPECIES: D+                      
+ UNITS:   EV                      
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ WEIGHTED MEAN VALUE ("UNITS")               
+ MEAN:        2.2061E+02
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PLASMA DENSITY (BULK PARTICLES)                                         
+ SPECIES: ELECTRONS               
+ UNITS:   CM**-3                  
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ WEIGHTED TOTAL ("UNITS*CM**3"), MEAN ("UNITS")
+ TOTAL, MEAN:         7.5870E+20     1.1557E+13
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PLASMA DENSITY (BULK PARTICLES)                                         
+ SPECIES: D+                      
+ UNITS:   CM**-3                  
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ WEIGHTED TOTAL ("UNITS*CM**3"), MEAN ("UNITS")
+ TOTAL, MEAN:         7.5870E+20     1.1557E+13
+      
+      
+      
+      
+      
+ CPU-TIME CONSUMED IN XSECT:    3.8814544677734375E-004  SEC
+      
+ GRNXTB CALLED FROM PLT2D.F
+ K,IFRST1,IFRST2             1            0            0
+      
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  1
+ TARGET MASS NUMBER =             9.000000000000000     
+ TARGET NUCL. CHARGE NUMBER =     4.000000000000000     
+ PROJECTIL MASS NUMBER =          12.00000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     6.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    2.4095344719421479E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  2
+ TARGET MASS NUMBER =             9.000000000000000     
+ TARGET NUCL. CHARGE NUMBER =     4.000000000000000     
+ PROJECTIL MASS NUMBER =          20.18000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     10.00000000000000     
+ REDUCED ENERGY FACTOR ERDC =    9.3809316146046268E-005
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  3
+ TARGET MASS NUMBER =             9.000000000000000     
+ TARGET NUCL. CHARGE NUMBER =     4.000000000000000     
+ PROJECTIL MASS NUMBER =          2.010000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     1.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    3.5463559184455177E-003
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  4
+ TARGET MASS NUMBER =             9.000000000000000     
+ TARGET NUCL. CHARGE NUMBER =     4.000000000000000     
+ PROJECTIL MASS NUMBER =          9.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     4.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    4.5320745430148506E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  5
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          183.9000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     74.00000000000000     
+ REDUCED ENERGY FACTOR ERDC =    5.0081905102422165E-007
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  6
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          4.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     2.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    4.9118411180038917E-005
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  7
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          3.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     1.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    1.0030737344318553E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  8
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          2.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     1.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    1.0084666039718116E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                  9
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          1.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     1.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    1.0139177748040916E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 10
+ TARGET MASS NUMBER =             184.0000000000000     
+ TARGET NUCL. CHARGE NUMBER =     74.00000000000000     
+ PROJECTIL MASS NUMBER =          12.00000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     6.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    1.5047483741139271E-005
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 11
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          183.9000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     74.00000000000000     
+ REDUCED ENERGY FACTOR ERDC =    9.8185858354860405E-007
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 12
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          9.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     4.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    3.2127126292561979E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 13
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          20.18000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     10.00000000000000     
+ REDUCED ENERGY FACTOR ERDC =    7.1793677877979330E-005
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 14
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          4.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     2.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    9.2024633947010350E-004
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 15
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          2.000000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     1.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    2.2424311328376584E-003
+      
+ DATABASE REFLECTION MODEL DEFINED FOR:
+ IFILE =                                 16
+ TARGET MASS NUMBER =             12.00000000000000     
+ TARGET NUCL. CHARGE NUMBER =     6.000000000000000     
+ PROJECTIL MASS NUMBER =          12.00000000000000     
+ PRJTL. NUCL. CHARGE NUMBER =     6.000000000000000     
+ REDUCED ENERGY FACTOR ERDC =    1.7596140134900129E-004
+      
+      
+      
+ REFLECTION DATA FROM BEHRISCH-MATRIX
+ IMP. ENERGY (RED), REF. PROB, MEAN REFL. ENERGY
+                            0.0000E+00     1.0000E+00     0.0000E+00
+                            2.6795E-03     9.0000E-01     1.8256E-03
+                            5.7838E-03     8.0000E-01     2.9136E-03
+                            1.2445E-02     7.0000E-01     6.2544E-03
+                            2.6795E-02     6.2000E-01     1.2852E-02
+                            5.7760E-02     5.4300E-01     2.5810E-02
+                            1.2445E-01     4.6000E-01     5.1267E-02
+                            2.6830E-01     3.7000E-01     1.0448E-01
+                            5.7760E-01     2.9000E-01     2.0863E-01
+                            1.2441E+00     2.1000E-01     4.0762E-01
+                            2.6806E+00     1.4000E-01     7.8376E-01
+                            5.7752E+00     9.5000E-02     1.4882E+00
+                            1.2445E+01     4.0000E-02     2.7763E+00
+      
+      
+ ADDITIONAL SURFACES, THAT ARE NOT 100% RECYCLING
+ FOR ALL SPECIES
+ ISPZ,ILIM,RECYCT
+ D                  10    0.000000000000000     
+ D2                 10    0.000000000000000     
+ D2+                10    0.000000000000000     
+ D+                 10    0.000000000000000     
+ D                  11    0.000000000000000     
+ D2                 11    0.000000000000000     
+ D2+                11    0.000000000000000     
+ D+                 11    0.000000000000000     
+ D                  12    0.000000000000000     
+ D2                 12    0.000000000000000     
+ D2+                12    0.000000000000000     
+ D+                 12    0.000000000000000     
+ D                  13    0.000000000000000     
+ D2                 13    0.000000000000000     
+ D2+                13    0.000000000000000     
+ D+                 13    0.000000000000000     
+ D                  14    0.000000000000000     
+ D2                 14    0.000000000000000     
+ D2+                14    0.000000000000000     
+ D+                 14    0.000000000000000     
+ D                  15    0.000000000000000     
+ D2                 15    0.000000000000000     
+ D2+                15    0.000000000000000     
+ D+                 15    0.000000000000000     
+ D                  16    0.000000000000000     
+ D2                 16    0.000000000000000     
+ D2+                16    0.000000000000000     
+ D+                 16    0.000000000000000     
+ D                  17    0.000000000000000     
+ D2                 17    0.000000000000000     
+ D2+                17    0.000000000000000     
+ D+                 17    0.000000000000000     
+ D                  18    0.000000000000000     
+ D2                 18    0.000000000000000     
+ D2+                18    0.000000000000000     
+ D+                 18    0.000000000000000     
+ D                  19    0.000000000000000     
+ D2                 19    0.000000000000000     
+ D2+                19    0.000000000000000     
+ D+                 19    0.000000000000000     
+ D                  20    0.000000000000000     
+ D2                 20    0.000000000000000     
+ D2+                20    0.000000000000000     
+ D+                 20    0.000000000000000     
+ D                  21    0.000000000000000     
+ D2                 21    0.000000000000000     
+ D2+                21    0.000000000000000     
+ D+                 21    0.000000000000000     
+ D                  22    0.000000000000000     
+ D2                 22    0.000000000000000     
+ D2+                22    0.000000000000000     
+ D+                 22    0.000000000000000     
+ D                  23    0.000000000000000     
+ D2                 23    0.000000000000000     
+ D2+                23    0.000000000000000     
+ D+                 23    0.000000000000000     
+ D                  24    0.000000000000000     
+ D2                 24    0.000000000000000     
+ D2+                24    0.000000000000000     
+ D+                 24    0.000000000000000     
+ STANDARD SURFACES, THAT ARE NOT 100% REFLECTING
+ FOR ALL SPECIES
+ ISPZ,ISTS,RECYCT
+ D                   1    0.000000000000000     
+ D2                  1    0.000000000000000     
+ D2+                 1    0.000000000000000     
+ D+                  1    0.000000000000000     
+ D                  10    0.000000000000000     
+ D2                 10    0.000000000000000     
+ D2+                10    0.000000000000000     
+ D+                 10    0.000000000000000     
+      
+      
+ PRINTOUT FROM SUBR. SPUTER, AFTER INITIALISATION
+ 
+ EIRENE-SPECIES, SPUTTER PROJ. NO., SELF-SPUTTER TARGET NO.
+ ISPZ,   IPROJ(ISPZ),IPROJS(ISPZ)
+ D                   2            0
+ D2                  0            0
+ D2+                 0            0
+ D+                  2            0
+ 
+ SURFACE NUMBER, TARGET MATERIAL, SPUTTERED ATOM
+            1  TRANSPARENT SURFACE 
+            2  TRANSPARENT SURFACE 
+            3  TRANSPARENT SURFACE 
+            4  TRANSPARENT SURFACE 
+            5  TRANSPARENT SURFACE 
+            6  TRANSPARENT SURFACE 
+            7  TRANSPARENT SURFACE 
+            8  TRANSPARENT SURFACE 
+            9  TRANSPARENT SURFACE 
+           10  GRAPHITE                        0
+           11  GRAPHITE                        0
+           12  GRAPHITE                        0
+           13  GRAPHITE                        0
+           14  GRAPHITE                        0
+           15  GRAPHITE                        0
+           16  GRAPHITE                        0
+           17  GRAPHITE                        0
+           18  GRAPHITE                        0
+           19  GRAPHITE                        0
+           20  GRAPHITE                        0
+           21  GRAPHITE                        0
+           22  GRAPHITE                        0
+           23  GRAPHITE                        0
+           24  GRAPHITE                        0
+           -1  IRON                            0
+           -2  TUNGSTEN                        0
+           -3  TUNGSTEN                        0
+           -4  TRANSPARENT SURFACE 
+           -5  TRANSPARENT SURFACE 
+           -6  TRANSPARENT SURFACE 
+           -7  BERYLLIUM                       0
+           -8  TUNGSTEN                        0
+           -9  TUNGSTEN                        0
+          -10  IRON                            0
+ 
+      
+ DIAGNOSTICS FROM SUBR. SAMVOL: 
+      
+ VOLUME RECOMBINATION RATES INTEGRATED OVER
+ ENTIRE COMPUTATIONAL GRID 
+      
+ RECOMBINATION ION PARTICLE LOSS (AMP): 
+ IPLS,IRRC, SREC          D+        1  -4.0340E+03
+      
+ RECOMBINATION ION ENERGY LOSS (WATT): 
+ IPLS,IRRC,EIO            D+        1  -8.1090E+03
+      
+ RECOMBINATION ELECTRON ENERGY LOSS (WATT): 
+ IPLS,IRRC,EEL            D+        1   2.2962E+03
+      
+ RECOMBINATION PARALLEL MOMENTUM LOSS : 
+ IPLS,IRRC,MOM            D+        1  -8.3405E-15
+      
+ BREMSSTRAHLUNG: 
+ IPLS,TOT.BREMSSTRAHLUNG  D+        0   9.7487E+03
+      
+ WARNING FROM SAMVL0, ISTRA=             6
+ NEW INPUT FOR INGRDA(.,.,1),INGRDE(.,.,1)
+ AUTOMATIC CORRECTION CARRIED OUT 
+      
+      
+ SUB-STRATUM WEIGHT REDEFINED 
+ ISRFSI,ISTRA,SORWGT             1        6     4.0340E+03
+ IRRC,IPLS,ICMX                0        1     4224
+      
+ SOURCE STRENGTH REDEFINED 
+ ISTRA, FLUX, EIFLUX             6     4.0340E+03    -8.1090E+03
+      
+ FUNCTION STEP NO.             1 : 
+    K  RRSTEP      FLSTEP( 1)
+    1  0.0000E+00  1.7161E+03
+    2  1.2818E+00  2.1451E+03
+    3  2.5257E+00  1.8130E+03
+    4  3.7869E+00  1.3144E+03
+    5  5.1064E+00  1.0540E+03
+    6  6.5130E+00  5.2839E+02
+    7  8.9342E+00  2.8767E+02
+    8  1.3318E+01  9.5001E+02
+    9  1.4509E+01  7.5608E+02
+   10  1.5771E+01  5.7945E+02
+   11  1.7107E+01  4.1703E+02
+   12  1.8590E+01  3.2884E+02
+   13  2.0011E+01  8.6554E+00
+   14  2.3008E+01  2.2489E+01
+   15  2.4868E+01  4.5105E+01
+   16  2.6230E+01  8.8139E+01
+   17  2.7295E+01  1.5102E+02
+   18  2.8160E+01  2.5968E+02
+   19  2.8847E+01  4.2109E+02
+   20  2.9385E+01  6.0864E+02
+   21  2.9792E+01  8.4778E+02
+   22  3.0079E+01  2.3338E+03
+   23  3.0321E+01
+      
+ FLUXES: PART., KINET., SHEATH; INTEGRATED:
+ IP,FLUX      [A]        1     1.8672E+04
+ IP,EKIN-FLUX [W]        1     6.5352E+04
+ IP,ESH-FLUX  [W]        1     5.3058E+05
+      
+      
+  XI     0.000000000000000     
+  XE     1.000000000000000     
+ FLUX ONTO SOURCE SURFACE [A]             1    18672.02575000000     
+      
+      
+ FUNCTION STEP NO.             2 : 
+    K  RRSTEP      FLSTEP( 1)
+    1  0.0000E+00  1.4111E+03
+    2  2.2019E+00  1.4008E+03
+    3  5.0232E+00  3.3248E+01
+    4  9.5689E+00  2.3436E+02
+    5  1.8584E+01  2.4775E+02
+    6  2.2456E+01  2.4440E+02
+    7  2.5059E+01  2.3824E+02
+    8  2.7461E+01  2.0604E+02
+    9  2.9978E+01  1.2896E+02
+   10  3.3303E+01  1.1039E+02
+   11  3.6560E+01  9.9363E+01
+   12  3.9661E+01  8.2635E+01
+   13  4.2662E+01  2.1542E+01
+   14  4.3749E+01  3.3163E+01
+   15  4.4848E+01  5.0592E+01
+   16  4.5894E+01  8.3098E+01
+   17  4.6876E+01  1.4131E+02
+   18  4.7746E+01  2.2617E+02
+   19  4.8520E+01  3.4820E+02
+   20  4.9188E+01  5.1738E+02
+   21  4.9734E+01  7.8346E+02
+   22  5.0142E+01  2.4283E+03
+   23  5.0502E+01
+      
+ FLUXES: PART., KINET., SHEATH; INTEGRATED:
+ IP,FLUX      [A]        1     1.5554E+04
+ IP,EKIN-FLUX [W]        1     5.4439E+04
+ IP,ESH-FLUX  [W]        1     2.1032E+05
+      
+      
+  XI     0.000000000000000     
+  XE     1.000000000000001     
+ FLUX ONTO SOURCE SURFACE [A]             1    15553.89039000001     
+      
+      
+ FUNCTION STEP NO.             3 : 
+    K  RRSTEP      FLSTEP( 1)
+    1  0.0000E+00  4.7713E+00
+    2  1.2769E-01  4.7528E+00
+    3  2.8556E-01  4.9767E+00
+    4  5.0168E-01  5.3202E+00
+    5  7.9745E-01  5.5591E+00
+    6  1.2034E+00  5.8015E+00
+    7  1.7423E+00  5.9992E+00
+    8  2.4345E+00  6.1911E+00
+    9  3.2972E+00  6.2819E+00
+   10  4.3356E+00  6.3163E+00
+   11  5.5379E+00  6.0808E+00
+   12  6.9388E+00  5.7689E+00
+   13  8.4953E+00  5.2096E+00
+   14  1.0233E+01  4.6541E+00
+   15  1.2119E+01  4.0595E+00
+   16  1.4134E+01  3.5012E+00
+   17  1.6247E+01  3.0252E+00
+   18  1.8463E+01  2.6495E+00
+   19  2.0728E+01  2.0755E+00
+   20  2.3027E+01  2.7265E+00
+   21  2.4202E+01  7.6576E+00
+   22  2.5431E+01  2.9072E+00
+   23  3.2454E+01  3.4581E+00
+   24  3.9582E+01  3.6348E+00
+   25  4.6900E+01  3.9113E+00
+   26  5.4498E+01  4.2478E+00
+   27  6.2464E+01  4.7967E+00
+   28  7.0875E+01  4.9231E+00
+   29  7.9816E+01  5.2046E+00
+   30  8.9351E+01  5.4026E+00
+   31  9.9540E+01  5.7178E+00
+   32  1.1044E+02  5.9997E+00
+   33  1.2208E+02  6.6164E+00
+   34  1.3451E+02  6.9647E+00
+   35  1.4773E+02  7.0381E+00
+   36  1.6178E+02  7.2259E+00
+   37  1.7663E+02  7.6095E+00
+   38  1.9229E+02  7.5972E+00
+   39  2.0873E+02  7.6634E+00
+   40  2.2592E+02  7.8212E+00
+   41  2.4382E+02  7.3177E+00
+   42  2.6237E+02  7.0418E+00
+   43  2.8151E+02  6.9337E+00
+   44  3.0117E+02  6.4430E+00
+   45  3.2129E+02  5.6327E+00
+   46  3.4176E+02  4.8816E+00
+   47  3.6251E+02  4.0403E+00
+   48  3.8346E+02  3.5348E+00
+   49  4.0448E+02  2.7915E+00
+   50  4.2642E+02  2.0805E+00
+   51  4.4823E+02  1.6986E+00
+   52  4.6977E+02  1.5905E+00
+   53  4.9102E+02  1.6084E+00
+   54  5.1197E+02  1.8547E+00
+   55  5.3249E+02  2.1758E+00
+   56  5.5248E+02  2.5498E+00
+   57  5.7184E+02  2.7390E+00
+   58  5.9053E+02  3.0335E+00
+   59  6.0848E+02  3.0783E+00
+   60  6.2565E+02  3.3842E+00
+   61  6.4200E+02  3.8387E+00
+   62  6.5752E+02  4.5362E+00
+   63  6.7218E+02  4.5857E+00
+   64  6.8599E+02  4.6042E+00
+   65  6.9896E+02  4.3377E+00
+   66  7.1112E+02  3.9938E+00
+   67  7.2250E+02  3.6165E+00
+   68  7.3313E+02  3.1673E+00
+   69  7.4308E+02  2.6882E+00
+   70  7.5242E+02  2.3504E+00
+   71  7.6120E+02  2.1134E+00
+   72  7.6952E+02  1.8180E+00
+   73  7.7746E+02  1.2738E+00
+   74  7.8509E+02  3.8016E+00
+   75  7.8618E+02  1.3909E+00
+   76  7.8725E+02  4.0204E+00
+   77  7.8742E+02  8.0065E-01
+   78  7.8760E+02  1.3335E+00
+   79  7.8767E+02  9.9730E-01
+   80  7.8774E+02  1.0487E+00
+   81  7.8781E+02  1.1368E+00
+   82  7.8788E+02  1.4643E+00
+   83  7.8795E+02  1.3955E+00
+   84  7.8802E+02  1.0654E+00
+   85  7.8808E+02  9.7321E-01
+   86  7.8813E+02  9.0582E-01
+   87  7.8819E+02  8.8147E-01
+   88  7.8823E+02  8.5966E-01
+   89  7.8828E+02  8.4378E-01
+   90  7.8832E+02  8.3321E-01
+   91  7.8836E+02  8.1461E-01
+   92  7.8839E+02  8.1018E-01
+   93  7.8842E+02  8.0277E-01
+   94  7.8845E+02  7.9547E-01
+   95  7.8848E+02  7.8773E-01
+   96  7.8850E+02  7.8656E-01
+   97  7.8853E+02
+      
+ FLUXES: PART., KINET., SHEATH; INTEGRATED:
+ IP,FLUX      [A]        1     3.4464E+03
+ IP,EKIN-FLUX [W]        1     1.2062E+04
+ IP,ESH-FLUX  [W]        1     1.4132E+05
+      
+      
+  XI     0.000000000000000     
+  XE     1.000000000000000     
+ FLUX ONTO SOURCE SURFACE [A]             1    3446.350223670003     
+      
+      
+ FUNCTION STEP NO.             4 : 
+    K  RRSTEP      FLSTEP( 1)
+    1  0.0000E+00  1.2772E+00
+    2  1.9159E-02  1.2354E+00
+    3  4.2815E-02  1.2529E+00
+    4  7.5358E-02  1.2924E+00
+    5  1.2049E-01  1.3339E+00
+    6  1.8258E-01  1.3920E+00
+    7  2.6535E-01  1.4704E+00
+    8  3.7220E-01  1.5736E+00
+    9  5.0624E-01  1.7396E+00
+   10  6.6948E-01  2.1264E+00
+   11  8.6256E-01  2.1560E+00
+   12  1.0901E+00  2.2801E+00
+   13  1.3499E+00  2.3375E+00
+   14  1.6463E+00  2.4100E+00
+   15  1.9791E+00  2.5333E+00
+   16  2.3518E+00  2.4583E+00
+   17  2.7716E+00  2.3520E+00
+   18  3.2626E+00  2.3805E+00
+   19  3.8646E+00  3.2269E+00
+   20  4.6747E+00  8.8964E-01
+   21  8.6266E+00
+      
+ FLUXES: PART., KINET., SHEATH; INTEGRATED:
+ IP,FLUX      [A]        1     1.4685E+01
+ IP,EKIN-FLUX [W]        1     5.1398E+01
+ IP,ESH-FLUX  [W]        1     7.7181E+01
+      
+      
+  XI     0.000000000000000     
+  XE     1.000000000000000     
+ FLUX ONTO SOURCE SURFACE [A]             1    14.68510949000000     
+      
+      
+ FUNCTION STEP NO.             5 : 
+    K  RRSTEP      FLSTEP( 1)
+    1  0.0000E+00  8.8873E-01
+    2  3.4869E+00  2.2061E+00
+    3  4.6303E+00  1.6403E+00
+    4  5.6635E+00  1.7427E+00
+    5  6.5943E+00  1.7787E+00
+    6  7.4434E+00  1.7250E+00
+    7  8.2007E+00  1.7301E+00
+    8  8.8891E+00  1.7061E+00
+    9  9.5002E+00  1.6203E+00
+   10  1.0045E+01  1.6505E+00
+   11  1.0535E+01  1.6372E+00
+   12  1.0968E+01  1.5117E+00
+   13  1.1349E+01  1.4136E+00
+   14  1.1686E+01  1.2873E+00
+   15  1.1983E+01  1.1557E+00
+   16  1.2249E+01  1.0592E+00
+   17  1.2487E+01  9.6934E-01
+   18  1.2700E+01  8.4373E-01
+   19  1.2895E+01  7.3654E-01
+   20  1.3077E+01  6.0665E-01
+   21  1.3251E+01
+      
+ FLUXES: PART., KINET., SHEATH; INTEGRATED:
+ IP,FLUX      [A]        1     1.8994E+01
+ IP,EKIN-FLUX [W]        1     6.6479E+01
+ IP,ESH-FLUX  [W]        1     6.8684E+01
+      
+      
+  XI     0.000000000000000     
+  XE     1.000000000000000     
+ FLUX ONTO SOURCE SURFACE [A]             1    18.99390219999999     
+      
+      
+      
+      
+      
+      
+ LOOP OVER STRATA STARTS AT CPU TIME(SEC):    
+ STARTTIM     9.6529E-01
+ CPU TIME ASSIGNED TO STRATA (SEC) :          
+ PROPORTIONAL NPTS(ISTRA)                     
+ STRATUM, TIME           1     1.3139E+04
+ STRATUM, TIME           2     1.0945E+04
+ STRATUM, TIME           3     2.4248E+03
+ STRATUM, TIME           4     9.3263E+01
+ STRATUM, TIME           5     9.3263E+01
+ STRATUM, TIME           6     2.1749E+03
+ STRATUM, TIME           7     1.1266E+03
+ STRATUM, TIME           8     0.0000E+00
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             1
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             9            0            0
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1            1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     1  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     1.2331E-03
+ XTIM(ISTRA)=     13139.82440863176     
+ TRIM-REFLECTION DATA REQUESTED BUT NOT
+ AVAILABLE FOR THE TARGET-PROJECTIL SYSTEM:
+ XMWALL,XCWALL,XMPART,XCPART 
+    9.000000000000000         4.000000000000000         2.000000000000000      
+    1.000000000000000     
+ EREDUC =    3.5495798783713776E-003
+ THE REDUCED ENERGY FORMULAS ARE APPLIED WITH
+ THE DATA FOR THE TARGET-PROJECTIL SYSTEM:
+ J,WM(J),WC(J),TM(J),TC(J) 
+            3    9.000000000000000         4.000000000000000      
+    2.010000000000000         1.000000000000000     
+ ERDC(J),J=1,NFLR =    2.4095344719421479E-004   9.3809316146046268E-005 
+   3.5463559184455177E-003   4.5320745430148506E-004   5.0081905102422165E-007 
+   4.9118411180038917E-005   1.0030737344318553E-004   1.0084666039718116E-004 
+   1.0139177748040916E-004   1.5047483741139271E-005   9.8185858354860405E-007 
+   3.2127126292561979E-004   7.1793677877979330E-005   9.2024633947010350E-004 
+   2.2424311328376584E-003   1.7596140134900129E-004
+      
+ TRIM-REFLECTION DATA REQUESTED BUT NOT
+ AVAILABLE FOR THE TARGET-PROJECTIL SYSTEM:
+ XMWALL,XCWALL,XMPART,XCPART 
+    9.000000000000000         4.000000000000000         2.000000000000000      
+    1.000000000000000     
+ EREDUC =    3.5495798783713776E-003
+ THE REDUCED ENERGY FORMULAS ARE APPLIED WITH
+ THE DATA FOR THE TARGET-PROJECTIL SYSTEM:
+ J,WM(J),WC(J),TM(J),TC(J) 
+            3    9.000000000000000         4.000000000000000      
+    2.010000000000000         1.000000000000000     
+ ERDC(J),J=1,NFLR =    2.4095344719421479E-004   9.3809316146046268E-005 
+   3.5463559184455177E-003   4.5320745430148506E-004   5.0081905102422165E-007 
+   4.9118411180038917E-005   1.0030737344318553E-004   1.0084666039718116E-004 
+   1.0139177748040916E-004   1.5047483741139271E-005   9.8185858354860405E-007 
+   3.2127126292561979E-004   7.1793677877979330E-005   9.2024633947010350E-004 
+   2.2424311328376584E-003   1.7596140134900129E-004
+      
+ TRIM-REFLECTION DATA REQUESTED BUT NOT
+ AVAILABLE FOR THE TARGET-PROJECTIL SYSTEM:
+ XMWALL,XCWALL,XMPART,XCPART 
+    9.000000000000000         4.000000000000000         2.000000000000000      
+    1.000000000000000     
+ EREDUC =    3.5495798783713776E-003
+ THE REDUCED ENERGY FORMULAS ARE APPLIED WITH
+ THE DATA FOR THE TARGET-PROJECTIL SYSTEM:
+ J,WM(J),WC(J),TM(J),TC(J) 
+            3    9.000000000000000         4.000000000000000      
+    2.010000000000000         1.000000000000000     
+ ERDC(J),J=1,NFLR =    2.4095344719421479E-004   9.3809316146046268E-005 
+   3.5463559184455177E-003   4.5320745430148506E-004   5.0081905102422165E-007 
+   4.9118411180038917E-005   1.0030737344318553E-004   1.0084666039718116E-004 
+   1.0139177748040916E-004   1.5047483741139271E-005   9.8185858354860405E-007 
+   3.2127126292561979E-004   7.1793677877979330E-005   9.2024633947010350E-004 
+   2.2424311328376584E-003   1.7596140134900129E-004
+      
+ TRIM-REFLECTION DATA REQUESTED BUT NOT
+ AVAILABLE FOR THE TARGET-PROJECTIL SYSTEM:
+ XMWALL,XCWALL,XMPART,XCPART 
+    9.000000000000000         4.000000000000000         2.000000000000000      
+    1.000000000000000     
+ EREDUC =    3.5495798783713776E-003
+ THE REDUCED ENERGY FORMULAS ARE APPLIED WITH
+ THE DATA FOR THE TARGET-PROJECTIL SYSTEM:
+ J,WM(J),WC(J),TM(J),TC(J) 
+            3    9.000000000000000         4.000000000000000      
+    2.010000000000000         1.000000000000000     
+ ERDC(J),J=1,NFLR =    2.4095344719421479E-004   9.3809316146046268E-005 
+   3.5463559184455177E-003   4.5320745430148506E-004   5.0081905102422165E-007 
+   4.9118411180038917E-005   1.0030737344318553E-004   1.0084666039718116E-004 
+   1.0139177748040916E-004   1.5047483741139271E-005   9.8185858354860405E-007 
+   3.2127126292561979E-004   7.1793677877979330E-005   9.2024633947010350E-004 
+   2.2424311328376584E-003   1.7596140134900129E-004
+      
+ TRIM-REFLECTION DATA REQUESTED BUT NOT
+ AVAILABLE FOR THE TARGET-PROJECTIL SYSTEM:
+ XMWALL,XCWALL,XMPART,XCPART 
+    9.000000000000000         4.000000000000000         2.000000000000000      
+    1.000000000000000     
+ EREDUC =    3.5495798783713776E-003
+ THE REDUCED ENERGY FORMULAS ARE APPLIED WITH
+ THE DATA FOR THE TARGET-PROJECTIL SYSTEM:
+ J,WM(J),WC(J),TM(J),TC(J) 
+            3    9.000000000000000         4.000000000000000      
+    2.010000000000000         1.000000000000000     
+ ERDC(J),J=1,NFLR =    2.4095344719421479E-004   9.3809316146046268E-005 
+   3.5463559184455177E-003   4.5320745430148506E-004   5.0081905102422165E-007 
+   4.9118411180038917E-005   1.0030737344318553E-004   1.0084666039718116E-004 
+   1.0139177748040916E-004   1.5047483741139271E-005   9.8185858354860405E-007 
+   3.2127126292561979E-004   7.1793677877979330E-005   9.2024633947010350E-004 
+   2.2424311328376584E-003   1.7596140134900129E-004
+      
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            1     3522
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+  -3.5220E+03     0.0000E+00     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART        3522
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       1.8672E+04
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   9.8167E-01     9.3004E-01     1.0170E+00     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   9.8167E-01     9.3004E-01     1.0170E+00     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             1    7.119293928146362     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             2
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             9            0            0
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1            1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     2  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     1.1786E-02
+ XTIM(ISTRA)=     24085.15392043842     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            2     2934
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+  -2.9340E+03     0.0000E+00     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART        2934
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       1.5554E+04
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   1.0092E+00     9.9263E-01     9.6364E-01     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   1.0092E+00     9.9263E-01     9.6364E-01     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             2    11.71794199943542     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             3
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             1            3            3
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1           -1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     3  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     1.1630E-02
+ XTIM(ISTRA)=     26509.99735751263     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            3      650
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+   0.0000E+00     6.5000E+02     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART         650
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       3.4464E+03
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   9.9100E-01     1.0261E+00     9.3951E-01     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   9.9100E-01     1.0261E+00     9.3951E-01     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             3    12.17860007286072     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             4
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             1            3            3
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1           -1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     4  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     8.8871E-03
+ XTIM(ISTRA)=     26603.26900637347     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            4       25
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+   0.0000E+00     2.5003E+01     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART          25
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       1.4685E+01
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   1.0900E+00     9.7562E-01     6.9255E-01     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   1.0900E+00     9.7562E-01     6.9255E-01     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             4    12.22933602333069     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             5
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             1            3            3
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1           -1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     5  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     8.4510E-03
+ XTIM(ISTRA)=     26696.54021916673     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            5       25
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+   0.0000E+00     2.5000E+01     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART          25
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       1.8994E+01
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   9.6674E-01     9.9761E-01     1.4273E+00     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   9.6674E-01     9.9761E-01     1.4273E+00     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             5    12.28901004791260     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             6
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             3            0            0
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1            1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     6  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     8.2719E-03
+ XTIM(ISTRA)=     28871.43609646899     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            6      583
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+  -5.8300E+02     0.0000E+00     0.0000E+00     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART         583
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       4.0340E+03
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   9.7197E-01     1.0397E+00     9.0392E-01     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   9.7197E-01     1.0397E+00     9.0392E-01     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             6    13.05269002914429     
+      
+      
+      
+      
+ BEGIN TO WORK ON STRATUM NO.             7
+      
+      
+ NEMOD1,NEMOD2,NEMOD3             1            0            0
+ SNORM      0.000000000000000     
+ ISRFS,IICSOR(I),ITISOR(I),IFPSOR(I),IUPSOR(I)
+            1            1            0            0            0
+            2            1            0            0            0
+            3            1            0            0            0
+            4            1            0            0            0
+            5            1            0            0            0
+            6            1            0            0            0
+            7            1            0            0            0
+            8            1            0            0            0
+            9            1            0            0            0
+           10            1            0            0            0
+           11            1            0            0            0
+           12            1            0            0            0
+           13            1            0            0            0
+           14            1            0            0            0
+
+
+
+******************************************************                          
+*                                                    *                          
+*  LAUNCH PARTICLES FOR STRATUM NUMBER ISTRA=     7  *                          
+*                                                    *                          
+******************************************************                          
+
+
+
+ OVERHEAD     8.9960E-03
+ XTIM(ISTRA)=     29998.05925512314     
+      
+ ALL REQUESTED TRAJECTORIES COMPLETED
+ M.C. HISTORIES FOLLOWED UNTIL THAT TIME FOR
+ THIS STRATUM
+ ISTRA,IPANU=            7      302
+      
+      
+ TOTAL WEIGHT OF PRIMARY SOURCE PARTICLES 
+ BULK IONS, ATOMS, MOLECULES, TEST IONS 
+ WTPLS,WTATM,WTMOL,WTION,WTPHOT          
+   0.0000E+00     0.0000E+00     3.0200E+02     0.0000E+00     0.0000E+00
+ TOTAL NUMBER OF MONTE CARLO HISTORIES
+ NPART         302
+ TOTAL SOURCE STRENGTH FOR TEST PARTICLE SPECIES
+ FLUXT=       1.6022E+03
+      
+      
+      
+ EIRENE RECOMMENDED RESCALING OF VOLUME AVERAGED 
+ TALLIES DUE TO STATISTICAL ERRORS IN BALANCE 
+ FATM,FMOL,FION,FPHOT            
+   9.6850E-01     1.0422E+00     1.0095E+00     1.0000E+00
+      
+      
+      
+ RESCALING OF TRACKLENGTH TALLIES COMPLETED
+ RESCALING FACTORS:                        
+ FATM,FMOL,FION,FPHOT            
+   9.6850E-01     1.0422E+00     1.0095E+00     1.0000E+00
+      
+      
+ CPU TIME USED UNTIL END OF STRATUM ISTRA 
+ ISTRA, CPU(S)             7    13.28594088554382     
+      
+      
+      
+      
+ STRATUM NO.             8  ABANDONED
+      
+      
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             1
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             2
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             3
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             4
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             5
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             6
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ ERROR IN OUTEIR: DATA FOR STRATUM ISTRA=             7
+ ARE NOT AVAILABLE. PRINTOUT ABANDONNED
+ OUTEIR CALLED, ISTRA, XMCP:             8    0.000000000000000     
+ PRINTOUT ABANDONNED FOR THIS STRATUM 
+      
+1         
+
+
+
+*************************************                                           
+*                                   *                                           
+*  THIS IS THE SUM OVER THE STRATA  *                                           
+*                                   *                                           
+*************************************                                           
+
+
+
+      
+ NUMBER OF MONTE-CARLO HISTORIES               
+ NHIST=       8.0410E+03
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE DENSITY (ATOMS)                                                
+ SPECIES: D                       
+ UNITS:   CM**-3                  
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         3.7424E+18     5.7008E+10
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE DENSITY (MOLECULES)                                            
+ SPECIES: D2                      
+ UNITS:   CM**-3                  
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         3.2256E+20     4.9136E+12
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ENERGY DENSITY (ATOMS)                                                  
+ SPECIES: D                       
+ UNITS:   EV*CM**-3               
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         2.8921E+19     4.4056E+11
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ENERGY DENSITY (MOLECULES)                                              
+ SPECIES: D2                      
+ UNITS:   EV*CM**-3               
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         2.4519E+19     3.7350E+11
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE SOURCE (BULK IONS) FROM ATOM-PLASMA INTERACTION                
+ SPECIES: D+                      
+ UNITS:   AMP*CM**-3              
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         3.7619E+04     5.7305E-04
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE SOURCE (BULK IONS) FROM MOLECULE-PLASMA INTERACTION            
+ SPECIES: D+                      
+ UNITS:   AMP*CM**-3              
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:        -2.2744E+03    -3.4647E-05
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE SOURCE (BULK IONS) FROM TEST ION-PLASMA INTERACTION            
+ SPECIES: D+                      
+ UNITS:   AMP*CM**-3              
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         6.9779E+03     1.0630E-04
+      
+      
+      
+      
+      
+ PARTICLE SOURCE (BULK IONS) FROM PHOTON-PLASMA INTERACTION              
+ TALLY SWITCHED OFF => NO OUTPUT AVAILABLE      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, X-DIRECTION (ATOMS)                                   
+ SPECIES: D                       
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         1.2557E+00     1.9128E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, X-DIRECTION (MOLECULES)                               
+ SPECIES: D2                      
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         1.1726E+00     1.7862E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, Y-DIRECTION (ATOMS)                                   
+ SPECIES: D                       
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         2.7060E+00     4.1221E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, Y-DIRECTION (MOLECULES)                               
+ SPECIES: D2                      
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:         1.2219E+00     1.8613E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, Z-DIRECTION (ATOMS)                                   
+ SPECIES: D                       
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:        -9.8958E-01    -1.5074E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ MOMENTUM DENSITY, Z-DIRECTION (MOLECULES)                               
+ SPECIES: D2                      
+ UNITS:   G*CM/SEC*CM**-3         
+ ========================================================================
+ ========================================================================
+      
+ BLOCK AVERAGE   0.0000E+00
+ ========================================================================
+      
+      
+      
+      
+
+      
+      
+      
+      
+ TOTAL ("UNITS*CM**3), AND MEAN VALUE ("UNITS") 
+ TOTAL, MEAN:        -4.1453E+00    -6.3146E-08
+      
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ADDITIONAL TALLIES FOR INTERFACING, SUBR. INFCOP.F                      
+ SPECIES:                         
+ UNITS:   TO BE DEFINED IN INFCOP 
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ADDITIONAL TALLIES FOR INTERFACING, SUBR. INFCOP.F                      
+ SPECIES:                         
+ UNITS:   TO BE DEFINED IN INFCOP 
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ADDITIONAL TALLIES FOR INTERFACING, SUBR. INFCOP.F                      
+ SPECIES:                         
+ UNITS:   TO BE DEFINED IN INFCOP 
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ ADDITIONAL TALLIES FOR INTERFACING, SUBR. INFCOP.F                      
+ SPECIES:                         
+ UNITS:   TO BE DEFINED IN INFCOP 
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+      
+ ADDITIONAL TALLIES, TRACKLENGTH ESTIMATOR, SUBR. UPTUSR.F               
+ TALLY SWITCHED OFF => NO OUTPUT AVAILABLE      
+      
+      
+      
+      
+      
+                                
+ ===============================
+ = GLOBAL BALANCES (AMP/WATT) =
+ ===============================
+      
+      
+      
+ TEST PARTICLE INFLUX FROM  SOURCE (AMP)       
+ INFLUX/(1.602*E-19) IS THE "ATOMIC" FLUX, PART./S
+ INFLUX=      4.3342E+04
+      
+      
+ PARTICLE FLUX BALANCE (AMP), NEUTRAL ATOMS
+ ===========================================
+      
+ ATOMIC INFLUX FROM PRIMARY SOURCE              
+ WTOTA  = 
+ D         3.4800E+03
+ SUM OVER SPECIES                               
+ TOTAL=       3.4800E+03
+ ATOMS FROM RECOMBINING BULK IONS               
+ PPATI  = 
+ D         2.8362E+04
+ SUM OVER SPECIES                               
+ TOTAL=       2.8362E+04
+ ATOMS BORN BY ATOM - PLASMA INTERACTIONS       
+ PAATI  = 
+ D        -3.7619E+04
+ SUM OVER SPECIES                               
+ TOTAL=      -3.7619E+04
+ ATOMS BORN BY MOLECULE - PLASMA INTERACTIONS   
+ PMATI  = 
+ D         1.6605E+04
+ SUM OVER SPECIES                               
+ TOTAL=       1.6605E+04
+ ATOMS BORN BY TEST ION - PLASMA INTERACTIONS   
+ PIATI  = 
+ D         7.5074E+03
+ SUM OVER SPECIES                               
+ TOTAL=       7.5074E+03
+ ATOMIC EFFLUX ONTO THE SURFACES                
+ POTATI = 
+ D        -7.7982E+04
+ SUM OVER SPECIES                               
+ TOTAL=      -7.7982E+04
+ ATOMIC INFLUX FROM SURFACES, ORIG: ATOMS       
+ PRFAAI = 
+ D         5.9646E+04
+ SUM OVER SPECIES                               
+ TOTAL=       5.9646E+04
+ ABSOLUTE ERRORS IN PARTICLE BALANCE            
+ DIFA =   
+ D         0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+ RELATIVE ERRORS IN PARTICLE BALANCE (%)        
+ DIFRA =  
+ D         0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+      
+      
+      
+      
+ PARTICLE FLUX BALANCE (AMP), NEUTRAL MOLECULES
+ ===============================================
+      
+ MOLECULAR INFLUX FROM PRIMARY SOURCE          
+ WTOTM  = 
+ D2        8.0110E+02
+ SUM OVER SPECIES                               
+ TOTAL=       8.0110E+02
+ MOLECULES FROM RECOMBINING BULK IONS          
+ PPMLI  = 
+ D2        4.9489E+03
+ SUM OVER SPECIES                               
+ TOTAL=       4.9489E+03
+ MOLECULES BORN BY MOLECULE - PLASMA INTERACTIONS
+ PMMLI  = 
+ D2       -1.4408E+04
+ SUM OVER SPECIES                               
+ TOTAL=      -1.4408E+04
+ MOLECULAR EFFLUX ONTO THE SURFACES             
+ POTMLI = 
+ D2       -2.8556E+05
+ SUM OVER SPECIES                               
+ TOTAL=      -2.8556E+05
+ MOLECULAR INFLUX FROM SURFACES, ORIG: ATOMS    
+ PRFAMI = 
+ D2        9.1206E+03
+ SUM OVER SPECIES                               
+ TOTAL=       9.1206E+03
+ MOLECULAR INFLUX FROM SURFACES, ORIG: MOLECULES
+ PRFMMI = 
+ D2        2.8510E+05
+ SUM OVER SPECIES                               
+ TOTAL=       2.8510E+05
+ ABSOLUTE ERRORS IN PARTICLE BALANCE            
+ DIFM =   
+ D2        0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+ RELATIVE ERRORS IN PARTICLE BALANCE (%)        
+ DIFRM =  
+ D2        0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+      
+      
+      
+      
+ PARTICLE FLUX BALANCE (AMP), TEST IONS
+ =======================================
+      
+ TEST IONS BORN BY TEST ION - PLASMA INTERACTIONS
+ PIIOI  = 
+ D2+      -7.2427E+03
+ SUM OVER SPECIES                               
+ TOTAL=      -7.2427E+03
+ TEST IONS BORN BY MOLECULE - PLASMA INTERACTIONS
+ PMIOI  = 
+ D2+       7.2427E+03
+ SUM OVER SPECIES                               
+ TOTAL=       7.2427E+03
+ ABSOLUTE ERRORS IN PARTICLE BALANCE            
+ DIFI =   
+ D2+       0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+ RELATIVE ERRORS IN PARTICLE BALANCE (%)        
+ DIFRI =  
+ D2+       0.0000E+00
+ SUM OVER SPECIES                               
+ TOTAL=       0.0000E+00
+      
+      
+ TRASH: TEST PARTICLES KILLED DUE TO ERRORS     
+ PTRASH=      0.0000E+00
+      
+      
+      
+ TOTAL ERROR IN PARTICLE FLUXBALANCE            
+ DIF: ABS, REL(%)     0.0000E+00     0.0000E+00
+      
+      
+ ENERGY FLUX BALANCE (WATT), NEUTRAL ATOMS
+ =========================================
+      
+ ENERGY FLUX FROM PRIMARY SOURCE                
+ ETOTA=       2.5644E+05
+ ENERGY FLUX FROM RECOMBINING BULK IONS         
+ EPATI=       4.3170E+05
+ ENERGY FLUX FROM ATOM PLASMA INTERACTION       
+ EAATI=      -2.5610E+05
+ ENERGY FLUX FROM MOLECULE PLASMA INTERACTIONS  
+ EMATI=       6.6251E+04
+ ENERGY FLUX FROM TEST ION PLASMA INTERACTIONS  
+ EIATI=       3.5790E+04
+ ENERGY FLUX ONTO NON TRANSPARENT SURFACES      
+ EOTATI=     -9.8484E+05
+ REFLECTED FROM NON TRANSPARENT SURFACES         
+ ERFATI=      4.6185E+05
+ ABSOLUTE AND RELATIVE ERROR IN BALANCE          
+ DIF: ABS, REL(%)     1.1097E+04     4.4514E-01
+      
+      
+ ENERGY FLUX BALANCE (WATT), NEUTRAL MOLECULES
+ =============================================
+      
+ FROM PRIMARY SOURCE                            
+ ETOTM =      3.0352E+01
+ FROM RECOMBINING BULK IONS                     
+ EPMLI=       3.6645E+02
+ ENERGY FLUX FROM MOLECULE PLASMA INTERACTIONS  
+ EMMLI =      9.2421E+03
+ ENERGY FLUX ONTO NON TRANSPARENT SURFACES      
+ EOTMLI=     -3.2736E+04
+ REFLECTED FROM NON TRANSPARENT SURFACES        
+ ERFMLI=      2.1786E+04
+ ABSOLUTE AND RELATIVE ERROR IN BALANCE          
+ DIF: ABS, REL(%)    -1.3106E+03    -2.0427E+00
+      
+      
+ ENERGY FLUX BALANCE (WATT), TEST IONS
+ =====================================
+      
+ FROM PRIMARY SOURCE                            
+ ETOTI =      0.0000E+00
+ ENERGY GAINED FROM MOLECULE PLASMA INTERACTIONS
+ EMIOI =      1.4204E+04
+ ENERGY GAINED FROM TEST ION PLASMA INTERACTIONS
+ EIIOI =     -1.2910E+04
+ REFLECTED FROM NON TRANSPARENT SURFACES        
+ ERFIOI=      0.0000E+00
+ ABSOLUTE AND RELATIVE ERROR IN BALANCE          
+ DIF: ABS, REL(%)     1.2937E+03     4.7715E+00
+      
+      
+ ETRASH: ENERGY ABSORBED DUE TO ERRORS          
+ ETRASH=      0.0000E+00
+      
+      
+      
+ TOTAL ERROR IN ENERGY FLUXBALANCE              
+ DIF: ABS, REL(%)     1.1080E+04     4.2876E-01
+      
+      
+ PARTICLE FLUX BALANCE (AMP), BULK IONS
+ =======================================
+      
+ BULK PARTICLE FLUX                             
+ (DEFINING THE TEST PARTICLE SOURCE             
+ STRENGTH (AMP))                                
+ PPPLI =  
+ D+       -3.8260E+04
+ SUM OVER SPECIES                               
+ TOTAL=      -3.8260E+04
+ BULK PARTICLES BORN BY ATOM PLASMA INTERACTIONS
+ PAPLI  = 
+ D+        3.7619E+04
+ SUM OVER SPECIES                               
+ TOTAL=       3.7619E+04
+ BULK IONS BORN BY MOLECULE PLASMA INTERACTIONS
+ PMPLI  = 
+ D+       -2.2744E+03
+ SUM OVER SPECIES                               
+ TOTAL=      -2.2744E+03
+ BULK IONS BORN BY TEST ION PLASMA INTERACTIONS
+ PIPLI  = 
+ D+        6.9779E+03
+ SUM OVER SPECIES                               
+ TOTAL=       6.9779E+03
+      
+      
+ TOTAL LOSS  ---  TOTAL GAIN                    
+ LOSS--GAIN          -3.8260E+04     4.2322E+04
+      
+      
+ ENERGY FLUX BALANCE (WATT), BULK IONS
+ =====================================
+      
+ BULK ION ENERGY FLUX  BEING                    
+ NEUTRALIZED  (DEFINING THE TEST PARTICLES      
+ SOURCE STRENGTH (WATT))                        
+ EPPLI=      -8.6735E+05
+ ENERGY GAIN DUE TO ATOM PLASMA INTERACTIONS  
+ EAPLI=       2.5610E+05
+ ENERGY GAIN FROM MOLECULE PLASMA INTERACTIONS  
+ EMPLI=      -4.1258E+04
+ ENERGY GAIN FROM TEST ION PLASMA INTERACTIONS  
+ EIPLI=       3.5214E+04
+      
+      
+ TOTAL LOSS  ---   TOTAL GAIN                   
+ LOSS--GAIN          -8.6735E+05     2.5006E+05
+      
+      
+ PARTICLE FLUX BALANCE (AMP), ELECTRONS
+ =======================================
+      
+ BULK ELECTRON PARTICLE FLUX BEING NEUTRALIZED  
+ PTOTE=      -3.8260E+04
+ ELECTRONS BORN BY ATOM PLASMA INTERACTIONS
+ PAELI=       3.7619E+04
+ ELECTRONS BORN BY MOLECULE PLASMA INTERACTIONS
+ PMELI=       4.9682E+03
+ ELECTRONS BORN BY TEST ION PLASMA INTERACTIONS
+ PIELI=      -2.6474E+02
+      
+      
+ TOTAL LOSS  ---  TOTAL GAIN                    
+ LOSS--GAIN          -3.8260E+04     4.2322E+04
+      
+      
+ ENERGY FLUX BALANCE (WATT), ELECTRONS
+ =====================================
+      
+ ENERGY GAIN DUE TO ATOM PLASMA INTERACTIONS
+ EAELI=      -9.5755E+05
+ ENERGY GAIN DUE TO MOLECULE PLASMA INTERACTIONS
+ EMELI=      -1.5160E+05
+ ENERGY GAIN DUE TO TEST ION PLASMA INTERACTIONS
+ EIELI=      -7.2504E+04
+ TOTAL LOSS  ---   TOTAL GAIN                   
+ LOSS--GAIN          -1.1817E+06     0.0000E+00
+      
+      
+ SURFACES, AT WHICH TEST PARTICLES FLUXES ARE REDUCED
+ NO. SPECIES  PUMPED FLUX
+  10 D2        3.1018E+01
+      
+  11 D         1.4773E+00
+  11 D2        2.1163E+01
+      
+  12 D         9.2846E-01
+  12 D2        2.4931E+01
+      
+  13 D         9.2287E+00
+  13 D2        4.1609E+01
+      
+  14 D         3.2677E-07
+  14 D2        2.2994E+01
+      
+  15 D2        2.2489E+01
+      
+  16 D         1.1947E+01
+  16 D2        1.4393E+02
+      
+  17 D2        1.7717E+01
+      
+  18 D2        2.8049E+01
+      
+  19 D         2.7179E+00
+  19 D2        4.1583E+01
+      
+  20 D2        1.3564E+01
+      
+  21 D2        1.5580E+01
+      
+  22 D         3.5655E-02
+  22 D2        6.7750E+00
+      
+  23 D2        1.7526E+01
+      
+  24 D2        1.3688E+01
+      
+  -1 D         6.8265E+01
+      
+      
+ FLUXES AT SURFACES              
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * core boundary, absorbing (EDGE2D)                                       *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.2444E+06
+ test     69.07712311086307     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   6.9077E+01
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         6.8265E+01
+ E-FLUX:  
+ D         3.2714E+04
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     6.8265E+01
+ TOT.EFLX     3.2714E+04
+      
+ NO FLUXES REEMITTED FROM INCIDENT ATOMS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT MOLECULES 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * outer target (EDGE2D)                                                   *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   5.2702E+04
+ test     10533.28540741752     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   1.0533E+04
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         1.0351E+04
+ E-FLUX:  
+ D         1.6282E+05
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        6.6827E+02
+ E-FLUX:  
+ D2        1.0099E+03
+ INCIDENT: BULK IONS (RECYCLING SOURCE)
+ P-FLUX:  
+ D+        1.8672E+04
+ E-FLUX:  
+ D+        5.9166E+05
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ (EXCLUDING BULK IONS (RECYCLING SOURCE) 
+ TOT.PFLX     1.1687E+04
+ TOT.EFLX     1.6383E+05
+      
+ TOTAL INCIDENT RECYCLING SOURCE "ATOMIC" FLUXES
+ BULK IONS
+ SRC.PFLX     1.8672E+04
+ SRC.EFLX     5.9166E+05
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         8.7415E+03
+ E-FLUX:  
+ D         1.1532E+05
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        8.0472E+02
+ E-FLUX:  
+ D2        5.9588E+01
+      
+ TOT.PFLX     1.0351E+04
+ TOT.EFLX     1.1538E+05
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        6.6827E+02
+ E-FLUX:  
+ D2        4.9484E+01
+      
+ TOT.PFLX     1.3365E+03
+ TOT.EFLX     4.9484E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ FLUX RE-EMITTED FROM INCIDENT BULK IONS:
+ (RECYCLING SOURCE) 
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.2978E+04
+ E-FLUX:  
+ D         2.8704E+05
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.8469E+03
+ E-FLUX:  
+ D2        2.1081E+02
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ CONTRIB. FROM INCIDENT BULK IONS (REC. SOURCE)
+ TOT.PFLX     1.8672E+04
+ TOT.EFLX     2.8725E+05
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ (EXCLUDING CONTRIB. FROM INCIDENT BULK IONS)
+ TOT.PFLX     1.1687E+04
+ TOT.EFLX     1.1543E+05
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * inner target (EDGE2D)                                                   *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   7.4825E+04
+ test     35353.22889223177     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   3.5353E+04
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         3.5341E+04
+ E-FLUX:  
+ D         1.5987E+05
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        4.8955E+03
+ E-FLUX:  
+ D2        7.1610E+03
+ INCIDENT: BULK IONS (RECYCLING SOURCE)
+ P-FLUX:  
+ D+        1.5554E+04
+ E-FLUX:  
+ D+        2.6027E+05
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ (EXCLUDING BULK IONS (RECYCLING SOURCE) 
+ TOT.PFLX     4.5132E+04
+ TOT.EFLX     1.6703E+05
+      
+ TOTAL INCIDENT RECYCLING SOURCE "ATOMIC" FLUXES
+ BULK IONS
+ SRC.PFLX     1.5554E+04
+ SRC.EFLX     2.6027E+05
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         2.7555E+04
+ E-FLUX:  
+ D         1.0864E+05
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        3.8930E+03
+ E-FLUX:  
+ D2        2.8827E+02
+      
+ TOT.PFLX     3.5341E+04
+ TOT.EFLX     1.0893E+05
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        4.8955E+03
+ E-FLUX:  
+ D2        3.6250E+02
+      
+ TOT.PFLX     9.7909E+03
+ TOT.EFLX     3.6250E+02
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ FLUX RE-EMITTED FROM INCIDENT BULK IONS:
+ (RECYCLING SOURCE) 
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.1350E+04
+ E-FLUX:  
+ D         1.2925E+05
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.1019E+03
+ E-FLUX:  
+ D2        1.5565E+02
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ CONTRIB. FROM INCIDENT BULK IONS (REC. SOURCE)
+ TOT.PFLX     1.5554E+04
+ TOT.EFLX     1.2940E+05
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ (EXCLUDING CONTRIB. FROM INCIDENT BULK IONS)
+ TOT.PFLX     4.5132E+04
+ TOT.EFLX     1.0929E+05
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * radial SOL (EDGE2D)                                                     *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.4153E+06
+ test     0.000000000000000     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * radial PFR (EDGE2D) part 1 (OT)                                         *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.4014E+04
+ test     0.000000000000000     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * radial PFR (EDGE2D) part 2 (IT)                                         *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.0645E+04
+ test     0.000000000000000     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ IDENTICAL ZERO, NOT PRINTED                  
+      
+      
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * material surface - main chamber                                         *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.4074E+06
+ test     6556.382298239669     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   6.5564E+03
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         6.4818E+03
+ E-FLUX:  
+ D         3.9301E+05
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        3.3018E+02
+ E-FLUX:  
+ D2        1.7900E+03
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     7.1422E+03
+ TOT.EFLX     3.9480E+05
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         2.7496E+03
+ E-FLUX:  
+ D         8.0998E+04
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.8661E+03
+ E-FLUX:  
+ D2        1.3818E+02
+      
+ TOT.PFLX     6.4818E+03
+ TOT.EFLX     8.1136E+04
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        3.3018E+02
+ E-FLUX:  
+ D2        2.4449E+01
+      
+ TOT.PFLX     6.6035E+02
+ TOT.EFLX     2.4449E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     7.1422E+03
+ TOT.EFLX     8.1161E+04
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * material surface - main chamber (target mat.)                           *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.6633E+06
+ test     20359.22890426351     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   2.0359E+04
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         2.0172E+04
+ E-FLUX:  
+ D         1.9481E+05
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.3774E+05
+ E-FLUX:  
+ D2        1.2126E+04
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.9565E+05
+ TOT.EFLX     2.0694E+05
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.6131E+04
+ E-FLUX:  
+ D         1.2753E+05
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.0206E+03
+ E-FLUX:  
+ D2        1.4962E+02
+      
+ TOT.PFLX     2.0172E+04
+ TOT.EFLX     1.2767E+05
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.3774E+05
+ E-FLUX:  
+ D2        1.0199E+04
+      
+ TOT.PFLX     2.7548E+05
+ TOT.EFLX     1.0199E+04
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.9565E+05
+ TOT.EFLX     1.3787E+05
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * material surface - private                                              *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.8135E+06
+ test     5319.221374836445     
+      
+      
+      
+ ========================================================================
+ ========================================================================
+ TALLY:   
+ PARTICLE FLUX, INCIDENT, ATOMS                                          
+ SPECIES: D                       
+ UNITS:   AMP                     
+ ========================================================================
+ ========================================================================
+      
+ BLOCK TOTAL   5.3192E+03
+ ========================================================================
+      
+      
+      
+      
+      
+      
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         5.2413E+03
+ E-FLUX:  
+ D         3.9509E+04
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.3676E+05
+ E-FLUX:  
+ D2        1.0266E+04
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.7876E+05
+ TOT.EFLX     4.9775E+04
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         4.1691E+03
+ E-FLUX:  
+ D         2.7516E+04
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        5.3611E+02
+ E-FLUX:  
+ D2        3.9698E+01
+      
+ TOT.PFLX     5.2413E+03
+ TOT.EFLX     2.7556E+04
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.3676E+05
+ E-FLUX:  
+ D2        1.0127E+04
+      
+ TOT.PFLX     2.7351E+05
+ TOT.EFLX     1.0127E+04
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.7876E+05
+ TOT.EFLX     3.7682E+04
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      1                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   9.2991E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      2                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   9.3372E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      4                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.2781E+04
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      5                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   9.5420E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      7                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   9.6317E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)      9                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   1.3102E+04
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)     11                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   8.0553E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)     12                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   8.1360E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * puff (wall)     14                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   8.2163E+03
+      
+ NO FLUXES INCIDENT ON THIS SURFACE             
+      
+      
+      
+      
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     1                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   5.5294E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         1.4572E+01
+ E-FLUX:  
+ D         1.4598E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        4.3605E+02
+ E-FLUX:  
+ D2        3.2288E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     8.8667E+02
+ TOT.EFLX     1.7827E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.4572E+01
+ E-FLUX:  
+ D         1.4598E+02
+      
+ TOT.PFLX     1.4572E+01
+ TOT.EFLX     1.4598E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        4.0503E+02
+ E-FLUX:  
+ D2        2.9992E+01
+      
+ TOT.PFLX     8.1006E+02
+ TOT.EFLX     2.9992E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     8.2463E+02
+ TOT.EFLX     1.7597E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     2                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.0074E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         2.0399E+01
+ E-FLUX:  
+ D         2.1065E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        2.2648E+02
+ E-FLUX:  
+ D2        1.6770E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.7335E+02
+ TOT.EFLX     2.2742E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.8921E+01
+ E-FLUX:  
+ D         1.8023E+02
+      
+ TOT.PFLX     1.8921E+01
+ TOT.EFLX     1.8023E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.0531E+02
+ E-FLUX:  
+ D2        1.5203E+01
+      
+ TOT.PFLX     4.1063E+02
+ TOT.EFLX     1.5203E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.2955E+02
+ TOT.EFLX     1.9543E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     3                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.8181E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         2.5944E+01
+ E-FLUX:  
+ D         1.1152E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        3.6269E+02
+ E-FLUX:  
+ D2        2.6856E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     7.5132E+02
+ TOT.EFLX     1.3838E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         2.5016E+01
+ E-FLUX:  
+ D         1.0259E+02
+      
+ TOT.PFLX     2.5016E+01
+ TOT.EFLX     1.0259E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        3.3776E+02
+ E-FLUX:  
+ D2        2.5010E+01
+      
+ TOT.PFLX     6.7551E+02
+ TOT.EFLX     2.5010E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     7.0053E+02
+ TOT.EFLX     1.2760E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     4                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   4.9008E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         6.0097E+01
+ E-FLUX:  
+ D         4.7023E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        4.4031E+02
+ E-FLUX:  
+ D2        3.2604E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     9.4071E+02
+ TOT.EFLX     5.0284E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         5.0868E+01
+ E-FLUX:  
+ D         3.4110E+02
+      
+ TOT.PFLX     5.0868E+01
+ TOT.EFLX     3.4110E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        3.9870E+02
+ E-FLUX:  
+ D2        2.9523E+01
+      
+ TOT.PFLX     7.9740E+02
+ TOT.EFLX     2.9523E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     8.4826E+02
+ TOT.EFLX     3.7062E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     5                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.9065E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         3.8050E+01
+ E-FLUX:  
+ D         2.7395E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        2.7588E+02
+ E-FLUX:  
+ D2        2.0428E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     5.8980E+02
+ TOT.EFLX     2.9438E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         3.8050E+01
+ E-FLUX:  
+ D         2.7395E+02
+      
+ TOT.PFLX     3.8050E+01
+ TOT.EFLX     2.7395E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.5288E+02
+ E-FLUX:  
+ D2        1.8725E+01
+      
+ TOT.PFLX     5.0576E+02
+ TOT.EFLX     1.8725E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     5.4381E+02
+ TOT.EFLX     2.9268E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     6                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.0054E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         3.9481E+01
+ E-FLUX:  
+ D         2.8249E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        2.4993E+02
+ E-FLUX:  
+ D2        1.8507E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     5.3934E+02
+ TOT.EFLX     3.0100E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         3.9481E+01
+ E-FLUX:  
+ D         2.8249E+02
+      
+ TOT.PFLX     3.9481E+01
+ TOT.EFLX     2.8249E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.2744E+02
+ E-FLUX:  
+ D2        1.6841E+01
+      
+ TOT.PFLX     4.5488E+02
+ TOT.EFLX     1.6841E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.9436E+02
+ TOT.EFLX     2.9933E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     7                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.5867E+04
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         9.4143E+01
+ E-FLUX:  
+ D         5.3363E+02
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.6682E+03
+ E-FLUX:  
+ D2        1.2352E+02
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.4305E+03
+ TOT.EFLX     6.5715E+02
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         8.2195E+01
+ E-FLUX:  
+ D         4.5773E+02
+      
+ TOT.PFLX     8.2195E+01
+ TOT.EFLX     4.5773E+02
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.5242E+03
+ E-FLUX:  
+ D2        1.1287E+02
+      
+ TOT.PFLX     3.0485E+03
+ TOT.EFLX     1.1287E+02
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.1307E+03
+ TOT.EFLX     5.7060E+02
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     8                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.7416E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         7.2070E+00
+ E-FLUX:  
+ D         1.3321E+01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.9664E+02
+ E-FLUX:  
+ D2        1.4560E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.0048E+02
+ TOT.EFLX     2.7881E+01
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         7.2070E+00
+ E-FLUX:  
+ D         1.3321E+01
+      
+ TOT.PFLX     7.2070E+00
+ TOT.EFLX     1.3321E+01
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.7892E+02
+ E-FLUX:  
+ D2        1.3249E+01
+      
+ TOT.PFLX     3.5784E+02
+ TOT.EFLX     1.3249E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.6505E+02
+ TOT.EFLX     2.6569E+01
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface     9                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.8603E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         1.4831E+01
+ E-FLUX:  
+ D         5.3964E+01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        2.4130E+02
+ E-FLUX:  
+ D2        1.7867E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.9742E+02
+ TOT.EFLX     7.1831E+01
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         1.4831E+01
+ E-FLUX:  
+ D         5.3964E+01
+      
+ TOT.PFLX     1.4831E+01
+ TOT.EFLX     5.3964E+01
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.1325E+02
+ E-FLUX:  
+ D2        1.5791E+01
+      
+ TOT.PFLX     4.2649E+02
+ TOT.EFLX     1.5791E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     4.4133E+02
+ TOT.EFLX     6.9754E+01
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    10                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   6.6318E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         2.7179E+00
+ E-FLUX:  
+ D         1.4051E+01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        3.3654E+02
+ E-FLUX:  
+ D2        2.4920E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     6.7580E+02
+ TOT.EFLX     3.8971E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT ATOMS 
+      
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        2.9496E+02
+ E-FLUX:  
+ D2        2.1841E+01
+      
+ TOT.PFLX     5.8992E+02
+ TOT.EFLX     2.1841E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     5.8992E+02
+ TOT.EFLX     2.1841E+01
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    11                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.5811E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         4.4002E+00
+ E-FLUX:  
+ D         3.2583E-01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.5017E+02
+ E-FLUX:  
+ D2        1.1120E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.0475E+02
+ TOT.EFLX     1.1446E+01
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         4.4002E+00
+ E-FLUX:  
+ D         3.2583E-01
+      
+ TOT.PFLX     4.4002E+00
+ TOT.EFLX     3.2583E-01
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.3661E+02
+ E-FLUX:  
+ D2        1.0116E+01
+      
+ TOT.PFLX     2.7322E+02
+ TOT.EFLX     1.0116E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.7762E+02
+ TOT.EFLX     1.0442E+01
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    12                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.6780E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.5035E+02
+ E-FLUX:  
+ D2        1.1133E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.0069E+02
+ TOT.EFLX     1.1133E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT ATOMS 
+      
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.3477E+02
+ E-FLUX:  
+ D2        9.9792E+00
+      
+ TOT.PFLX     2.6953E+02
+ TOT.EFLX     9.9792E+00
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.6953E+02
+ TOT.EFLX     9.9792E+00
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    13                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.5978E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         3.5655E-02
+ E-FLUX:  
+ D         1.6268E-01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.2423E+02
+ E-FLUX:  
+ D2        9.1991E+00
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.4850E+02
+ TOT.EFLX     9.3618E+00
+      
+ NO FLUXES REEMITTED FROM INCIDENT ATOMS 
+      
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.1746E+02
+ E-FLUX:  
+ D2        8.6974E+00
+      
+ TOT.PFLX     2.3491E+02
+ TOT.EFLX     8.6974E+00
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.3491E+02
+ TOT.EFLX     8.6974E+00
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    14                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   2.7501E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         3.3908E-04
+ E-FLUX:  
+ D         3.6852E-03
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.4138E+02
+ E-FLUX:  
+ D2        1.0469E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.8276E+02
+ TOT.EFLX     1.0473E+01
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         3.3908E-04
+ E-FLUX:  
+ D         3.6852E-03
+      
+ TOT.PFLX     3.3908E-04
+ TOT.EFLX     3.6852E-03
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.2385E+02
+ E-FLUX:  
+ D2        9.1711E+00
+      
+ TOT.PFLX     2.4771E+02
+ TOT.EFLX     9.1711E+00
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     2.4771E+02
+ TOT.EFLX     9.1748E+00
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+      
+      
+
+
+
+******************************************************************************  
+*                                                                            *  
+*  * pump surface    15                                                      *  
+*                                                                            *  
+******************************************************************************  
+
+
+
+ SURFACE AREA (CM**2)   3.3780E+03
+      
+ FLUX INCIDENT ON SURFACE:
+ INCIDENT: ATOMS
+ P-FLUX:  
+ D         4.4002E+00
+ E-FLUX:  
+ D         3.2583E-01
+ INCIDENT: MOLECULES
+ P-FLUX:  
+ D2        1.6919E+02
+ E-FLUX:  
+ D2        1.2528E+01
+      
+ TOTAL INCIDENT "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.4278E+02
+ TOT.EFLX     1.2854E+01
+      
+ FLUX REEMITTED FROM INCIDENT ATOMS:
+ REEMITTED: ATOMS
+ P-FLUX:  
+ D         4.4002E+00
+ E-FLUX:  
+ D         3.2583E-01
+      
+ TOT.PFLX     4.4002E+00
+ TOT.EFLX     3.2583E-01
+      
+ FLUX REEMITTED FROM INCIDENT MOLECULES:
+ REEMITTED: MOLECULES
+ P-FLUX:  
+ D2        1.5550E+02
+ E-FLUX:  
+ D2        1.1515E+01
+      
+ TOT.PFLX     3.1101E+02
+ TOT.EFLX     1.1515E+01
+      
+ NO FLUXES REEMITTED FROM INCIDENT TEST IONS 
+      
+      
+ NO FLUXES REEMITTED FROM INCIDENT PHOTONS   
+      
+      
+ NO FLUXES RE-EMITTED FROM INCIDENT BULK IONS 
+      
+      
+ TOTAL REEMITTED "ATOMIC" FLUXES, AMPERE AND WATT
+ TOT.PFLX     3.1541E+02
+ TOT.EFLX     1.1841E+01
+      
+      
+ NO FLUXES SPUTTERED FROM THIS SURFACE         
+      
+      
+ NO ADDITIONAL SURFACE TALLIES AT THIS SURFACE 
+      
+      
+ NO ALGEBRAIC SURFACE TALLIES AT THIS SURFACE 
+      
+1         
+      
+      
+ TIME CYCLE COMPLETED, NEXT TIME CYCLE PREPARED 
+ NEXT TIME CYCLE RUNS FROM TIM1 TO TIM2:  
+ TIM1, TIM2           1.0000E+30     2.0000E+30
+ IPRNL           0
+ "ATOMIC" FLUX AT CENSUS (AMP):
+ FLUX         0.0000E+00
+ +-%          0.0000E+00

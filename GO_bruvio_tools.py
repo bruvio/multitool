@@ -45,7 +45,6 @@ import subprocess
 # from kg1_tools.kg1_tools_gui.utility import *
 # sys.path.append('../')
 from class_sim import sim
-from library import *
 from EDGE2DAnalyze import shot
 from utility import *
 

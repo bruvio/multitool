@@ -82,6 +82,7 @@ from matplotlib.collections import PatchCollection
 #from django.utils.datastructures import SortedDict
 from collections import OrderedDict
 import Struct as st
+import pdb;
 logger = logging.getLogger(__name__)
 pi=mpmath.pi
 
@@ -4567,7 +4568,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
       :param path: 
       :return: 
       """
-      self.data.eirene=Eirene()
+      self.data.eirene=Eirene(path)
       logger.log(5,self.data.eirene)
 
       
@@ -4742,10 +4743,14 @@ if __name__ == "__main__":
     EDGE2dfold='./e2d_data'
     workfold='work/Python/EDGE2D'
     #
-    # import sys
-    # del sys.modules['class_sim']
-    # from class_sim import sim
-
+    #import sys
+    #del sys.modules['class_sim']
+    #del sys.modules['class_eirene']
+    
+    from class_sim import sim
+    from class_eirene import Eirene
+    
+    
     # sim_lfe = sim('92121', 'aug1717', '1', workfold)
     # sim_hfe = sim('92123', 'aug1717', '2', workfold)
 
@@ -4845,4 +4850,4 @@ if __name__ == "__main__":
     # sim.bar_power_balance(sim_lfe_81472,'LFE')
     # sim.bar_power_balance(sim_hfe_81472,'HFE')
 
-    sim_hfe_Nrad0.read_eirene(workfold)
+    sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
