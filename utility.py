@@ -114,6 +114,12 @@ def read_elemente_file(filename):
     dummy = dummy[:,1:4]
     return dummy
 
+def read_transfer_file(filename,rows):
+    dummy = np.genfromtxt(filename, skip_header=rows)
+    dummy = dummy[:,1:]
+    return dummy
+
+
 def parse_csv_file_to_variable(filename):
     with open(filename, 'rt') as f:
       reader = csv.reader(f, delimiter=',')

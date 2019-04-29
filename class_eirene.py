@@ -4,6 +4,8 @@ logger = logging.getLogger(__name__)
 import pdb;
 import numpy as np
 import gzip
+import pandas as pd
+import xarray as xr
 from types import SimpleNamespace
 from utility import *
 class Eirene():
@@ -256,38 +258,53 @@ class Eirene():
                 self.nsts = int(dummy[2])
                 break
         row_to_skip=index+3
-        pdb.set_trace()
-        self.PLS.data = np.zeros((self.npls,self.NPLSdataname,self.geom.trimap.shape[0]))
                 # 5          27        6086
-        for i in range(0,self.npls):
-            dummy=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0]-1,delim_whitespace=True, header=None)
-            self.PLS.data[i, :, :] = dummy.T
-        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+        for i in range(0, self.npls):
+            dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            # dummy1[dummy1.columns[11]]
+            dummy1.fillna(0, inplace=True)
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0]+ self.nlimps+3
+            self.PLS.data.append(dummy1)
 
-        self.ATM.data = np.zeros((self.natm,self.NATMdataName,self.geom.trimap.shape[0]))
-                # 5          27        6086
+        self.PLS.data = pd.concat(self.PLS.data, axis=0)
+        self.PLS.data.reset_index(drop=True, inplace=True)
+
+
+        row_to_skip = row_to_skip +1
+        # row_to_skip = 30648
+        #row to skip should be 30647
         for i in range(0,self.natm):
-            dummy = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0]-1,delim_whitespace=True, header=None)
-            self.ATM.data[i, :, :] = dummy.T
-        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+            dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            # 36730
+            dummy1.fillna(0, inplace=True)
+            # a = dummy2[dummy2.columns[0:3]][-1:]
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps +2
+            self.ATM.data.append(dummy1)
+        #
+        self.ATM.data = pd.concat(self.ATM.data, axis=0)
+        self.ATM.data.reset_index(drop=True, inplace=True)
+        row_to_skip = row_to_skip + 1
 
-        self.MOL.data = np.zeros((self.nmol,self.NMOLdataname,self.geom.trimap.shape[0]))
-                # 5          27        6086
+
         for i in range(0,self.nmol):
-            dummy = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0]-1,delim_whitespace=True, header=None)
-            self.MOL.data[i, :, :] = dummy.T
-        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            dummy1.fillna(0, inplace=True)
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
+            self.MOL.data.append(dummy1)
+        self.MOL.data = pd.concat(self.MOL.data, axis=0)
+        self.MOL.data.reset_index(drop=True, inplace=True)
+        row_to_skip = row_to_skip + 1
 
-        self.ION.data = np.zeros((self.nion,self.NIONdataname,self.geom.trimap.shape[0]))
-                # 5          27        6086
         for i in range(0,self.nion):
-            dummy = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0]-1,delim_whitespace=True, header=None)
-            self.ION.data[i, :, :] = dummy.T
-        row_to_skip = row_to_skip + size(self.geom.trimap, axis=0) + 1
+            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            dummy1.fillna(0, inplace=True)
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
+            self.ION.data.append(dummy1)
 
-        self.MISC.data = np.zeros((self.NMISCdataname,self.geom.trimap.shape[0]))
-                # 5          27        6086
-        for i in range(0,self.npls):
-            dummy = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=12, nrows=self.geom.trimap.shape[0]-1,delim_whitespace=True, header=None)
-            self.MISC.data[i, :, :] = dummy.T
+        self.ION.data = pd.concat(self.ION.data, axis=0)
+        self.ION.data.reset_index(drop=True, inplace=True)
+        row_to_skip = row_to_skip + 1
+
+        self.MISC.data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        self.MISC.data.reset_index(drop=True, inplace=True)
                         
