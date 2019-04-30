@@ -270,11 +270,16 @@ Execute_makeppf(simu_list, outputfile)
 
 ###############################################
   def __init__(self,shotIDArg,dateIDArg,seqNumArg, folder,ownerArg=None, codeArg=None, macArg=None, fileArg=None ):
-    geom.__init__(self,shotIDArg,dateIDArg,seqNumArg,ownerArg=None, codeArg=None, macArg=None, fileArg=None )
+    if ownerArg is None:
+        ownerArg = os.getenv('USR')
+    else:
+        ownerArg = ownerArg
+    geom.__init__(self,shotIDArg,dateIDArg,seqNumArg,ownerArg, codeArg, macArg, fileArg )
     self.path_e2d = os.getcwd()+'/e2d_data/runs'
 
-    self.sim_folder='shotid_'+shotIDArg+'_'+dateIDArg+'_grid_'
-    catalogue=ep.cat(shotIDArg,dateIDArg,seqNumArg)
+    self.sim_folder='shotid_'+shotIDArg+'_'+dateIDArg+'_grid_' # deprecated
+
+    catalogue=ep.cat(shotIDArg,dateIDArg,seqNumArg,ownerArg)
     owner=catalogue.owner
     code=catalogue.code
     machine=catalogue.machine
@@ -283,7 +288,7 @@ Execute_makeppf(simu_list, outputfile)
     pulse=catalogue.shot
     # self.simfolder='/u/'+owner+
 # /u/bviola/cmg/catalog/edge2d/jet
-    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,sequence)
+    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,'seq#',sequence)
     self.workingdir=folder
     self.initfolder(folder)
     self.data = SimpleNamespace()  # dictionary object that contains all data

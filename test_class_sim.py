@@ -471,13 +471,13 @@ if __name__ == "__main__":
     
     
     sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
-    sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
-    
-    sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)
-    sim_lfe_Nrad1 = sim('92121', 'aug1717', '4', workfold)
-    
-    sim_lfe_81472 = sim('81472', 'may2316', '6', workfold)
-    sim_hfe_81472 = sim('81472', 'may2316', '1', workfold)
+    # sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
+    #
+    # sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)
+    # sim_lfe_Nrad1 = sim('92121', 'aug1717', '4', workfold)
+    #
+    # sim_lfe_81472 = sim('81472', 'may2316', '6', workfold)
+    # sim_hfe_81472 = sim('81472', 'may2316', '1', workfold)
     
     # simlist=[]
     # workfold = 'work/Python/EDGE2D'
@@ -527,18 +527,18 @@ if __name__ == "__main__":
     # print(ne5, te5)
     #
     # # contour = False
-    # contour = True
-    # if contour is True:
-    #     # sim.(simlist,3.5e6)
-    #     # plt.show(block=True)
-    #
-    #     for index1 in range(0, len(simlist)):
-    #         simu = simlist[index1][0]
-    #         label= simlist[index1][1]
-    #         var = ep.data(simu.fullpath, 'soun').data
-    #         var = -np.trim_zeros(var, 'b')
-    #         simu.contour(var, 'soun_' + label)
-    #         plt.show(block=True)
+    contour = True
+    if contour is True:
+        # sim.(simlist,3.5e6)
+        # plt.show(block=True)
+
+        for index1 in range(0, len(simlist)):
+            simu = simlist[index1][0]
+            label= simlist[index1][1]
+            var = ep.data(simu.fullpath, 'soun').data
+            var = -np.trim_zeros(var, 'b')
+            simu.contour(var, 'soun_' + label)
+            plt.show(block=True)
     # sim_hfe_Nrad0.contour()
     
     
@@ -564,9 +564,18 @@ if __name__ == "__main__":
     #
     # sim.bar_power_balance(sim_lfe_81472,'LFE')
     # sim.bar_power_balance(sim_hfe_81472,'HFE')
-    
-    sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
+
+    sim_alexc = sim('84727', 'nov1015', '1', workfold,'alexc')
+
+    # sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
+    # sim_hfe_Nrad0.data.eirene.plot_eirene()
+
+    sim_hfe_Nrad0.read_eirene(sim_hfe_Nrad0.fullpath[:-4])
     sim_hfe_Nrad0.data.eirene.plot_eirene()
+
+    sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
+    sim_alexc.data.eirene.plot_eirene()
+
     raise SystemExit
 
     # sim_hfe_Nrad0.data.eirene.plot_eirene()
