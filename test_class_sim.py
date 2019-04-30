@@ -6,6 +6,11 @@ Created on Wed Jul 26 21:08:45 2017
 @author: bruvio
 """
 # from importlib import reload
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
 import numpy as np
 import sys
 import math
@@ -16,10 +21,9 @@ from class_sim import sim
 from class_sim import Getdata
 from class_sim import initread
 from class_sim import find_indices
-import matplotlib.pyplot as plt
 import eproc as ep
 from ppf import *
-from matplotlib.patches import Polygon
+
 def e2d_variables(file):
     with open(file) as f:
         lines = f.readlines()
@@ -525,13 +529,13 @@ if __name__ == "__main__":
     # # contour = False
     # contour = True
     # if contour is True:
-    #     # sim.contour_rad_power(simlist,3.5e6)
+    #     # sim.(simlist,3.5e6)
     #     # plt.show(block=True)
     #
     #     for index1 in range(0, len(simlist)):
     #         simu = simlist[index1][0]
     #         label= simlist[index1][1]
-    #         var = ep.data(simu.fullpath, 'SQEZR_2').data
+    #         var = ep.data(simu.fullpath, 'soun').data
     #         var = -np.trim_zeros(var, 'b')
     #         simu.contour(var, 'soun_' + label)
     #         plt.show(block=True)
@@ -562,3 +566,74 @@ if __name__ == "__main__":
     # sim.bar_power_balance(sim_hfe_81472,'HFE')
     
     sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
+    sim_hfe_Nrad0.data.eirene.plot_eirene()
+    raise SystemExit
+
+    # sim_hfe_Nrad0.data.eirene.plot_eirene()
+
+    x = [sim_hfe_Nrad0.data.eirene.geom.xv[i] for i in
+         sim_hfe_Nrad0.data.eirene.geom.trimap]
+    y = [sim_hfe_Nrad0.data.eirene.geom.yv[i] for i in
+         sim_hfe_Nrad0.data.eirene.geom.trimap]
+
+    # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.data.eirene.MOL.data)
+
+
+
+
+
+    # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
+
+    var=sim_hfe_Nrad0.data.eirene.MOL.data[1]
+    label = 'MOL m^{-3}'
+    # if lowerbound is None:
+    lower = min(var)
+    # else:
+    #   lower=lowerbound
+    # if upperbound is None:
+    upper = max(var)
+    # else:
+    #   upper=upperbound
+    x1=[]
+    x2=[]
+    x3=[]
+    for i,value in enumerate(x):
+        x1.append(x[i][0])
+        x2.append(x[i][1])
+        x3.append(x[i][2])
+    y1=[]
+    y2=[]
+    y3=[]
+    for i,value in enumerate(y):
+        y1.append(y[i][0])
+        y2.append(y[i][1])
+        y3.append(y[i][2])
+
+    patches=[]
+    for i in list(range(0,len(x1))):
+      #print(i)
+      polygon = Polygon([[x1[i],y1[i]],[x2[i],y2[i]],[x3[i],y3[i]]],
+        edgecolor='none',alpha=0.1,linewidth=0, closed=True)
+      patches.append(polygon)
+
+
+    norm = mpl.colors.Normalize(vmin=lower,vmax=upper)
+    collection = PatchCollection(patches, match_original=True)
+    collection.set(array=var, cmap='jet',norm=norm)
+
+    fig,ax = plt.subplots()
+    ax.add_collection(collection)
+
+    ax.autoscale_view()
+
+
+    sfmt=ScalarFormatter(useMathText=True)
+    sfmt.set_powerlimits((0,0))
+    sm = plt.cm.ScalarMappable(cmap="jet", norm=plt.Normalize(vmin=lower, vmax=upper))
+    sm.set_array([])
+    plt.xlabel('R [m]')
+    plt.ylabel('Z [m]')
+
+    cbar=plt.colorbar(sm,format=sfmt)
+    cbar.set_label(label)
+    plt.show(block=True)

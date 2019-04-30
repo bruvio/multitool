@@ -107,11 +107,14 @@ def read_npco_file(filename):
     for i,row in enumerate(dummy):
         x.append(dummy[i][1]/100)
         y.append(dummy[i][2]/100)
+    x=np.asarray(x)
+    y=np.asarray(y)
     return x,y
 
 def read_elemente_file(filename):
-    dummy = np.genfromtxt(filename, skip_header=1)
+    dummy = np.genfromtxt(filename, skip_header=1,dtype=int)
     dummy = dummy[:,1:4]
+    dummy = np.subtract(dummy,1)
     return dummy
 
 def read_transfer_file(filename,rows):

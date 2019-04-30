@@ -1,6 +1,11 @@
 import logging
 logger = logging.getLogger(__name__)
-
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
 import pdb;
 import numpy as np
 import gzip
@@ -308,3 +313,76 @@ class Eirene():
         self.MISC.data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
         self.MISC.data.reset_index(drop=True, inplace=True)
                         
+
+
+    def plot_eirene(self):
+        # plt.figure()
+        # x = [self.geom.xv[i] for i in self.geom.trimap]
+        # y = [self.geom.yv[i] for i in self.geom.trimap]
+        #
+        # plt.tricontourf(x,y,self.MOL.data)
+        # plt.show()
+
+        x = [self.geom.xv[i] for i in
+             self.geom.trimap]
+        y = [self.geom.yv[i] for i in
+             self.geom.trimap]
+
+        # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.data.eirene.MOL.data)
+
+        # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
+
+        var = self.MOL.data[1]
+        label = 'MOL m^{-3}'
+        label = self.MOL.unitName[0]
+        # if lowerbound is None:
+        lower = min(var)
+        # else:
+        #   lower=lowerbound
+        # if upperbound is None:
+        upper = max(var)
+        # else:
+        #   upper=upperbound
+        x1 = []
+        x2 = []
+        x3 = []
+        for i, value in enumerate(x):
+            x1.append(x[i][0])
+            x2.append(x[i][1])
+            x3.append(x[i][2])
+        y1 = []
+        y2 = []
+        y3 = []
+        for i, value in enumerate(y):
+            y1.append(y[i][0])
+            y2.append(y[i][1])
+            y3.append(y[i][2])
+
+        patches = []
+        for i in list(range(0, len(x1))):
+            # print(i)
+            polygon = Polygon([[x1[i], y1[i]], [x2[i], y2[i]], [x3[i], y3[i]]],
+                              edgecolor='none', alpha=0.1, linewidth=0,
+                              closed=True)
+            patches.append(polygon)
+
+        norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
+        collection = PatchCollection(patches, match_original=True)
+        collection.set(array=var, cmap='jet', norm=norm)
+
+        fig, ax = plt.subplots()
+        ax.add_collection(collection)
+
+        ax.autoscale_view()
+
+        sfmt = ScalarFormatter(useMathText=True)
+        sfmt.set_powerlimits((0, 0))
+        sm = plt.cm.ScalarMappable(cmap="jet",
+                                   norm=plt.Normalize(vmin=lower, vmax=upper))
+        sm.set_array([])
+        plt.xlabel('R [m]')
+        plt.ylabel('Z [m]')
+
+        cbar = plt.colorbar(sm, format=sfmt)
+        cbar.set_label(label)
+        plt.show(block=True)

@@ -4569,9 +4569,14 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
       :return: 
       """
       self.data.eirene=Eirene(path)
-      logger.log(5,self.data.eirene)
+      logger.log(5,dir(self.data.eirene))
 
-      
+
+
+
+
+
+
 
     
 
