@@ -315,7 +315,22 @@ class Eirene():
                         
 
 
-    def plot_eirene(self):
+    def plot_eirene(self,species=None):
+
+        if species is None:
+            var = self.MOL.data[1]
+            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+        elif species is "MOL":
+            var = self.MOL.data[1]
+            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+        elif species is "ATM":
+            var = self.ATM.data[1]
+            label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
+        else:
+            logger.error('choose between MOL/ATM')
+            return
+
+
         # plt.figure()
         # x = [self.geom.xv[i] for i in self.geom.trimap]
         # y = [self.geom.yv[i] for i in self.geom.trimap]
@@ -332,9 +347,7 @@ class Eirene():
 
         # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
 
-        var = self.MOL.data[1]
-        label = 'MOL m^{-3}'
-        label = self.MOL.unitName[0]
+
         # if lowerbound is None:
         lower = min(var)
         # else:
@@ -385,4 +398,4 @@ class Eirene():
 
         cbar = plt.colorbar(sm, format=sfmt)
         cbar.set_label(label)
-        plt.show(block=True)
+        # plt.show(block=True)

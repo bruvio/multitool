@@ -478,74 +478,69 @@ if __name__ == "__main__":
     #
     # sim_lfe_81472 = sim('81472', 'may2316', '6', workfold)
     # sim_hfe_81472 = sim('81472', 'may2316', '1', workfold)
-    
-    # simlist=[]
-    # workfold = 'work/Python/EDGE2D'
-    # simu = sim('84598X', 'nov0518', '1',workfold);
-    # simlist.append([sim_lfe_Nrad0,'test'])
-    # for index1 in range(0, len(simlist)):
-    #     simu = simlist[index1][0]
-    #     label = simlist[index1][1]
-    #     simu.contour('DENEL', 'denel_' + label)
-    # raise SystemExit
-    simlist = []
-    simlist.append([sim_hfe_Nrad0, 'HFE_3MW'])
+    #
+    # # simlist=[]
+    # # workfold = 'work/Python/EDGE2D'
+    # # simu = sim('84598X', 'nov0518', '1',workfold);
+    # # simlist.append([sim_lfe_Nrad0,'test'])
+    # # for index1 in range(0, len(simlist)):
+    # #     simu = simlist[index1][0]
+    # #     label = simlist[index1][1]
+    # #     simu.contour('DENEL', 'denel_' + label)
+    # # raise SystemExit
+    # simlist = []
+    # simlist.append([sim_hfe_Nrad0, 'HFE_3MW'])
     # simlist.append([sim_hfe_Nrad1, 'HFE_5MW'])
     #
     # simlist.append([sim_lfe_Nrad0, 'LFE_2MW'])
     # simlist.append([sim_lfe_Nrad1, 'LFE_3MW'])
-    
+    #
     # omp_index = sim_lfe_Nrad0.find_omp_index()
     #
     # # first open cell on the OMP row
-    # first_open_omp_cell_row = lfe.find_omp_index_row()
+    # first_open_omp_cell_row = sim_lfe_Nrad0.find_omp_index_row()
     # # calculate connection length
     # l_lfe = sim_lfe_Nrad0.calc_connection_length(omp_index)
     # print(l_lfe)
-    # tpm_lfe_unseeded = sim_lfe_Nrad0.TPMscaling_Petrie(l_lfe)
-    
+    # # tpm_lfe_unseeded = sim_lfe_Nrad0.TPMscaling_Petrie(l_lfe)
+    #
     # omp_index1 = sim_hfe_Nrad0.find_omp_index()
     #
     # # first open cell on the OMP row
-    # first_open_omp_cell_row = hfe.find_omp_index_row()
+    # first_open_omp_cell_row = sim_hfe_Nrad0.find_omp_index_row()
     # # calculate connection length
     # l_hfe = sim_hfe_Nrad0.calc_connection_length(omp_index1)
     # print(l_hfe)
-    # tpm_hfe_unseeded = sim_hfe_Nrad0.TPMscaling_Petrie(l_hfe)
-    # print(tpm_lfe_unseeded['ntar'], tpm_hfe_unseeded['ntar'])
-    # print(tpm_lfe_unseeded['ttar'], tpm_hfe_unseeded['ttar'])
-    # raise SystemExit
-    
+    # ## tpm_hfe_unseeded = sim_hfe_Nrad0.TPMscaling_Petrie(l_hfe)
+    # ## print(tpm_lfe_unseeded['ntar'], tpm_hfe_unseeded['ntar'])
+    # ## print(tpm_lfe_unseeded['ttar'], tpm_hfe_unseeded['ttar'])
+    # ## raise SystemExit
+    #
     # ne1, te1 = sim_lfe_Nrad0.nete_omp()
-    
+    # #
     # ne2, te2 = sim_hfe_Nrad0.nete_omp()
-    
+    #
     # print(ne1, te1)
     # print(ne2, te2)
-    # print(ne3, te3)
-    # print(ne4, te4)
-    # print(ne5, te5)
     #
-    # # contour = False
-    contour = True
-    if contour is True:
-        # sim.(simlist,3.5e6)
-        # plt.show(block=True)
-
-        for index1 in range(0, len(simlist)):
-            simu = simlist[index1][0]
-            label= simlist[index1][1]
-            var = ep.data(simu.fullpath, 'soun').data
-            var = -np.trim_zeros(var, 'b')
-            simu.contour(var, 'soun_' + label)
-            plt.show(block=True)
-    # sim_hfe_Nrad0.contour()
-    
-    
+    # #
+    # contour = False
+    # # contour = True
+    # if contour is True:
+    #     for index1 in range(0, len(simlist)):
+    #         simu = simlist[index1][0]
+    #         label= simlist[index1][1]
+    #         var = ep.data(simu.fullpath, 'soun').data
+    #         var = -np.trim_zeros(var, 'b')
+    #         simu.contour(var, 'soun_' + label)
+    #         plt.show(block=True)
+    #
+    #
+    #
     # print_lfe= sim_lfe_Nrad0.read_print_file_edge2d()
     # print_hfe= sim_hfe_Nrad0.read_print_file_edge2d()
-    
-    
+    #
+    #
     # print(print_lfe['ionflux_sol_outdiv'])
     # print(print_lfe['ionflux_sol_indiv'])
     #
@@ -562,87 +557,26 @@ if __name__ == "__main__":
     # lfe_pb = sim_lfe_81472.read_print_file_edge2d()
     # hfe_pb = sim_hfe_81472.read_print_file_edge2d()
     #
-    # sim.bar_power_balance(sim_lfe_81472,'LFE')
-    # sim.bar_power_balance(sim_hfe_81472,'HFE')
+    # sim.bar_power_balance(lfe_pb,'LFE')
+    # sim.bar_power_balance(hfe_pb,'HFE')
 
     sim_alexc = sim('84727', 'nov1015', '1', workfold,'alexc')
+    sim_david = sim('81472', 'jan2215', '1', workfold,'dmoulton')
+
 
     # sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
     # sim_hfe_Nrad0.data.eirene.plot_eirene()
 
-    sim_hfe_Nrad0.read_eirene(sim_hfe_Nrad0.fullpath[:-4])
-    sim_hfe_Nrad0.data.eirene.plot_eirene()
-
-    sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
-    sim_alexc.data.eirene.plot_eirene()
-
-    raise SystemExit
-
+    # sim_hfe_Nrad0.read_eirene(sim_hfe_Nrad0.fullpath[:-4])
     # sim_hfe_Nrad0.data.eirene.plot_eirene()
+    #
+    # sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
+    # sim_alexc.data.eirene.plot_eirene()
 
-    x = [sim_hfe_Nrad0.data.eirene.geom.xv[i] for i in
-         sim_hfe_Nrad0.data.eirene.geom.trimap]
-    y = [sim_hfe_Nrad0.data.eirene.geom.yv[i] for i in
-         sim_hfe_Nrad0.data.eirene.geom.trimap]
-
-    # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.data.eirene.MOL.data)
-
-
-
-
-
-    # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
-
-    var=sim_hfe_Nrad0.data.eirene.MOL.data[1]
-    label = 'MOL m^{-3}'
-    # if lowerbound is None:
-    lower = min(var)
-    # else:
-    #   lower=lowerbound
-    # if upperbound is None:
-    upper = max(var)
-    # else:
-    #   upper=upperbound
-    x1=[]
-    x2=[]
-    x3=[]
-    for i,value in enumerate(x):
-        x1.append(x[i][0])
-        x2.append(x[i][1])
-        x3.append(x[i][2])
-    y1=[]
-    y2=[]
-    y3=[]
-    for i,value in enumerate(y):
-        y1.append(y[i][0])
-        y2.append(y[i][1])
-        y3.append(y[i][2])
-
-    patches=[]
-    for i in list(range(0,len(x1))):
-      #print(i)
-      polygon = Polygon([[x1[i],y1[i]],[x2[i],y2[i]],[x3[i],y3[i]]],
-        edgecolor='none',alpha=0.1,linewidth=0, closed=True)
-      patches.append(polygon)
-
-
-    norm = mpl.colors.Normalize(vmin=lower,vmax=upper)
-    collection = PatchCollection(patches, match_original=True)
-    collection.set(array=var, cmap='jet',norm=norm)
-
-    fig,ax = plt.subplots()
-    ax.add_collection(collection)
-
-    ax.autoscale_view()
-
-
-    sfmt=ScalarFormatter(useMathText=True)
-    sfmt.set_powerlimits((0,0))
-    sm = plt.cm.ScalarMappable(cmap="jet", norm=plt.Normalize(vmin=lower, vmax=upper))
-    sm.set_array([])
-    plt.xlabel('R [m]')
-    plt.ylabel('Z [m]')
-
-    cbar=plt.colorbar(sm,format=sfmt)
-    cbar.set_label(label)
+    sim_david.read_eirene(sim_david.fullpath[:-4])
+    sim_david.data.eirene.plot_eirene('MOL')
+    sim_david.data.eirene.plot_eirene('ATM')
     plt.show(block=True)
+
+
+
