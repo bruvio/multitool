@@ -111,6 +111,9 @@ def read_npco_file(filename):
     y=np.asarray(y)
     return x,y
 
+
+
+
 def read_elemente_file(filename):
     dummy = np.genfromtxt(filename, skip_header=1,dtype=int)
     dummy = dummy[:,1:4]

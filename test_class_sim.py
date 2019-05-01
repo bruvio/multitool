@@ -562,6 +562,7 @@ if __name__ == "__main__":
 
     sim_alexc = sim('84727', 'nov1015', '1', workfold,'alexc')
     sim_david = sim('81472', 'jan2215', '1', workfold,'dmoulton')
+    sim_bruvio = sim('84599X', 'nov2818', '1', workfold)
 
 
     # sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
@@ -572,11 +573,21 @@ if __name__ == "__main__":
     #
     # sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
     # sim_alexc.data.eirene.plot_eirene()
+    #
+    # sim_david.read_eirene(sim_david.fullpath[:-4])
+    # sim_david.data.eirene.plot_eirene('MOL')
+    # sim_david.data.eirene.plot_eirene('ATM')
 
-    sim_david.read_eirene(sim_david.fullpath[:-4])
-    sim_david.data.eirene.plot_eirene('MOL')
-    sim_david.data.eirene.plot_eirene('ATM')
+    sim_bruvio.read_eirene(sim_david.fullpath[:-4])
+    sim_bruvio.data.eirene.plot_eirene('MOL')
     plt.show(block=True)
+
+
+
+    sim_bruvio.data.eirene.plot_subdivertor(sim_bruvio.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
+
+
+
 
 
 

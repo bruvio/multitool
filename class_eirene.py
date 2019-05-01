@@ -13,6 +13,11 @@ import pandas as pd
 import xarray as xr
 from types import SimpleNamespace
 from utility import *
+from class_geom import geom
+# from class_sim import sim
+
+import eproc as ep
+
 class Eirene():
     
     def __init__(self,folder):
@@ -159,6 +164,8 @@ class Eirene():
         self.MISC.unitName.append(' ')
         self.MISC.unitName.append(' ')
         self.MISC.unitName.append('tesla')
+
+        super(Eirene, self).__init__()
 	
         self._read_eirene()
 
@@ -399,3 +406,140 @@ class Eirene():
         cbar = plt.colorbar(sm, format=sfmt)
         cbar.set_label(label)
         # plt.show(block=True)
+
+    def plot_subdivertor(self,path,subdivertor_file):
+
+        rvert = ep.data(path, 'RVERTP').data
+        rvert = np.trim_zeros(rvert, 'b')
+        zvert = ep.data(path, 'ZVERTP').data
+        zvert = -np.trim_zeros(zvert, 'b')
+
+        rvert_size = len(rvert) + 5
+        dummy = list(range(1, int(rvert_size / 5)))
+        dummy1 = list(map(lambda x: 5 * x, dummy))
+        dummy2 = list(map(lambda x: x - 1, dummy1))
+        rvert_cent = rvert[dummy2[:]]
+        zvert_cent = zvert[dummy2[:]]
+
+        leng = len(rvert)
+        dummy = list(range(0, int(leng / 5)))
+
+        dummy1 = list(map(lambda x: 5 * x + 1, dummy))
+        dummy2 = list(map(lambda x: 5 * x + 2, dummy))
+        dummy3 = list(map(lambda x: 5 * x + 3, dummy))
+        dummy4 = list(map(lambda x: 5 * x + 4, dummy))
+
+        dummy1 = list(map(lambda x: x - 1, dummy1))
+        dummy2 = list(map(lambda x: x - 1, dummy2))
+        dummy3 = list(map(lambda x: x - 1, dummy3))
+        dummy4 = list(map(lambda x: x - 1, dummy4))
+
+        A = rvert[dummy1]
+        B = rvert[dummy2]
+        C = rvert[dummy3]
+        D = rvert[dummy4]
+
+        A1 = zvert[dummy1]
+        B1 = zvert[dummy2]
+        C1 = zvert[dummy3]
+        D1 = zvert[dummy4]
+
+        patches = []
+        for i in list(range(0, len(A))):
+            # print(i)
+            polygon = Polygon(
+                [[A[i], A1[i]], [B[i], B1[i]], [C[i], C1[i]], [D[i], D1[i]]],
+                edgecolor='black', alpha=0.5, linewidth=0.5, closed=True)
+            patches.append(polygon)
+            #
+            # polygon = Polygon(
+            #     [[rv[0,i], zv[0,i]], [rv[0,i], zv[1,i]], [rv[2,i], zv[2,i]], [rv[3,i], zv[3,i]]],
+            #     edgecolor='black', alpha=0.5, linewidth=0.5, closed=True)
+            # patches.append(polygon)
+
+        collection = PatchCollection(patches, match_original=True)
+
+        fig, ax = plt.subplots()
+        ax.add_collection(collection)
+        ax.autoscale_view()
+
+        # sm.set_array([])
+        plt.xlabel('R [m]')
+        plt.ylabel('Z [m]')
+
+        rpoint = []
+        zpoint = []
+        color = ['red', 'white', 'green', 'blue']
+        rvertex = []
+        zvertex = []
+        with open(subdivertor_file) as f:
+            lines = f.readlines()
+            for index, line in enumerate(lines):
+                if '# VACUUM VESSEL.' in str(line):
+
+                    index = index + 2
+                    dummy = lines[index].split(',')
+                    no_vertices = int(dummy[0])
+                    surf_type = int(dummy[1])
+                    nread = 0
+                    index = index + 3
+
+                    while nread < no_vertices:
+                        if lines[index].startswith('#'):
+                            index = index + 1
+                        else:
+                            dummy = lines[index].split(',')
+                            nread = nread + 1
+                            # rvertex.append([float(dummy[0]),float(dummy[1])])
+                            rvertex.append(float(dummy[0]))
+                            zvertex.append(float(dummy[1]))
+                            index = index + 1
+
+            plt.plot(rvertex, zvertex, 'x-', color=color[surf_type - 1],
+                     linewidth=0.5)
+
+            for index, line in enumerate(lines):
+                if '# (TOT. NO OF REMAINING STRUCTURES), (MAX. NO. OF VERTICES IN ANY ONE OF THEM)' in str(
+                        line):
+                    index = index + 1
+                    dummy = lines[index].split(',')
+                    no_holes = int(dummy[0])
+                    index = index + 1
+
+                    nholesread = 0
+                    while nholesread < no_holes:
+                        rpoint = []
+                        zpoint = []
+                        if lines[index].startswith('#'):
+                            index = index + 1
+                        else:
+                            dummy = lines[index].split(',')
+
+                            nread = 0
+                            npts = int(dummy[0])
+                            stype = int(dummy[1])
+                            index = index + 1
+                            while nread < npts + 1:
+                                if lines[index].startswith('#'):
+                                    index = index + 1
+                                else:
+                                    nread = nread + 1
+                                    dummy = lines[index].split(',')
+                                    rpoint.append(float(dummy[0]))
+                                    zpoint.append(float(dummy[1]))
+                                    index = index + 1
+                            # nread = nread +1
+                            rinternal = rpoint[0]
+                            zinternal = zpoint[0]
+                            plt.plot(rinternal, zinternal, '*',
+                                     color=color[stype - 1])
+                            plt.plot(rpoint[1:], zpoint[1:], '.-',
+                                     color=color[stype - 1], linewidth=0.5)
+                            nholesread = nholesread + 1
+                            index = index + 1
+                            # print(stype-1,color[stype-1])
+                            # plt.show()
+                            # plt.axis('equal')
+
+            plt.show()
+            plt.axis('equal')
