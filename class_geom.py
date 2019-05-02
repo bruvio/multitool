@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+# ----------------------------
+__author__ = "Bruno Viola"
+__Name__ = "class geom"
+__version__ = "0.1"
+__release__ = "0"
+__maintainer__ = "Bruno Viola"
+__email__ = "bruno.viola@ukaea.uk"
+__status__ = "Testing"
+# __status__ = "Production"
+# __credits__ = [""]
 """
 Created on July 2017
 

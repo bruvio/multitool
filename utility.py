@@ -119,24 +119,27 @@ def read_npco_file(filename):
 
 
 def read_pump_file(filename):
-    lmap = lambda func, *iterable: list(map(func, *iterable))
-    arrays = [np.array(lmap(float, line.split())) for line in
-              open(filename)]
-    # dummy = np.loadtxt(filename, skiprows=1)
-    r=[]
-    z=[]
+    try:
+        lmap = lambda func, *iterable: list(map(func, *iterable))
+        arrays = [np.array(lmap(float, line.split())) for line in
+                  open(filename)]
+        # dummy = np.loadtxt(filename, skiprows=1)
+        r=[]
+        z=[]
 
-    for i in range(0,len(arrays)):
-        if len(arrays[i])<3:
-            continue
-        else:
+        for i in range(0,len(arrays)):
+            if len(arrays[i])<3:
+                continue
+            else:
 
-           r.append(arrays[i][0]/100)
-           z.append(arrays[i][1]/100)
-    r=np.asarray(r)
-    z=np.asarray(z)
-    pump = [r,z]
-    return pump
+               r.append(arrays[i][0]/100)
+               z.append(arrays[i][1]/100)
+        r=np.asarray(r)
+        z=np.asarray(z)
+        pump = [r,z]
+        return pump
+    except:
+        logging.error('this simulation has not a standard pump file.')
 
 def read_puff_file(filename,alternativefile=None):
     dummy =[]

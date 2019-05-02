@@ -16,19 +16,36 @@ from utility import *
 from class_geom import geom
 # from class_sim import sim
 
+# ----------------------------
+__author__ = "Bruno Viola"
+__Name__ = "class EIRENE"
+__version__ = "0.1"
+__release__ = "0"
+__maintainer__ = "Bruno Viola"
+__email__ = "bruno.viola@ukaea.uk"
+__status__ = "Testing"
+# __status__ = "Production"
+# __credits__ = [""]
 import eproc as ep
 
 class Eirene():
+    """
+    class to store information from EIRENE
+    """
     
     def __init__(self,folder):
+        #default setting for EIRENE outputs (may change in the future)
+
+        #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
-        self.NPLSdataname = 27
-        self.NMOLdataname = 11
-        self.NATMdataName = 15
-        self.NIONdataname = 7
-        self.NMISCdataname = 11
 
+        # self.NPLSdataname = 27
+        # self.NMOLdataname = 11
+        # self.NATMdataName = 15
+        # self.NIONdataname = 7
+        # self.NMISCdataname = 11
 
+        #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
         self.MOL = SimpleNamespace()
         self.ION = SimpleNamespace()
@@ -70,7 +87,9 @@ class Eirene():
         self.MISC.unitName= []
         self.MISC.names = {}
         self.MISC.data = []
-   
+
+
+        #initialising names - check with Gerard/Derek
         self.ATM.dataName.append('pdena - atom density')
         self.ATM.dataName.append('vxdena - atom momentum density (x)')
         self.ATM.dataName.append('vydena - atom momentum density (y)')
@@ -171,20 +190,26 @@ class Eirene():
         self.MISC.unitName.append('tesla')
 
         super(Eirene, self).__init__()
-	
+
         self._read_eirene()
 
 
     def _read_eirene(self):
-
+        """
+        function that reads EIRENE files (automatically when initialising objects)
+        :return:
+        """
+        #read triangles coordinates
         self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
-
+        #reads triangles map and vertices
         self.geom.trimap,self.geom.verts = read_elemente_file(self.runfolder+'eirene.elemente')
 
+        #reads pump (only for standard EIRENE files)
         self.geom.pump = read_pump_file(self.runfolder + 'pump')
-
+        #read puff location
         self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
+        #start reading informations
         with open(self.runfolder + 'eirene.input') as f:
             lines = f.readlines()
             text_atoms_spec = '** 4a NEUTRAL ATOMS SPECIES CARDS:'
@@ -252,7 +277,11 @@ class Eirene():
                 if info1 & info2 & info3 & info4 is True:
                     break
             f.close()
-                
+
+
+
+        # read transfer file and store data as pandas dataframe (first column is always a pandas index!)
+
         exists = os.path.isfile(self.runfolder + 'eirene.transfer.gz')
 
         if exists:
@@ -278,11 +307,11 @@ class Eirene():
         for i in range(0, self.npls):
             dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # dummy1[dummy1.columns[11]]
-            dummy1.fillna(0, inplace=True)
+            dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0]+ self.nlimps+3
             self.PLS.data.append(dummy1)
 
-        self.PLS.data = pd.concat(self.PLS.data, axis=0)
+        self.PLS.data = pd.concat(self.PLS.data, axis=0)#concatenates as row
         self.PLS.data.reset_index(drop=True, inplace=True)
 
 
@@ -292,32 +321,32 @@ class Eirene():
         for i in range(0,self.natm):
             dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # 36730
-            dummy1.fillna(0, inplace=True)
+            dummy1.fillna(0, inplace=True)#converts nan into 0
             # a = dummy2[dummy2.columns[0:3]][-1:]
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps +2
             self.ATM.data.append(dummy1)
         #
-        self.ATM.data = pd.concat(self.ATM.data, axis=0)
+        self.ATM.data = pd.concat(self.ATM.data, axis=0)#concatenates as row
         self.ATM.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
 
         for i in range(0,self.nmol):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-            dummy1.fillna(0, inplace=True)
+            dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
             self.MOL.data.append(dummy1)
-        self.MOL.data = pd.concat(self.MOL.data, axis=0)
+        self.MOL.data = pd.concat(self.MOL.data, axis=0)#concatenates as row
         self.MOL.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
         for i in range(0,self.nion):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-            dummy1.fillna(0, inplace=True)
+            dummy1.fillna(0, inplace=True) #converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
             self.ION.data.append(dummy1)
 
-        self.ION.data = pd.concat(self.ION.data, axis=0)
+        self.ION.data = pd.concat(self.ION.data, axis=0)#concatenates as row
         self.ION.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
@@ -326,7 +355,13 @@ class Eirene():
                         
 
 
-    def plot_eirene(self,species=None):
+    def plot_eirene(self,species=None, lowerbound=None,upperbound=None,label=None):
+        """
+        function that allow contour plots of EIRENE data
+        :param species:
+        :param label:
+        :return:
+        """
 
         if species is None:
             var = self.MOL.data[1]
@@ -337,6 +372,9 @@ class Eirene():
         elif species is "ATM":
             var = self.ATM.data[1]
             label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
+        elif isinstance(species,np.ndarray):
+            var = species
+            label = label
         else:
             logger.error('choose between MOL/ATM')
             return
@@ -349,6 +387,8 @@ class Eirene():
         # plt.tricontourf(x,y,self.MOL.data)
         # plt.show()
 
+
+        #getting coordinates of the triangles and creating arrays that describe polygons
         x = [self.geom.xv[i] for i in
              self.geom.trimap]
         y = [self.geom.yv[i] for i in
@@ -359,14 +399,14 @@ class Eirene():
         # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
 
 
-        # if lowerbound is None:
-        lower = min(var)
-        # else:
-        #   lower=lowerbound
-        # if upperbound is None:
-        upper = max(var)
-        # else:
-        #   upper=upperbound
+        if lowerbound is None:
+            lower = min(var)
+        else:
+          lower=lowerbound
+        if upperbound is None:
+            upper = max(var)
+        else:
+          upper=upperbound
         x1 = []
         x2 = []
         x3 = []
@@ -382,6 +422,8 @@ class Eirene():
             y2.append(y[i][1])
             y3.append(y[i][2])
 
+
+        #now starting to create the polygon using triangles coordinates
         patches = []
         for i in list(range(0, len(x1))):
             # print(i)
@@ -390,15 +432,18 @@ class Eirene():
                               closed=True)
             patches.append(polygon)
 
+        #normalisation of the variable
         norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
         collection = PatchCollection(patches, match_original=True)
         collection.set(array=var, cmap='jet', norm=norm)
 
+        #plotting patches
         fig, ax = plt.subplots()
         ax.add_collection(collection)
 
         ax.autoscale_view()
 
+        #setting up colorbar and normalising it accordint to variable to plot
         sfmt = ScalarFormatter(useMathText=True)
         sfmt.set_powerlimits((0, 0))
         sm = plt.cm.ScalarMappable(cmap="jet",
@@ -412,11 +457,22 @@ class Eirene():
         # plt.show(block=True)
 
     def plot_subdivertor(self,path,subdivertor_file):
+        """
+        function that reads and plots subdivertor structure
+        :param path: location of tranfile
+        :param subdivertor_file: location of subdivertor structure file
+        :return:
+        """
 
+        #reading edge2d mesh
         rvert = ep.data(path, 'RVERTP').data
         rvert = np.trim_zeros(rvert, 'b')
         zvert = ep.data(path, 'ZVERTP').data
         zvert = -np.trim_zeros(zvert, 'b')
+
+
+        #from line 465 to line 493
+        #finding vertices of polygons
 
         rvert_size = len(rvert) + 5
         dummy = list(range(1, int(rvert_size / 5)))
@@ -448,6 +504,9 @@ class Eirene():
         C1 = zvert[dummy3]
         D1 = zvert[dummy4]
 
+
+        #creating polygon to plot variable
+        #variable is defined inside the polygon
         patches = []
         for i in list(range(0, len(A))):
             # print(i)
@@ -455,11 +514,6 @@ class Eirene():
                 [[A[i], A1[i]], [B[i], B1[i]], [C[i], C1[i]], [D[i], D1[i]]],
                 edgecolor='black', alpha=0.5, linewidth=0.5, closed=True)
             patches.append(polygon)
-            #
-            # polygon = Polygon(
-            #     [[rv[0,i], zv[0,i]], [rv[0,i], zv[1,i]], [rv[2,i], zv[2,i]], [rv[3,i], zv[3,i]]],
-            #     edgecolor='black', alpha=0.5, linewidth=0.5, closed=True)
-            # patches.append(polygon)
 
         collection = PatchCollection(patches, match_original=True)
 
@@ -467,7 +521,7 @@ class Eirene():
         ax.add_collection(collection)
         ax.autoscale_view()
 
-        # sm.set_array([])
+
         plt.xlabel('R [m]')
         plt.ylabel('Z [m]')
 
@@ -476,6 +530,9 @@ class Eirene():
         color = ['red', 'white', 'green', 'blue']
         rvertex = []
         zvertex = []
+
+
+        #reading subdivertor file and extracting coordinates
         with open(subdivertor_file) as f:
             lines = f.readlines()
             for index, line in enumerate(lines):
@@ -494,7 +551,7 @@ class Eirene():
                         else:
                             dummy = lines[index].split(',')
                             nread = nread + 1
-                            # rvertex.append([float(dummy[0]),float(dummy[1])])
+
                             rvertex.append(float(dummy[0]))
                             zvertex.append(float(dummy[1]))
                             index = index + 1
@@ -502,6 +559,7 @@ class Eirene():
             plt.plot(rvertex, zvertex, 'x-', color=color[surf_type - 1],
                      linewidth=0.5)
 
+            #now it is time to read following regions
             for index, line in enumerate(lines):
                 if '# (TOT. NO OF REMAINING STRUCTURES), (MAX. NO. OF VERTICES IN ANY ONE OF THEM)' in str(
                         line):
@@ -532,7 +590,7 @@ class Eirene():
                                     rpoint.append(float(dummy[0]))
                                     zpoint.append(float(dummy[1]))
                                     index = index + 1
-                            # nread = nread +1
+
                             rinternal = rpoint[0]
                             zinternal = zpoint[0]
                             plt.plot(rinternal, zinternal, '*',
@@ -541,16 +599,19 @@ class Eirene():
                                      color=color[stype - 1], linewidth=0.5)
                             nholesread = nholesread + 1
                             index = index + 1
-                            # print(stype-1,color[stype-1])
-                            # plt.show()
-                            # plt.axis('equal')
 
-            plt.show()
+
+            # plt.show()
             plt.axis('equal')
 
 
     def plot_eirene_grid(self,pufffile=None):
-        if pufffile is None:
+        """
+        function to read and plot EIRENE grids
+        :param pufffile:
+        :return:
+        """
+        if pufffile is None:#
             pass
         else:
             self.geom.puff = read_puff_file(self.runfolder + 'puff.dat', alternativefile=pufffile)
@@ -576,24 +637,27 @@ class Eirene():
 
         patches = []
         for i in list(range(0, len(x1))):
-            # print(i)
+
             polygon = Polygon([[x1[i], y1[i]], [x2[i], y2[i]], [x3[i], y3[i]]],
                               edgecolor='black', alpha=0.5, linewidth=0.5,
                               closed=True)
             patches.append(polygon)
 
-        # norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
+
         collection = PatchCollection(patches, match_original=True)
-        # collection.set(array=var, cmap='jet', norm=norm)
+
 
         fig, ax = plt.subplots()
         ax.add_collection(collection)
 
         ax.autoscale_view()
 
-        for i in range(0,len(self.geom.pump[0]),2):
-            plt.plot(self.geom.pump[0][i:i+2],self.geom.pump[1][i:i+2],color='magenta',marker='x')
-# ,linestyle="None"
+        try:
+            for i in range(0,len(self.geom.pump[0]),2):
+                plt.plot(self.geom.pump[0][i:i+2],self.geom.pump[1][i:i+2],color='magenta',marker='x')
+        except:
+            logging.error('this simulation has not a standard pump file')
+
         npuff = len(self.geom.puff)
         xp=np.zeros(2)
         yp=np.zeros(2)

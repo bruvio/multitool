@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# ----------------------------
+__author__ = "Bruno Viola"
+__Name__ = "class EIRENE"
+__version__ = "0.1"
+__release__ = "0"
+__maintainer__ = "Bruno Viola"
+__email__ = "bruno.viola@ukaea.uk"
+__status__ = "Testing"
+# __status__ = "Production"
+
+# __credits__ = [""]
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jul 26 21:08:45 2017
@@ -562,29 +573,78 @@ if __name__ == "__main__":
 
     sim_alexc = sim('84727', 'nov1015', '1', workfold,'alexc')
     sim_david = sim('81472', 'jan2215', '1', workfold,'dmoulton')
-    sim_bruvio = sim('84599X', 'nov2818', '1', workfold)
+    sim_bruvio_sd = sim('84599X', 'nov2818', '1', workfold)
+    sim_bruvio = sim('92123', 'oct1917', '1', workfold)
+
+    # simu = sim_bruvio
+    # simu = sim_alexc
+    simu = sim_david
 
 
-    # sim_hfe_Nrad0.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-    # sim_hfe_Nrad0.data.eirene.plot_eirene()
 
-    # sim_hfe_Nrad0.read_eirene(sim_hfe_Nrad0.fullpath[:-4])
-    # sim_hfe_Nrad0.data.eirene.plot_eirene()
-    #
-    sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
-    # sim_alexc.data.eirene.plot_eirene()
-    #
-    # sim_david.read_eirene(sim_david.fullpath[:-4])
-    # sim_david.data.eirene.plot_eirene('MOL')
-    # sim_david.data.eirene.plot_eirene('ATM')
+    simu.read_eirene(simu.fullpath[:-4])
+    # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
+    simu.data.eirene.plot_eirene()
 
-    # sim_bruvio.read_eirene(sim_bruvio.fullpath[:-4])
-    # sim_bruvio.data.eirene.plot_eirene('MOL')
-    # plt.show(block=True)
-    #
-    #
-    #
-    # sim_bruvio.data.eirene.plot_subdivertor(sim_bruvio.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
 
-    sim_alexc.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
+    simu.data.eirene.plot_eirene(species='MOL')
+    simu.data.eirene.plot_eirene(species='ATM')
+    #
+    simu.data.eirene.plot_subdivertor(simu.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
+
+    simu.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
+
+    #
+
+   #
+    #
+    #
+
+
+
+    #test to plot EIRENE PRESSURE AND TEMPERATURE
+    mD2 = 2*2.01410178*1.660538921E-27; # kg
+    vxD2 = np.asarray(simu.data.eirene.MOL.data[2]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
+    vyD2 = np.asarray(simu.data.eirene.MOL.data[3]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
+    vzD2 = np.asarray(simu.data.eirene.MOL.data[4]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
+    vxD2[np.isnan(vxD2)] = 0;
+    vyD2[np.isnan(vyD2)] = 0;
+    vzD2[np.isnan(vzD2)] = 0;
+
+    pD2 = np.asarray(2/3*(simu.data.eirene.MOL.data[5]*1.6022E-19*1E6 -
+               0.5*mD2*simu.data.eirene.MOL.data[1]*1E6*(vxD2**2+vyD2**2+vzD2**2)));
+    # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
+    TD2 = np.asarray(pD2/simu.data.eirene.MOL.data[1]/1E6/1.3806488E-23);
+    TD2[np.isnan(TD2)] = 0;
+    pD2[np.isnan(pD2)] = 0;
+    #
+    #
+    # xv=linspace(2.003,2.547,100)';
+    # yv=-2.3*ones(100,1);
+    #
+    #
+
+    simu.data.eirene.plot_eirene(species=TD2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     plt.show(block=True)
