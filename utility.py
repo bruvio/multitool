@@ -91,6 +91,8 @@ class Toggle():
                     self.fig.canvas.draw_idle()
 
 
+
+
 def read_csv(file_name):
     array_2D = []
     with open(file_name, 'r') as csvfile:
@@ -104,21 +106,68 @@ def read_npco_file(filename):
     dummy = np.genfromtxt(filename, skip_header=1)
     x=[]
     y=[]
+    z=[]
     for i,row in enumerate(dummy):
         x.append(dummy[i][1]/100)
         y.append(dummy[i][2]/100)
+        z.append(dummy[i][3]/100)
     x=np.asarray(x)
     y=np.asarray(y)
-    return x,y
+    z=np.asarray(z)
+
+    return x,y,z
+
+
+def read_pump_file(filename):
+    lmap = lambda func, *iterable: list(map(func, *iterable))
+    arrays = [np.array(lmap(float, line.split())) for line in
+              open(filename)]
+    # dummy = np.loadtxt(filename, skiprows=1)
+    r=[]
+    z=[]
+
+    for i in range(0,len(arrays)):
+        if len(arrays[i])<3:
+            continue
+        else:
+
+           r.append(arrays[i][0]/100)
+           z.append(arrays[i][1]/100)
+    r=np.asarray(r)
+    z=np.asarray(z)
+    pump = [r,z]
+    return pump
+
+def read_puff_file(filename,alternativefile=None):
+    dummy =[]
+    if alternativefile is None:
+        exists = os.path.isfile(filename)
+        if exists:
+            dummy = np.genfromtxt(filename, skip_header=1, dtype=float)
+            return dummy
+        else:
+            return dummy
+    else:
+        exists = os.path.isfile(alternativefile)
+        if exists:
+            dummy = np.genfromtxt(alternativefile, skip_header=1, dtype=float)
+            return dummy
+        else:
+            return dummy
+
+
+
 
 
 
 
 def read_elemente_file(filename):
     dummy = np.genfromtxt(filename, skip_header=1,dtype=int)
+    dummy2 = dummy
     dummy = dummy[:,1:4]
     dummy = np.subtract(dummy,1)
-    return dummy
+
+    return dummy,dummy2
 
 def read_transfer_file(filename,rows):
     dummy = np.genfromtxt(filename, skip_header=rows)

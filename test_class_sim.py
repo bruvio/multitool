@@ -571,23 +571,20 @@ if __name__ == "__main__":
     # sim_hfe_Nrad0.read_eirene(sim_hfe_Nrad0.fullpath[:-4])
     # sim_hfe_Nrad0.data.eirene.plot_eirene()
     #
-    # sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
+    sim_alexc.read_eirene(sim_alexc.fullpath[:-4])
     # sim_alexc.data.eirene.plot_eirene()
     #
     # sim_david.read_eirene(sim_david.fullpath[:-4])
     # sim_david.data.eirene.plot_eirene('MOL')
     # sim_david.data.eirene.plot_eirene('ATM')
 
-    sim_bruvio.read_eirene(sim_david.fullpath[:-4])
-    sim_bruvio.data.eirene.plot_eirene('MOL')
+    # sim_bruvio.read_eirene(sim_bruvio.fullpath[:-4])
+    # sim_bruvio.data.eirene.plot_eirene('MOL')
+    # plt.show(block=True)
+    #
+    #
+    #
+    # sim_bruvio.data.eirene.plot_subdivertor(sim_bruvio.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
+
+    sim_alexc.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
     plt.show(block=True)
-
-
-
-    sim_bruvio.data.eirene.plot_subdivertor(sim_bruvio.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
-
-
-
-
-
-

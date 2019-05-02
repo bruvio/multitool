@@ -39,6 +39,11 @@ class Eirene():
         self.geom.xv = []
         self.geom.yv = []
         self.geom.trimap = []
+        self.geom.verts = []
+        self.geom.pump = []
+        self.geom.pump = []
+        self.geom.puff = []
+
 
         self.ATM.dataName = []
         self.ATM.unitName = []
@@ -172,14 +177,13 @@ class Eirene():
 
     def _read_eirene(self):
 
-        self.geom.xv, self.geom.yv= read_npco_file(self.runfolder+'eirene.npco_char')
+        self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
 
-        self.geom.trimap = read_elemente_file(self.runfolder+'eirene.elemente')
+        self.geom.trimap,self.geom.verts = read_elemente_file(self.runfolder+'eirene.elemente')
 
+        self.geom.pump = read_pump_file(self.runfolder + 'pump')
 
-        # raise SystemExit
-
-
+        self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
         with open(self.runfolder + 'eirene.input') as f:
             lines = f.readlines()
@@ -543,3 +547,74 @@ class Eirene():
 
             plt.show()
             plt.axis('equal')
+
+
+    def plot_eirene_grid(self,pufffile=None):
+        if pufffile is None:
+            pass
+        else:
+            self.geom.puff = read_puff_file(self.runfolder + 'puff.dat', alternativefile=pufffile)
+        x = [self.geom.xv[i] for i in
+             self.geom.trimap]
+        y = [self.geom.yv[i] for i in
+             self.geom.trimap]
+
+        x1 = []
+        x2 = []
+        x3 = []
+        for i, value in enumerate(x):
+            x1.append(x[i][0])
+            x2.append(x[i][1])
+            x3.append(x[i][2])
+        y1 = []
+        y2 = []
+        y3 = []
+        for i, value in enumerate(y):
+            y1.append(y[i][0])
+            y2.append(y[i][1])
+            y3.append(y[i][2])
+
+        patches = []
+        for i in list(range(0, len(x1))):
+            # print(i)
+            polygon = Polygon([[x1[i], y1[i]], [x2[i], y2[i]], [x3[i], y3[i]]],
+                              edgecolor='black', alpha=0.5, linewidth=0.5,
+                              closed=True)
+            patches.append(polygon)
+
+        # norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
+        collection = PatchCollection(patches, match_original=True)
+        # collection.set(array=var, cmap='jet', norm=norm)
+
+        fig, ax = plt.subplots()
+        ax.add_collection(collection)
+
+        ax.autoscale_view()
+
+        for i in range(0,len(self.geom.pump[0]),2):
+            plt.plot(self.geom.pump[0][i:i+2],self.geom.pump[1][i:i+2],color='magenta',marker='x')
+# ,linestyle="None"
+        npuff = len(self.geom.puff)
+        xp=np.zeros(2)
+        yp=np.zeros(2)
+        for i in range(0,npuff):
+            izs = self.geom.puff[i, 0]
+            xp[0] = self.geom.puff[i, 5]/100
+            yp[0] = self.geom.puff[i, 6]/100
+            xp[1] = self.geom.puff[i, 7]/100
+            yp[1] = self.geom.puff[i, 8]/100
+            # sqrt((xp(1) - xp(2)) ^ 2 + (yp(1) - yp(2)) ^ 2);
+            if (izs == 0):
+
+                plt.plot(xp, yp, color='red', marker='o');
+
+            if (izs == 1):
+
+                plt.plot(xp, yp, color='green', marker='o');
+
+            if (izs == 2):
+
+                plt.plot(xp, yp, color='blue', marker='o');
+
+
+
