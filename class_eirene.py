@@ -51,6 +51,7 @@ class Eirene():
         self.ION = SimpleNamespace()
         self.PLS = SimpleNamespace()
         self.MISC = SimpleNamespace()
+        self.PHOT = SimpleNamespace()
 
         self.geom = SimpleNamespace()
         self.geom.xv = []
@@ -76,6 +77,11 @@ class Eirene():
         self.ION.unitName= []
         self.ION.names ={}
         self.ION.data = []
+
+        self.PHOT.dataName = []
+        self.PHOT.unitName= []
+        self.PHOT.names ={}
+        self.PHOT.data = []
 
         self.PLS.dataName = []
         self.PLS.unitName= []
@@ -200,26 +206,34 @@ class Eirene():
         :return:
         """
         #read triangles coordinates
+        logger.info('reading eirene.npco_char file \n')
         self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
         #reads triangles map and vertices
+        logger.info( 'reading eirene.elemente file \n')
         self.geom.trimap,self.geom.verts = read_elemente_file(self.runfolder+'eirene.elemente')
 
         #reads pump (only for standard EIRENE files)
+        logger.info( 'reading eirene pump file \n')
         self.geom.pump = read_pump_file(self.runfolder + 'pump')
         #read puff location
+        logger.info( 'reading puff file \n')
         self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
         #start reading informations
+        logger.info( 'collecting information from eirene.input file \n')
         with open(self.runfolder + 'eirene.input') as f:
             lines = f.readlines()
             text_atoms_spec = '** 4a NEUTRAL ATOMS SPECIES CARDS:'
             text_mole_spec = '** 4b NEUTRAL MOLECULES SPECIES CARDS'
             text_ion_spec = '**4c TEST ION SPECIES CARDS:'
             text_bulk_spec = '*** 5. DATA FOR PLASMA-BACKGROUND'
+            text_phot      = '** 4d photons'
             info1 = False
             info2 = False
             info3 = False
             info4 = False
+            info_phot = False
+
             for index, line in enumerate(lines):
 
                 if text_atoms_spec in str(line):
@@ -262,6 +276,19 @@ class Eirene():
                         index = index + 2 * nreac
                     info3=True
 
+                if text_phot in str(line):
+                    index = index +1
+                    dummy = lines[index].split()
+                    self.nphot = int(dummy[0])
+
+                    for i in range(0,self.nphot):
+                        index = index + 1
+                        dummy=lines[index].split()
+                        self.PHOT.names[i] = dummy[1]
+                        nreac = int(dummy[9])
+                        index = index + 2 * nreac
+                    info_phot=True
+
                 if text_bulk_spec in str(line):
                     index = index +2
                     dummy = lines[index].split()
@@ -274,14 +301,14 @@ class Eirene():
                         nreac = int(dummy[9])
                         index = index + 2 * nreac
                     info4=True
-                if info1 & info2 & info3 & info4 is True:
+                if info1 & info2 & info3 & info4 & info_phot is True:
                     break
             f.close()
 
 
 
         # read transfer file and store data as pandas dataframe (first column is always a pandas index!)
-
+        logger.info( 'reading eirene.transfer file \n')
         exists = os.path.isfile(self.runfolder + 'eirene.transfer.gz')
 
         if exists:
@@ -304,6 +331,7 @@ class Eirene():
                 break
         row_to_skip=index+3
                 # 5          27        6086
+        logger.log(5,' reading bulk plasma data')
         for i in range(0, self.npls):
             dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # dummy1[dummy1.columns[11]]
@@ -313,11 +341,11 @@ class Eirene():
 
         self.PLS.data = pd.concat(self.PLS.data, axis=0)#concatenates as row
         self.PLS.data.reset_index(drop=True, inplace=True)
-
-
         row_to_skip = row_to_skip +1
+
         # row_to_skip = 30648
         #row to skip should be 30647
+        logger.log(5, ' reading neutral atom data')
         for i in range(0,self.natm):
             dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # 36730
@@ -330,7 +358,7 @@ class Eirene():
         self.ATM.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
-
+        logger.log(5, ' reading neutral molecules data')
         for i in range(0,self.nmol):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
@@ -340,6 +368,7 @@ class Eirene():
         self.MOL.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
+        logger.log(5, ' reading test ions data')
         for i in range(0,self.nion):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
@@ -350,8 +379,11 @@ class Eirene():
         self.ION.data.reset_index(drop=True, inplace=True)
         row_to_skip = row_to_skip + 1
 
+        logger.log(5, ' reading miscellaneous data')
         self.MISC.data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
         self.MISC.data.reset_index(drop=True, inplace=True)
+        logger.log(5, 'done \n')
+        logger.info( 'reading eirene data done! \n')
                         
 
 
@@ -362,6 +394,7 @@ class Eirene():
         :param label:
         :return:
         """
+
 
         if species is None:
             var = self.MOL.data[1]
@@ -376,10 +409,10 @@ class Eirene():
             var = species
             label = label
         else:
-            logger.error('choose between MOL/ATM')
+            logger.error('choose between MOL/ATM \n')
             return
 
-
+        logger.log(5,'plotting {} data volume avg data \n'.format(label))
         # plt.figure()
         # x = [self.geom.xv[i] for i in self.geom.trimap]
         # y = [self.geom.yv[i] for i in self.geom.trimap]
@@ -389,6 +422,7 @@ class Eirene():
 
 
         #getting coordinates of the triangles and creating arrays that describe polygons
+        logger.log(5,"collecting coordinates of triangles \n")
         x = [self.geom.xv[i] for i in
              self.geom.trimap]
         y = [self.geom.yv[i] for i in
@@ -424,6 +458,7 @@ class Eirene():
 
 
         #now starting to create the polygon using triangles coordinates
+        logger.log(5, "now starting to create the polygon using triangles coordinates \n")
         patches = []
         for i in list(range(0, len(x1))):
             # print(i)
@@ -433,11 +468,13 @@ class Eirene():
             patches.append(polygon)
 
         #normalisation of the variable
+        logger.log(5, " normalisation of the variable \n ")
         norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
         collection = PatchCollection(patches, match_original=True)
         collection.set(array=var, cmap='jet', norm=norm)
 
         #plotting patches
+        logger.log(5, " plotting patches \n ")
         fig, ax = plt.subplots()
         ax.add_collection(collection)
 
@@ -454,6 +491,7 @@ class Eirene():
 
         cbar = plt.colorbar(sm, format=sfmt)
         cbar.set_label(label)
+        logger.log(5,'done \n')
         # plt.show(block=True)
 
     def plot_subdivertor(self,path,subdivertor_file):
@@ -463,7 +501,7 @@ class Eirene():
         :param subdivertor_file: location of subdivertor structure file
         :return:
         """
-
+        logger.info('plotting subdivertor structure \n')
         #reading edge2d mesh
         rvert = ep.data(path, 'RVERTP').data
         rvert = np.trim_zeros(rvert, 'b')
@@ -531,7 +569,7 @@ class Eirene():
         rvertex = []
         zvertex = []
 
-
+        logger.log(5,"reading subdivertor file and extracting coordinates \n")
         #reading subdivertor file and extracting coordinates
         with open(subdivertor_file) as f:
             lines = f.readlines()
@@ -560,6 +598,7 @@ class Eirene():
                      linewidth=0.5)
 
             #now it is time to read following regions
+            logger.log(5, "reading following regions \n")
             for index, line in enumerate(lines):
                 if '# (TOT. NO OF REMAINING STRUCTURES), (MAX. NO. OF VERTICES IN ANY ONE OF THEM)' in str(
                         line):
@@ -603,7 +642,7 @@ class Eirene():
 
             # plt.show()
             plt.axis('equal')
-
+            logger.log(5,"done \n")
 
     def plot_eirene_grid(self,pufffile=None):
         """
@@ -611,6 +650,9 @@ class Eirene():
         :param pufffile:
         :return:
         """
+        logger.info('plotting eirene grid \n')
+
+        logger.log(5," reading puff file")
         if pufffile is None:#
             pass
         else:

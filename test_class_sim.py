@@ -14,6 +14,12 @@ __status__ = "Testing"
 # __credits__ = [""]
 # -*- coding: utf-8 -*-
 # from importlib import reload
+import logging
+import argparse
+import platform
+from logging.handlers import RotatingFileHandler
+from logging import handlers
+from custom_formatters import MyFormatter,QPlainTextEditLogger,HTMLFormatter
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -84,6 +90,58 @@ def sqrt(s):
 
 
 if __name__ == "__main__":
+
+    home = os.curdir
+
+    # Ensure we are running on 64bit
+    assert (platform.architecture()[0] == '64bit'), "Please log on Freja"
+
+    # Ensure we are running python 3
+    assert sys.version_info >= (
+        3, 5), "Python version too old. Please use >= 3.5.X."
+
+    parser = argparse.ArgumentParser(description='Run CORMAT_py')
+    parser.add_argument("-d", "--debug", type=int,
+                        help="Debug level. 0: Info, 1: Warning, 2: Debug,"
+                             " 3: Error, 4: Debug Plus; \n default level is INFO", default=4)
+    parser.add_argument("-doc", "--documentation", type=str,
+                        help="Make documentation. yes/no", default='no')
+
+    args = parser.parse_args(sys.argv[1:])
+
+
+    debug_map = {0: logging.INFO,
+                 1: logging.WARNING,
+                 2: logging.DEBUG,
+                 3: logging.ERROR,
+                 4: 5}
+    #this plots logger twice (black plus coloured)
+    logging.addLevelName(5, "DEBUG_PLUS")
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=debug_map[args.debug])
+    # logger.setLevel(debug_map[args.debug])
+
+    fmt = MyFormatter()
+    # hdlr = logging.StreamHandler(sys.stdout)
+
+
+    # hdlr.setFormatter(fmt)
+    # logging.root.addHandler(hdlr)
+    fh = handlers.RotatingFileHandler('./LOGFILE.DAT', mode = 'w',maxBytes=(1048576*5), backupCount=7)
+    fh.setFormatter(fmt)
+    logging.root.addHandler(fh)
+
+    if (args.documentation).lower() == 'yes':
+        logger.info('creating documentation')
+        os.chdir('../docs')
+        import subprocess
+
+        subprocess.check_output('make html', shell=True)
+        subprocess.check_output('make latex', shell=True)
+        os.chdir(home)
+
+
+
 
     EDGE2dfold='/work/bviola/Python/EDGE2D/e2d_data'
     workfold='work/Python/EDGE2D'
