@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
-"""
-Created on July 2017
-
 # ----------------------------
-__author__ = "bruvio"
+
+# Created on July 2017
+"""
+__author__ = "Bruno Viola"
+__Name__ = "class geom"
 __version__ = "0.1"
-
-# ----------------------------
-
+__release__ = "0"
+__maintainer__ = "Bruno Viola"
+__email__ = "bruno.viola@ukaea.uk"
+__status__ = "Testing"
+# __status__ = "Production"
+# __credits__ = [""]
 """
+
+
 
 import eproc
 import numpy as np
