@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+# ----------------------------
+__author__ = "Bruno Viola"
+__Name__ = "class SIM"
+__version__ = "0.1"
+__release__ = "0"
+__maintainer__ = "Bruno Viola"
+__email__ = "bruno.viola@ukaea.uk"
+__status__ = "Testing"
+# __status__ = "Production"
+# __credits__ = [""]
 """
 Created on July 2017
 
@@ -61,6 +71,7 @@ write_edge2d_profiles
 import eproc as ep
 import numpy as np
 from class_geom import geom
+from class_eirene import Eirene
 import os
 import csv
 import stat
@@ -69,6 +80,7 @@ import os
 import pathlib
 import mpmath
 import math
+from types import SimpleNamespace
 import logging
 from time import gmtime, strftime
 # from ppf import *
@@ -80,6 +92,7 @@ from matplotlib.collections import PatchCollection
 #from django.utils.datastructures import SortedDict
 from collections import OrderedDict
 import Struct as st
+import pdb;
 logger = logging.getLogger(__name__)
 pi=mpmath.pi
 
@@ -267,11 +280,16 @@ Execute_makeppf(simu_list, outputfile)
 
 ###############################################
   def __init__(self,shotIDArg,dateIDArg,seqNumArg, folder,ownerArg=None, codeArg=None, macArg=None, fileArg=None ):
-    geom.__init__(self,shotIDArg,dateIDArg,seqNumArg,ownerArg=None, codeArg=None, macArg=None, fileArg=None )
+    if ownerArg is None:
+        ownerArg = os.getenv('USR')
+    else:
+        ownerArg = ownerArg
+    geom.__init__(self,shotIDArg,dateIDArg,seqNumArg,ownerArg, codeArg, macArg, fileArg )
     self.path_e2d = os.getcwd()+'/e2d_data/runs'
 
-    self.sim_folder='shotid_'+shotIDArg+'_'+dateIDArg+'_grid_'
-    catalogue=ep.cat(shotIDArg,dateIDArg,seqNumArg)
+    self.sim_folder='shotid_'+shotIDArg+'_'+dateIDArg+'_grid_' # deprecated
+
+    catalogue=ep.cat(shotIDArg,dateIDArg,seqNumArg,ownerArg)
     owner=catalogue.owner
     code=catalogue.code
     machine=catalogue.machine
@@ -280,9 +298,15 @@ Execute_makeppf(simu_list, outputfile)
     pulse=catalogue.shot
     # self.simfolder='/u/'+owner+
 # /u/bviola/cmg/catalog/edge2d/jet
-    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,sequence)
+    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,'seq#',sequence)
     self.workingdir=folder
     self.initfolder(folder)
+    self.data = SimpleNamespace()  # dictionary object that contains all data
+    
+    
+    self.data.eirene = {}
+
+
 
     # self.pathT=self.path_e2d+'/'+self.sim_folder+'/'+'seq'+seqNumArg
 
@@ -4285,211 +4309,211 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
   # # #     #     print(idx)
   # # #
   def calculate_upstream_t(self,l):
-      # # omp index this give the index for the omp row or omp on a ring
-      # omp_index = self.find_omp_index()
-      #
-      # # first open cell on the OMP row
-      # first_open_omp_cell_row = self.find_omp_index_row()
-      # # print(first_open_omp_cell_row)
-      # # calculate connection length
-      # l = self.calc_connection_length(omp_index)
-      # print('connection length = ', l)
-      #
-      # # find the first open cell entering the divertor
-      #
-      # first_open_cell_row_div, first_div_row = self.div_idx_value()
-      # # print(type(first_open_cell_row_div))
-      # # type(first_div_row)
-      # # print(first_open_cell_row_div, first_div_row)
-      # # get the variables you need from the tran file
-      #
-      # # weight them for there area to remap to outer midplane
-      # rmesh = ep.row(self.fullpath, 'rmesh', first_div_row)
-      # dvol = ep.row(self.fullpath, 'dv', first_div_row)
-      # rmesh = np.asarray(rmesh.yData)
-      # dvol = np.asarray(dvol.yData)
-      # # print(len(dvol))
-      # # print(int(first_open_omp_cell_row))
-      # # print(dvol[21])
-      # # print()
-      # area_div = dvol[first_open_cell_row_div] / (2 * np.pi * rmesh[first_open_cell_row_div])
-      # #
-      # # # OMP area
-      # rmesh = ep.row(self.fullpath, 'rmesh', 'omp')
-      # npts = rmesh.nPts
-      # dvol = ep.row(self.fullpath, 'dv', 'omp')
-      # rmesh = np.asarray(rmesh.yData)
-      # dvol = np.asarray(dvol.yData)
-      # # print(dvol[first_open_omp_cell_row])
-      # #
-      # #
-      # area_omp = dvol[first_open_omp_cell_row] / (2 * np.pi * rmesh[first_open_omp_cell_row])
-      # # print('omp = ', npts)
-      # # upstream_te, upstream_ti=0,0
-      # # print(dvol[omp_index])
-      # #
-      # # # area at x point should be larger than at the OMP and q parallel should be larger at the OMP than at the x point hence why the ratio is this way around
-      # area_ratio = area_div / area_omp
-      # #
-      # # # need to calculate q paralell i.e. the energy flux density
-      # #
-      # # # for electrons read from a row because we have that index
-      # q_para_e = ep.row(self.fullpath, 'qepcdd', first_div_row)
-      # q_para_e = np.asarray(q_para_e.yData)
-      # # # get the values at the divertor and remap for area
-      # q_para_e_omp = q_para_e[first_open_cell_row_div] * area_ratio
-      # #
-      # # # for ions read from a row because we that index
-      # q_para_i = ep.row(self.fullpath, 'qipcdd', first_div_row)
-      # q_para_i = np.asarray(q_para_i.yData)
-      # # # remap for area
-      # q_para_i_omp = q_para_i[first_open_cell_row_div] * area_ratio
-      qpar=self.Qpara()
+        # # omp index this give the index for the omp row or omp on a ring
+        # omp_index = self.find_omp_index()
+        #
+        # # first open cell on the OMP row
+        # first_open_omp_cell_row = self.find_omp_index_row()
+        # # print(first_open_omp_cell_row)
+        # # calculate connection length
+        # l = self.calc_connection_length(omp_index)
+        # print('connection length = ', l)
+        #
+        # # find the first open cell entering the divertor
+        #
+        # first_open_cell_row_div, first_div_row = self.div_idx_value()
+        # # print(type(first_open_cell_row_div))
+        # # type(first_div_row)
+        # # print(first_open_cell_row_div, first_div_row)
+        # # get the variables you need from the tran file
+        #
+        # # weight them for there area to remap to outer midplane
+        # rmesh = ep.row(self.fullpath, 'rmesh', first_div_row)
+        # dvol = ep.row(self.fullpath, 'dv', first_div_row)
+        # rmesh = np.asarray(rmesh.yData)
+        # dvol = np.asarray(dvol.yData)
+        # # print(len(dvol))
+        # # print(int(first_open_omp_cell_row))
+        # # print(dvol[21])
+        # # print()
+        # area_div = dvol[first_open_cell_row_div] / (2 * np.pi * rmesh[first_open_cell_row_div])
+        # #
+        # # # OMP area
+        # rmesh = ep.row(self.fullpath, 'rmesh', 'omp')
+        # npts = rmesh.nPts
+        # dvol = ep.row(self.fullpath, 'dv', 'omp')
+        # rmesh = np.asarray(rmesh.yData)
+        # dvol = np.asarray(dvol.yData)
+        # # print(dvol[first_open_omp_cell_row])
+        # #
+        # #
+        # area_omp = dvol[first_open_omp_cell_row] / (2 * np.pi * rmesh[first_open_omp_cell_row])
+        # # print('omp = ', npts)
+        # # upstream_te, upstream_ti=0,0
+        # # print(dvol[omp_index])
+        # #
+        # # # area at x point should be larger than at the OMP and q parallel should be larger at the OMP than at the x point hence why the ratio is this way around
+        # area_ratio = area_div / area_omp
+        # #
+        # # # need to calculate q paralell i.e. the energy flux density
+        # #
+        # # # for electrons read from a row because we have that index
+        # q_para_e = ep.row(self.fullpath, 'qepcdd', first_div_row)
+        # q_para_e = np.asarray(q_para_e.yData)
+        # # # get the values at the divertor and remap for area
+        # q_para_e_omp = q_para_e[first_open_cell_row_div] * area_ratio
+        # #
+        # # # for ions read from a row because we that index
+        # q_para_i = ep.row(self.fullpath, 'qipcdd', first_div_row)
+        # q_para_i = np.asarray(q_para_i.yData)
+        # # # remap for area
+        # q_para_i_omp = q_para_i[first_open_cell_row_div] * area_ratio
+        qpar=self.Qpara()
 
-      q_para_e_omp = qpar['q_para_e_omp']
-      q_para_i_omp = qpar['q_para_i_omp']
-      # q_para_i = qpar.q_para_i
-      # q_para_e = qpar.q_para_e
+        q_para_e_omp = qpar['q_para_e_omp']
+        q_para_i_omp = qpar['q_para_i_omp']
+        # q_para_i = qpar.q_para_i
+        # q_para_e = qpar.q_para_e
 
-      #
-      q_para_e_omp_neg_flag = False
-      if q_para_e_omp < 0:
+        #
+        q_para_e_omp_neg_flag = False
+        if q_para_e_omp < 0:
           # we can't take a negative root. so needs changing, the sign just represents the direction.
           q_para_e_omp = q_para_e_omp * (-1)
           q_para_e_omp_neg_flag = True
 
-      q_para_i_omp_neg_flag = False
-      if q_para_i_omp < 0:
+        q_para_i_omp_neg_flag = False
+        if q_para_i_omp < 0:
           # we can't take a negative root. so needs changing, the sign just represents the direction.
           q_para_i_omp = q_para_i_omp * (-1)
           q_para_i_omp_neg_flag = True
-      #
-      # # get miplane value of q_para_i
-      kapa_0e = 2000  # CHECK THESE!!!
-      kapa_0i = 70  # CHECK THESE!!!
+        #
+        # # get miplane value of q_para_i
+        kapa_0e = 2000  # CHECK THESE!!!
+        kapa_0i = 70  # CHECK THESE!!!
 
-      upstream_te = ((7 * q_para_e_omp * l) / (2 * kapa_0e)) ** (2. / 7)
-      upstream_ti = ((7 * q_para_i_omp * l) / (2 * kapa_0i)) ** (2. / 7)
+        upstream_te = ((7 * q_para_e_omp * l) / (2 * kapa_0e)) ** (2. / 7)
+        upstream_ti = ((7 * q_para_i_omp * l) / (2 * kapa_0i)) ** (2. / 7)
 
-      # sign checking
-      if q_para_e_omp_neg_flag == True:
+        # sign checking
+        if q_para_e_omp_neg_flag == True:
           # upstream_te = upstream_te*(-1)
           print('WARNING Q PARALLEL ELECTRON IS NEGATIVE')
 
-      if q_para_i_omp_neg_flag == True:
+        if q_para_i_omp_neg_flag == True:
           # upstream_ti = upstream_ti*(-1)
           print('WARNING Q PARALLEL ION IS NEGATIVE')
 
-      return upstream_te, upstream_ti
+        return upstream_te, upstream_ti
 
   def TPMscaling_Petrie(self,lconn):
-      # following Petrie et al., NF 53 2013
-    import mpmath
-    R=ep.row(self.fullpath,'RMESH','OT')
-    ii=np.argmax(list(map(lambda x: x>0, R.xData)))
-    Rosp=R.yData[ii]
-    omp=self.read_profiles('OMP')
-    xdata=omp['ate'].xData
-    # iy_OMP_SOL=xdata[xdata > 0.0]
+          # following Petrie et al., NF 53 2013
+        import mpmath
+        R=ep.row(self.fullpath,'RMESH','OT')
+        ii=np.argmax(list(map(lambda x: x>0, R.xData)))
+        Rosp=R.yData[ii]
+        omp=self.read_profiles('OMP')
+        xdata=omp['ate'].xData
+        # iy_OMP_SOL=xdata[xdata > 0.0]
 
-    iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
+        iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
 
-    # print(iy_OMP_SOL)
-    iy_sep_OMP=min(iy_OMP_SOL)
-    iy_ny_OMP=max(iy_OMP_SOL)
-    Romp=R.yData[iy_sep_OMP]
-    fr=Rosp/Romp
-    frad=abs(self.read_psol_pradpsol()['fraddiv'])
-    Pin =self.read_time_data('POWSOL',100)
-    nsep=omp['ade'].yData[iy_sep_OMP]
-    # print('frad',frad)
-    # print(Pin)
-    # print(fr)
-    # print(Romp)
-    # print(nsep)
-    # ntar = pow(Rosp,2) * pow(lconn,6/7) * pow(nsep,3)
-    # ttar = pow(Rosp,-2) * pow(lconn,-4/7) * pow(nsep,-2)
-    dummy=(lconn*ln(fr) / (fr-1))
+        # print(iy_OMP_SOL)
+        iy_sep_OMP=min(iy_OMP_SOL)
+        iy_ny_OMP=max(iy_OMP_SOL)
+        Romp=R.yData[iy_sep_OMP]
+        fr=Rosp/Romp
+        frad=abs(self.read_psol_pradpsol()['fraddiv'])
+        Pin =self.read_time_data('POWSOL',100)
+        nsep=omp['ade'].yData[iy_sep_OMP]
+        # print('frad',frad)
+        # print(Pin)
+        # print(fr)
+        # print(Romp)
+        # print(nsep)
+        # ntar = pow(Rosp,2) * pow(lconn,6/7) * pow(nsep,3)
+        # ttar = pow(Rosp,-2) * pow(lconn,-4/7) * pow(nsep,-2)
+        dummy=(lconn*ln(fr) / (fr-1))
 
-    ntar =  pow(Rosp,2) * pow(nsep,3) * pow(Pin/1e6 * (1-frad),-8./7) * mpmath.power(dummy,-6./7)
+        ntar =  pow(Rosp,2) * pow(nsep,3) * pow(Pin/1e6 * (1-frad),-8./7) * mpmath.power(dummy,-6./7)
 
-    ttar = mpmath.power(Pin/1e6,10./7) * mpmath.power(1-frad,10./7) *  pow(Rosp,-2)  * pow(nsep,-2) * mpmath.power((fr-1) * (lconn*ln(fr)),-4./7)
-    return{'ntar':ntar,'ttar':ttar}
+        ttar = mpmath.power(Pin/1e6,10./7) * mpmath.power(1-frad,10./7) *  pow(Rosp,-2)  * pow(nsep,-2) * mpmath.power((fr-1) * (lconn*ln(fr)),-4./7)
+        return{'ntar':ntar,'ttar':ttar}
 
   def nete_omp(self):
-    omp=self.read_profiles('OMP')
-    xdata=omp['ate'].xData
-    # iy_OMP_SOL=xdata[xdata > 0.0]
+        omp=self.read_profiles('OMP')
+        xdata=omp['ate'].xData
+        # iy_OMP_SOL=xdata[xdata > 0.0]
 
-    iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
-    # print(iy_OMP_SOL)
-    iy_sep_OMP=min(iy_OMP_SOL)
-    iy_ny_OMP=max(iy_OMP_SOL)
-    nsep=omp['ade'].yData[iy_sep_OMP]
-    tsep=omp['ate'].yData[iy_sep_OMP]
-    return nsep,tsep
+        iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
+        # print(iy_OMP_SOL)
+        iy_sep_OMP=min(iy_OMP_SOL)
+        iy_ny_OMP=max(iy_OMP_SOL)
+        nsep=omp['ade'].yData[iy_sep_OMP]
+        tsep=omp['ate'].yData[iy_sep_OMP]
+        return nsep,tsep
 
   def Qpara(self):
-      # # omp index this give the index for the omp row or omp on a ring
-      omp_index = self.find_omp_index()
+        # # omp index this give the index for the omp row or omp on a ring
+        omp_index = self.find_omp_index()
 
-      # first open cell on the OMP row
-      first_open_omp_cell_row = self.find_omp_index_row()
-      # print(first_open_omp_cell_row)
-      # calculate connection length
-      l = self.calc_connection_length(omp_index)
-      print('connection length = ', l)
+        # first open cell on the OMP row
+        first_open_omp_cell_row = self.find_omp_index_row()
+        # print(first_open_omp_cell_row)
+        # calculate connection length
+        l = self.calc_connection_length(omp_index)
+        print('connection length = ', l)
 
-      # find the first open cell entering the divertor
+        # find the first open cell entering the divertor
 
-      first_open_cell_row_div, first_div_row = self.div_idx_value()
-      # print(type(first_open_cell_row_div))
-      # type(first_div_row)
-      # print(first_open_cell_row_div, first_div_row)
-      # get the variables you need from the tran file
+        first_open_cell_row_div, first_div_row = self.div_idx_value()
+        # print(type(first_open_cell_row_div))
+        # type(first_div_row)
+        # print(first_open_cell_row_div, first_div_row)
+        # get the variables you need from the tran file
 
-      # weight them for there area to remap to outer midplane
-      rmesh = ep.row(self.fullpath, 'rmesh', first_div_row)
-      dvol = ep.row(self.fullpath, 'dv', first_div_row)
-      rmesh = np.asarray(rmesh.yData)
-      dvol = np.asarray(dvol.yData)
-      # print(len(dvol))
-      # print(int(first_open_omp_cell_row))
-      # print(dvol[21])
-      # print()
-      area_div = dvol[first_open_cell_row_div] / (2 * np.pi * rmesh[first_open_cell_row_div])
-      #
-      # # OMP area
-      rmesh = ep.row(self.fullpath, 'rmesh', 'omp')
-      npts = rmesh.nPts
-      dvol = ep.row(self.fullpath, 'dv', 'omp')
-      rmesh = np.asarray(rmesh.yData)
-      dvol = np.asarray(dvol.yData)
-      # print(dvol[first_open_omp_cell_row])
-      #
-      #
-      area_omp = dvol[first_open_omp_cell_row] / (2 * np.pi * rmesh[first_open_omp_cell_row])
-      # print('omp = ', npts)
-      # upstream_te, upstream_ti=0,0
-      # print(dvol[omp_index])
-      #
-      # # area at x point should be larger than at the OMP and q parallel should be larger at the OMP than at the x point hence why the ratio is this way around
-      area_ratio = area_div / area_omp
-      #
-      # # need to calculate q paralell i.e. the energy flux density
-      #
-      # # for electrons read from a row because we have that index
-      q_para_e = ep.row(self.fullpath, 'qepcdd', first_div_row)
-      q_para_e = np.asarray(q_para_e.yData)
-      # # get the values at the divertor and remap for area
-      q_para_e_omp = q_para_e[first_open_cell_row_div] * area_ratio
-      #
-      # # for ions read from a row because we that index
-      q_para_i = ep.row(self.fullpath, 'qipcdd', first_div_row)
-      q_para_i = np.asarray(q_para_i.yData)
-      # # remap for area
-      q_para_i_omp = q_para_i[first_open_cell_row_div] * area_ratio
-      return{'q_para_e':q_para_e,
+        # weight them for there area to remap to outer midplane
+        rmesh = ep.row(self.fullpath, 'rmesh', first_div_row)
+        dvol = ep.row(self.fullpath, 'dv', first_div_row)
+        rmesh = np.asarray(rmesh.yData)
+        dvol = np.asarray(dvol.yData)
+        # print(len(dvol))
+        # print(int(first_open_omp_cell_row))
+        # print(dvol[21])
+        # print()
+        area_div = dvol[first_open_cell_row_div] / (2 * np.pi * rmesh[first_open_cell_row_div])
+        #
+        # # OMP area
+        rmesh = ep.row(self.fullpath, 'rmesh', 'omp')
+        npts = rmesh.nPts
+        dvol = ep.row(self.fullpath, 'dv', 'omp')
+        rmesh = np.asarray(rmesh.yData)
+        dvol = np.asarray(dvol.yData)
+        # print(dvol[first_open_omp_cell_row])
+        #
+        #
+        area_omp = dvol[first_open_omp_cell_row] / (2 * np.pi * rmesh[first_open_omp_cell_row])
+        # print('omp = ', npts)
+        # upstream_te, upstream_ti=0,0
+        # print(dvol[omp_index])
+        #
+        # # area at x point should be larger than at the OMP and q parallel should be larger at the OMP than at the x point hence why the ratio is this way around
+        area_ratio = area_div / area_omp
+        #
+        # # need to calculate q paralell i.e. the energy flux density
+        #
+        # # for electrons read from a row because we have that index
+        q_para_e = ep.row(self.fullpath, 'qepcdd', first_div_row)
+        q_para_e = np.asarray(q_para_e.yData)
+        # # get the values at the divertor and remap for area
+        q_para_e_omp = q_para_e[first_open_cell_row_div] * area_ratio
+        #
+        # # for ions read from a row because we that index
+        q_para_i = ep.row(self.fullpath, 'qipcdd', first_div_row)
+        q_para_i = np.asarray(q_para_i.yData)
+        # # remap for area
+        q_para_i_omp = q_para_i[first_open_cell_row_div] * area_ratio
+        return{'q_para_e':q_para_e,
              'q_para_e_omp': q_para_e_omp,
              'q_para_i': q_para_i,
              'q_para_i_omp': q_para_i_omp}
@@ -4497,95 +4521,136 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
   def TPMscaling(self,lconn):
-      # following Petrie et al., NF 53 2013
-    import mpmath
-      # omp index this give the index for the omp row or omp on a ring
-    R=ep.row(self.fullpath,'RMESH','OT')
-    ii=np.argmax(list(map(lambda x: x>0, R.xData)))
-    Rosp=R.yData[ii]
-    omp=self.read_profiles('OMP')
-    xdata=omp['ate'].xData
-    # iy_OMP_SOL=xdata[xdata > 0.0]
+          # following Petrie et al., NF 53 2013
+        import mpmath
+          # omp index this give the index for the omp row or omp on a ring
+        R=ep.row(self.fullpath,'RMESH','OT')
+        ii=np.argmax(list(map(lambda x: x>0, R.xData)))
+        Rosp=R.yData[ii]
+        omp=self.read_profiles('OMP')
+        xdata=omp['ate'].xData
+        # iy_OMP_SOL=xdata[xdata > 0.0]
 
-    iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
+        iy_OMP_SOL=find_indices(xdata, lambda e: e > 0)
 
-    # print(iy_OMP_SOL)
-    iy_sep_OMP=min(iy_OMP_SOL)
-    iy_ny_OMP=max(iy_OMP_SOL)
-    Romp=R.yData[iy_sep_OMP]
-    fr=Rosp/Romp
-    frad=abs(self.read_psol_pradpsol()['fraddiv'])
-    Pin =self.read_time_data('POWSOL',100)
-    nsep=omp['ade'].yData[iy_sep_OMP]
-    print('frad',frad)
-    qpar=self.Qpara()
-    Qparallel_up=qpar['q_para_e_omp'] #+ qpar.q_para_i_omp
-    # print(Pin)
-    # print(fr)
-    # print(Romp)
-    # print(nsep)
+        # print(iy_OMP_SOL)
+        iy_sep_OMP=min(iy_OMP_SOL)
+        iy_ny_OMP=max(iy_OMP_SOL)
+        Romp=R.yData[iy_sep_OMP]
+        fr=Rosp/Romp
+        frad=abs(self.read_psol_pradpsol()['fraddiv'])
+        Pin =self.read_time_data('POWSOL',100)
+        nsep=omp['ade'].yData[iy_sep_OMP]
+        print('frad',frad)
+        qpar=self.Qpara()
+        Qparallel_up=qpar['q_para_e_omp'] #+ qpar.q_para_i_omp
+        # print(Pin)
+        # print(fr)
+        # print(Romp)
+        # print(nsep)
 
 
-    ntar =  mpmath.power(Qparallel_up,-8./7) *pow(Rosp,2) * pow(nsep,3) * pow((1-frad),2) * mpmath.power(lconn,6./7)
+        ntar =  mpmath.power(Qparallel_up,-8./7) *pow(Rosp,2) * pow(nsep,3) * pow((1-frad),2) * mpmath.power(lconn,6./7)
 
-    ttar = mpmath.power(Qparallel_up,10./7) * mpmath.power(1-frad,2)*  pow(nsep,-2) *  pow(Rosp,-2)  * pow(Romp,2) * mpmath.power(lconn,-4./7)
+        ttar = mpmath.power(Qparallel_up,10./7) * mpmath.power(1-frad,2)*  pow(nsep,-2) *  pow(Rosp,-2)  * pow(Romp,2) * mpmath.power(lconn,-4./7)
 
-    return{'ntar':ntar,'ttar':ttar}
+        return{'ntar':ntar,'ttar':ttar}
+
+
+  def read_eirene(self,path):
+
+      """
+    % Function to read EIRENE output data from a run directory. Mimicks the
+    % behaviour of Derek Harting's plote2deir reading routines.
+    % Input  : rundir          = Full path of run directory
+    % Output : geom.xv       = x coordinates of distinct EIRENE triangle vertices.
+    %          geom.yv       = y coordinates of distinct EIRENE triangle vertices.
+    %          geom.trimap   = indices into xv and yv giving triangle coordinates.
+    %                          Has dimension: (ntriangles,3). Triangle
+    %                          coordinates are then
+    %                          (geom.xv(geom.trimap),geom.yv(geom.trimap)).
+    %          PLS.names     = Names of bulk plasma ions in eirene.input.
+    %          PLS.dataName  = Data names for bulk plasma ions.
+    %          PLS.unitName  = Unit names for bulk plasma ions.
+    %          PLS.data      = 3D array containing data for each bulk plasma ion
+    %                          species, for each data name and at each EIRENE
+    %                          triangle. Has dimension:
+    %               (length(PLS.names),length(PLS.dataName),size(geom.trimap,1)).
+    %          ATM           = Same for atoms.
+    %          MOL           = Same for molecules.
+    %          ION           = Same for test ions.
+    %          MISC          = Same for miscelaneous.
+      :param path: 
+      :return: 
+      """
+      self.data.eirene=Eirene(path)
+      logger.log(5,dir(self.data.eirene))
+
+
+
+
+
+
+
+
+    
+
+
 
   @staticmethod
   def plot_profiles(simlist,var,Region):
-      for index1 in range(0, len(simlist)):
-          simu = simlist[index1][0]
-          label = simlist[index1][1]
-          data=ep.row(simu.fullpath,var,Region)
-          fname = data.yDesc.decode('utf-8')
-          ftitle = data.yDesc.decode('utf-8')
-          fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
-          fylabel = str(data.yUnits.decode('utf-8'))
+          for index1 in range(0, len(simlist)):
+              simu = simlist[index1][0]
+              label = simlist[index1][1]
+              data=ep.row(simu.fullpath,var,Region)
+              fname = data.yDesc.decode('utf-8')
+              ftitle = data.yDesc.decode('utf-8')
+              fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
+              fylabel = str(data.yUnits.decode('utf-8'))
 
-          # print(fylabel)
-          plt.figure(num=fname)
-          # if self.plot_exp == "True":
-          plt.scatter(data.xData,data.yData,
-                          label=label)
+              # print(fylabel)
+              plt.figure(num=fname)
+              # if self.plot_exp == "True":
+              plt.scatter(data.xData,data.yData,
+                              label=label)
 
-          axes = plt.axes()
-          plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-          plt.legend(loc='upper right', prop={'size': 18})
-          plt.xlabel(fxlabel)
-          plt.ylabel(fylabel)
-      plt.show()
-      # %%
+              axes = plt.axes()
+              plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+              plt.legend(loc='upper right', prop={'size': 18})
+              plt.xlabel(fxlabel)
+              plt.ylabel(fylabel)
+          plt.show()
+          # %%
 
-      # plt.savefig('./figures/' + fname, format='eps', dpi=300)
-      # plt.savefig('./figures/' + fname, dpi=300)  #
+          # plt.savefig('./figures/' + fname, format='eps', dpi=300)
+          # plt.savefig('./figures/' + fname, dpi=300)  #
 
   @staticmethod
   def contour_rad_power(simlist,upper):
-      for index1 in range(0, len(simlist)):
-          simu = simlist[index1][0]
-          label = simlist[index1][1]
-          # print(simu)
-          var_H = ep.data(simu.fullpath, 'SQEHRAD').data
-          # var_H=-np.trim_zeros(var_H['data'],'b')
-          try:
-              var_SQERZ_1 = ep.data(simu.fullpath, 'SQEZR_1').data
-              # var_SQERZ_1=-np.trim_zeros(var_SQERZ_1['data'],'b')
-          except:
-              print('no SQEZR_1')
-              var_SQERZ_1 = 0
-          try:
-              var_SQERZ_2 = ep.data(simu.fullpath, 'SQEZR_2').data
-              # var_SQERZ_2=-np.trim_zeros(var_SQERZ_2['data'],'b')
-          except:
-              print('no SQEZR_2')
-              var_SQERZ_2 = 0
-          #
-          var = var_H + var_SQERZ_1 + var_SQERZ_2
-          # var=var_H+var_SQERZ_1+var_SQERZ_2
-          var = -np.trim_zeros(var, 'b')
-          simu.contour(var, 'Prad_' + label, upperbound=upper,
-                       label='MW/m^3')
+          for index1 in range(0, len(simlist)):
+              simu = simlist[index1][0]
+              label = simlist[index1][1]
+              # print(simu)
+              var_H = ep.data(simu.fullpath, 'SQEHRAD').data
+              # var_H=-np.trim_zeros(var_H['data'],'b')
+              try:
+                  var_SQERZ_1 = ep.data(simu.fullpath, 'SQEZR_1').data
+                  # var_SQERZ_1=-np.trim_zeros(var_SQERZ_1['data'],'b')
+              except:
+                  print('no SQEZR_1')
+                  var_SQERZ_1 = 0
+              try:
+                  var_SQERZ_2 = ep.data(simu.fullpath, 'SQEZR_2').data
+                  # var_SQERZ_2=-np.trim_zeros(var_SQERZ_2['data'],'b')
+              except:
+                  print('no SQEZR_2')
+                  var_SQERZ_2 = 0
+              #
+              var = var_H + var_SQERZ_1 + var_SQERZ_2
+              # var=var_H+var_SQERZ_1+var_SQERZ_2
+              var = -np.trim_zeros(var, 'b')
+              simu.contour(var, 'Prad_' + label, upperbound=upper,
+                           label='MW/m^3')
 
           
   @staticmethod
@@ -4693,110 +4758,5 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
           # df.plot(kind='bar', stacked=True)
         
 
-if __name__ == "__main__":
-
-    EDGE2dfold='/work/bviola/Python/EDGE2D/e2d_data'
-    workfold='work/Python/EDGE2D'
-    #
-    # import sys
-    # del sys.modules['class_sim']
-    # from class_sim import sim
-
-    # sim_lfe = sim('92121', 'aug1717', '1', workfold)
-    # sim_hfe = sim('92123', 'aug1717', '2', workfold)
 
 
-    sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
-    sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
-
-    sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)
-    sim_lfe_Nrad1 = sim('92121', 'aug1717', '4', workfold)
-
-    sim_lfe_81472 = sim('81472', 'may2316', '6', workfold)
-    sim_hfe_81472 = sim('81472', 'may2316', '1', workfold)
-
-    # simlist=[]
-    # workfold = 'work/Python/EDGE2D'
-    # simu = sim('84598X', 'nov0518', '1',workfold);
-    # simlist.append([sim_lfe_Nrad0,'test'])
-    # for index1 in range(0, len(simlist)):
-    #     simu = simlist[index1][0]
-    #     label = simlist[index1][1]
-    #     simu.contour('DENEL', 'denel_' + label)
-    # raise SystemExit
-    simlist = []
-    simlist.append([sim_hfe_Nrad0, 'HFE_3MW'])
-    # simlist.append([sim_hfe_Nrad1, 'HFE_5MW'])
-    #
-    # simlist.append([sim_lfe_Nrad0, 'LFE_2MW'])
-    # simlist.append([sim_lfe_Nrad1, 'LFE_3MW'])
-
-    # omp_index = sim_lfe_Nrad0.find_omp_index()
-    #
-    # # first open cell on the OMP row
-    # first_open_omp_cell_row = lfe.find_omp_index_row()
-    # # calculate connection length
-    # l_lfe = sim_lfe_Nrad0.calc_connection_length(omp_index)
-    # print(l_lfe)
-    # tpm_lfe_unseeded = sim_lfe_Nrad0.TPMscaling_Petrie(l_lfe)
-
-    # omp_index1 = sim_hfe_Nrad0.find_omp_index()
-    #
-    # # first open cell on the OMP row
-    # first_open_omp_cell_row = hfe.find_omp_index_row()
-    # # calculate connection length
-    # l_hfe = sim_hfe_Nrad0.calc_connection_length(omp_index1)
-    # print(l_hfe)
-    # tpm_hfe_unseeded = sim_hfe_Nrad0.TPMscaling_Petrie(l_hfe)
-    # print(tpm_lfe_unseeded['ntar'], tpm_hfe_unseeded['ntar'])
-    # print(tpm_lfe_unseeded['ttar'], tpm_hfe_unseeded['ttar'])
-    # raise SystemExit
-
-    # ne1, te1 = sim_lfe_Nrad0.nete_omp()
-
-    # ne2, te2 = sim_hfe_Nrad0.nete_omp()
-
-    # print(ne1, te1)
-    # print(ne2, te2)
-    # print(ne3, te3)
-    # print(ne4, te4)
-    # print(ne5, te5)
-
-    # contour = False
-    contour = True
-    if contour is True:
-        # sim.contour_rad_power(simlist,3.5e6)
-        # plt.show(block=True)
-
-        for index1 in range(0, len(simlist)):
-            simu = simlist[index1][0]
-            label= simlist[index1][1]
-            var = ep.data(simu.fullpath, 'SQEZR_2').data
-            var = -np.trim_zeros(var, 'b')
-            simu.contour(var, 'soun_' + label)
-            plt.show(block=True)
-        # sim_hfe_Nrad0.contour()
-
-
-    # print_lfe= sim_lfe_Nrad0.read_print_file_edge2d()
-    # print_hfe= sim_hfe_Nrad0.read_print_file_edge2d()
-
-
-    # print(print_lfe['ionflux_sol_outdiv'])
-    # print(print_lfe['ionflux_sol_indiv'])
-    #
-    # print(print_hfe['ionflux_sol_outdiv'])
-    # print(print_hfe['ionflux_sol_indiv'])
-    #
-    #
-    lfe_pb = sim_lfe_Nrad1.read_print_file_edge2d()
-    # hfe_pb = sim_hfe_Nrad1.read_print_file_edge2d()
-    #
-    sim.bar_power_balance(lfe_pb,'LFE')
-    # sim.bar_power_balance(hfe_pb,'HFE')
-    #
-    # lfe_pb = sim_lfe_81472.read_print_file_edge2d()
-    # hfe_pb = sim_hfe_81472.read_print_file_edge2d()
-    #
-    # sim.bar_power_balance(sim_lfe_81472,'LFE')
-    # sim.bar_power_balance(sim_hfe_81472,'HFE')
