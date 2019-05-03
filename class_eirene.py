@@ -66,33 +66,39 @@ class Eirene():
         self.ATM.dataName = []
         self.ATM.unitName = []
         self.ATM.names = {}
-        self.ATM.data = []
+        self.ATM.vol_avg_data = []
+        self.ATM.surf_avg_data = []
 
         self.MOL.dataName = []
         self.MOL.unitName =  []
         self.MOL.names ={}
-        self.MOL.data = []
+        self.MOL.vol_avg_data = []
+        self.MOL.surf_avg_data = []
 
         self.ION.dataName = []
         self.ION.unitName= []
         self.ION.names ={}
-        self.ION.data = []
+        self.ION.vol_avg_data = []
+        self.ION.surf_avg_data = []
 
         self.PHOT.dataName = []
         self.PHOT.unitName= []
         self.PHOT.names ={}
-        self.PHOT.data = []
+        self.PHOT.vol_avg_data = []
+        self.PHOT.surf_avg_data = []
 
         self.PLS.dataName = []
         self.PLS.unitName= []
         self.PLS.names ={}
-        self.PLS.data = []
+        self.PLS.vol_avg_data = []
+        self.PLS.surf_avg_data = []
 
 
         self.MISC.dataName= []
         self.MISC.unitName= []
         self.MISC.names = {}
-        self.MISC.data = []
+        self.MISC.vol_avg_data = []
+        self.MISC.surf_avg_data = []
 
 
         #initialising names - check with Gerard/Derek
@@ -330,18 +336,35 @@ class Eirene():
                 self.nsts = int(dummy[2])
                 break
         row_to_skip=index+3
+        logger.log(5, row_to_skip)
                 # 5          27        6086
         logger.log(5,' reading bulk plasma data')
         for i in range(0, self.npls):
             dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0]+ self.nlimps+3
-            self.PLS.data.append(dummy1)
+            row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip +self.nlimps+ 2
+            logger.log(5, row_to_skip)
+            self.PLS.vol_avg_data.append(dummy1)
+            self.PLS.surf_avg_data.append(dummy2)
 
-        self.PLS.data = pd.concat(self.PLS.data, axis=0)#concatenates as row
-        self.PLS.data.reset_index(drop=True, inplace=True)
+        self.PLS.vol_avg_data = pd.concat(self.PLS.vol_avg_data, axis=0)#concatenates as row
+        self.PLS.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.PLS.surf_avg_data = pd.concat(self.PLS.surf_avg_data, axis=0)#concatenates as row
+        self.PLS.surf_avg_data.reset_index(drop=True, inplace=True)
+
+
         row_to_skip = row_to_skip +1
+        logger.log(5, row_to_skip)
 
         # row_to_skip = 30648
         #row to skip should be 30647
@@ -349,39 +372,93 @@ class Eirene():
         for i in range(0,self.natm):
             dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # 36730
-            dummy1.fillna(0, inplace=True)#converts nan into 0
-            # a = dummy2[dummy2.columns[0:3]][-1:]
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps +2
-            self.ATM.data.append(dummy1)
-        #
-        self.ATM.data = pd.concat(self.ATM.data, axis=0)#concatenates as row
-        self.ATM.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+            dummy1.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip +self.nlimps+ 1
+            logger.log(5, row_to_skip)
+            self.ATM.vol_avg_data.append(dummy1)
+            self.ATM.surf_avg_data.append(dummy2)
 
+        self.ATM.vol_avg_data = pd.concat(self.ATM.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.ATM.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.ATM.surf_avg_data = pd.concat(self.ATM.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.ATM.surf_avg_data.reset_index(drop=True, inplace=True)
+
+        row_to_skip = row_to_skip + 1
+        logger.log(5,row_to_skip)
         logger.log(5, ' reading neutral molecules data')
         for i in range(0,self.nmol):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
-            self.MOL.data.append(dummy1)
-        self.MOL.data = pd.concat(self.MOL.data, axis=0)#concatenates as row
-        self.MOL.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.nlimps + 2
+            logger.log(5, row_to_skip)
+            self.MOL.vol_avg_data.append(dummy1)
+            self.MOL.surf_avg_data.append(dummy2)
+
+        self.MOL.vol_avg_data = pd.concat(self.MOL.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.MOL.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.MOL.surf_avg_data = pd.concat(self.MOL.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.MOL.surf_avg_data.reset_index(drop=True, inplace=True)
+
+        # row_to_skip = row_to_skip + 1
+        # logger.log(5, row_to_skip)
+
+
 
         logger.log(5, ' reading test ions data')
         for i in range(0,self.nion):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
-            self.ION.data.append(dummy1)
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.nlimps + 2
+            logger.log(5, row_to_skip)
+            self.ION.vol_avg_data.append(dummy1)
+            self.ION.surf_avg_data.append(dummy2)
 
-        self.ION.data = pd.concat(self.ION.data, axis=0)#concatenates as row
-        self.ION.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+        self.ION.vol_avg_data = pd.concat(self.ION.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.ION.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.ION.surf_avg_data = pd.concat(self.ION.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.ION.surf_avg_data.reset_index(drop=True, inplace=True)
+
 
         logger.log(5, ' reading miscellaneous data')
-        self.MISC.data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-        self.MISC.data.reset_index(drop=True, inplace=True)
+        self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
+
+
+        logger.log(5, "stratum data is not read YET!")
+
         logger.log(5, 'done \n')
         logger.info( 'reading eirene data done! \n')
                         
@@ -397,13 +474,13 @@ class Eirene():
 
 
         if species is None:
-            var = self.MOL.data[1]
+            var = self.MOL.vol_avg_data[1]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
         elif species is "MOL":
-            var = self.MOL.data[1]
+            var = self.MOL.vol_avg_data[1]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
         elif species is "ATM":
-            var = self.ATM.data[1]
+            var = self.ATM.vol_avg_data[1]
             label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
         elif isinstance(species,np.ndarray):
             var = species
@@ -417,7 +494,7 @@ class Eirene():
         # x = [self.geom.xv[i] for i in self.geom.trimap]
         # y = [self.geom.yv[i] for i in self.geom.trimap]
         #
-        # plt.tricontourf(x,y,self.MOL.data)
+        # plt.tricontourf(x,y,self.MOL.vol_avg_data)
         # plt.show()
 
 
@@ -428,9 +505,9 @@ class Eirene():
         y = [self.geom.yv[i] for i in
              self.geom.trimap]
 
-        # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.data.eirene.MOL.data)
+        # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data)
 
-        # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
+        # plt.tricontourf(sim_hfe_Nrad0.vol_avg_data.eirene.geom.xv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.yv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.trimap,sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data[1])
 
 
         if lowerbound is None:

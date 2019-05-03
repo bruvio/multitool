@@ -633,7 +633,7 @@ if __name__ == "__main__":
 
     # simu = sim_bruvio
     # simu = sim_alexc
-    simu = sim_david
+    simu = sim_alexc
 
 
 
