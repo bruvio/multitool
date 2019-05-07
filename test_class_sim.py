@@ -639,37 +639,44 @@ if __name__ == "__main__":
 
     simu.read_eirene(simu.fullpath[:-4])
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-    simu.data.eirene.plot_eirene()
-
-
-    simu.data.eirene.plot_eirene(species='MOL')
-    simu.data.eirene.plot_eirene(species='ATM')
-    #
-    simu.data.eirene.plot_subdivertor(simu.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
-
-    simu.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
-
-    #
-
+   #  simu.data.eirene.plot_eirene()
    #
-    #
-    #
+   #
+   #  simu.data.eirene.plot_eirene(species='MOL')
+   #  simu.data.eirene.plot_eirene(species='ATM')
 
 
 
-    #test to plot EIRENE PRESSURE AND TEMPERATURE
+
+    #  #
+   #  simu.data.eirene.plot_subdivertor(simu.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
+   #
+   #  simu.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
+   #
+   #  #
+   #
+   # #
+   #  #
+   #  #
+   #
+   #
+   #
+   #  #test to plot EIRENE PRESSURE AND TEMPERATURE
+    triangnum = simu.data.eirene.geom.trimap.shape[0]
+
+
     mD2 = 2*2.01410178*1.660538921E-27; # kg
-    vxD2 = np.asarray(simu.data.eirene.MOL.data[2]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
-    vyD2 = np.asarray(simu.data.eirene.MOL.data[3]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
-    vzD2 = np.asarray(simu.data.eirene.MOL.data[4]/1000/mD2/simu.data.eirene.MOL.data[1]/100); # m/s
+    vxD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[2]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
+    vyD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[3]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
+    vzD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[4]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
     vxD2[np.isnan(vxD2)] = 0;
     vyD2[np.isnan(vyD2)] = 0;
     vzD2[np.isnan(vzD2)] = 0;
 
-    pD2 = np.asarray(2/3*(simu.data.eirene.MOL.data[5]*1.6022E-19*1E6 -
-               0.5*mD2*simu.data.eirene.MOL.data[1]*1E6*(vxD2**2+vyD2**2+vzD2**2)));
-    # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
-    TD2 = np.asarray(pD2/simu.data.eirene.MOL.data[1]/1E6/1.3806488E-23);
+    pD2 = np.asarray(2/3*(simu.data.eirene.MOL.vol_avg_data[5]*1.6022E-19*1E6 -
+               0.5*mD2*simu.data.eirene.MOL.vol_avg_data[1]*1E6*(vxD2**2+vyD2**2+vzD2**2)));
+    # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
+    TD2 = np.asarray(pD2/simu.data.eirene.MOL.vol_avg_data[1]/1E6/1.3806488E-23);
     TD2[np.isnan(TD2)] = 0;
     pD2[np.isnan(pD2)] = 0;
     #
@@ -678,8 +685,29 @@ if __name__ == "__main__":
     # yv=-2.3*ones(100,1);
     #
     #
+   #
+    # simu.data.eirene.plot_eirene(species=pD2)
+    # simu.data.eirene.plot_eirene(species=TD2)
 
-    simu.data.eirene.plot_eirene(species=TD2)
+    # simu.data.eirene.PLS.names
+    # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+    # simu.data.eirene.MOL.names
+    # Out[13]: {0: 'D2'}
+    # simu.data.eirene.ATM.names
+    # Out[14]: {0: 'D', 1: 'Be'}
+    # simu.data.eirene.ION.names
+    # Out[15]: {0: 'D2+'}
+
+
+
+    # I want Be1+
+    species =2
+    data = simu.data.eirene.PLS.vol_avg_data[27]
+    label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
+
+
+    simu.data.eirene.plot_eirene(data=data,species=species,label=label)
+
 
 
 

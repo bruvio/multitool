@@ -39,11 +39,11 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
-        # self.NPLSdataname = 27
-        # self.NMOLdataname = 11
-        # self.NATMdataName = 15
-        # self.NIONdataname = 7
-        # self.NMISCdataname = 11
+        self.NPLSdataname = 27
+        self.NMOLdataname = 11
+        self.NATMdataName = 15
+        self.NIONdataname = 7
+        self.NMISCdataname = 11
 
         #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
@@ -102,6 +102,69 @@ class Eirene():
 
 
         #initialising names - check with Gerard/Derek
+
+        self.PLS.dataName.append('papl - part.source atm coll.')
+        self.PLS.dataName.append('pmpl - part.source mol coll.')
+        self.PLS.dataName.append('pipl - part.source ion coll.')
+        self.PLS.dataName.append('pphpl - part.source phot coll.')
+        self.PLS.dataName.append('papl+pmpl+pipl - part.source')
+        self.PLS.dataName.append('mapl - mom.source atm coll.')
+        self.PLS.dataName.append('mmpl - mom.source mol coll.')
+        self.PLS.dataName.append('mipl - mom.source ion coll.')
+        self.PLS.dataName.append('mphpl - mom.source phot coll.')
+        self.PLS.dataName.append('mapl+mmpl+mipl - mom.source')
+        self.PLS.dataName.append('diin - plasma density bulk plasma')
+        self.PLS.dataName.append('vxin - plasma drift velocity (x)')
+        self.PLS.dataName.append('vyin - plasma drift velocity (y)')
+        self.PLS.dataName.append('vzin - plasma drift velocity (z)')
+        self.PLS.dataName.append('bvin - ')
+        self.PLS.dataName.append('tiin - plasma temperature bulk plasma')
+        self.PLS.dataName.append('edrift - kinetic energy in drift motion bulk plasma')
+        self.PLS.dataName.append('eapl - eng.source atm coll.')
+        self.PLS.dataName.append('empl - eng.source mol coll.')
+        self.PLS.dataName.append('eipl - eng.source ion coll.')
+        self.PLS.dataName.append('ephpl - eng.source phot coll.')
+        self.PLS.dataName.append('eapl+empl+eipl - eng.source')
+        self.PLS.dataName.append('eael - eng.source electrons atm coll.')
+        self.PLS.dataName.append('emel - eng.source electrons mol coll.')
+        self.PLS.dataName.append('eiel - eng.source electrons ion coll.')
+        self.PLS.dataName.append('ephel - eng.source electrons phot coll.')
+        self.PLS.dataName.append('eael+emel+eiel - eng.source electrons')
+
+
+        # set unit names for bulk plasma ions
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append( 'amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append( '1/cm^3')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( '?')
+        self.PLS.unitName.append( 'eV')
+        self.PLS.unitName.append( 'eV')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+
+
+
+
+
         self.ATM.dataName.append('pdena - atom density')
         self.ATM.dataName.append('vxdena - atom momentum density (x)')
         self.ATM.dataName.append('vydena - atom momentum density (y)')
@@ -464,27 +527,35 @@ class Eirene():
                         
 
 
-    def plot_eirene(self,species=None, lowerbound=None,upperbound=None,label=None):
+    def plot_eirene(self,data=None,species=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
         :param species:
         :param label:
         :return:
         """
-
-
         if species is None:
-            var = self.MOL.vol_avg_data[1]
+            species =1
+        else:
+            species=species
+
+        triangnum = self.geom.trimap.shape[0]
+        if data is None:
+            var = self.MOL.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
-        elif species is "MOL":
-            var = self.MOL.vol_avg_data[1]
+        elif data is "MOL":
+            var = self.MOL.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
-        elif species is "ATM":
-            var = self.ATM.vol_avg_data[1]
+        elif data is "ATM":
+            var = self.ATM.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
             label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
-        elif isinstance(species,np.ndarray):
-            var = species
+        elif isinstance(data,np.ndarray):
+            var = data[triangnum*(species-1):species*triangnum-1]
             label = label
+        elif isinstance(data,pd.Series):
+            var = data[triangnum*(species-1):species*triangnum-1]
+            label = label
+        #     var
         else:
             logger.error('choose between MOL/ATM \n')
             return
