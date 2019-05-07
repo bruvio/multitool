@@ -527,35 +527,73 @@ class Eirene():
                         
 
 
-    def plot_eirene(self,data=None,species=None, lowerbound=None,upperbound=None,label=None):
+    def plot_eirene(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
-        :param species:
-        :param label:
-        :return:
+        :param data input data (dataframe, string or empty)
+        as data is stored by read_eirene as a dataframe species and var determine for which species user want the data (row index) and which variable (column index)
+        :param species: simu.data.eirene.PLS.names
+        {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+        :param var:
+        column number indentifying variables
+        :param label: simu.data.eirene.ATM.names[species] + \
+            simu.data.eirene.ATM.dataName[species]
+        :param lowerbound minimum value to be used to normalise data
+        :param upperbound minimum value to be used to normalise data
+
+
+        :return: contour plot of data
+        usage
+
+            # I want Be1+
+            species =1
+            data = simu.data.eirene.PLS.vol_avg_data
+            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
+
+            # I want D
+            species = 0
+            species_name = simu.data.eirene.ATM.names[species]
+            data = simu.data.eirene.ATM.vol_avg_data
+            label = simu.data.eirene.ATM.names[species] + \
+            simu.data.eirene.ATM.dataName[species]
+
+            simu.data.eirene.plot_eirene(data=data,species=species,label=label)
+
         """
         if species is None:
-            species =1
+            species =0
         else:
             species=species
 
+        if var is None:
+            var =0
+        else:
+            var=var
+
         triangnum = self.geom.trimap.shape[0]
         if data is None:
-            var = self.MOL.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
+            data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
+            data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
         elif data is "MOL":
-            var = self.MOL.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
+            data = self.MOL.vol_avg_data[triangnum*(species):(species)*triangnum]
+            data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
         elif data is "ATM":
-            var = self.ATM.vol_avg_data[1][triangnum*(species-1):species*triangnum-1]
+            data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
+            data = data[data.columns[1]]
             label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
         elif isinstance(data,np.ndarray):
-            var = data[triangnum*(species-1):species*triangnum-1]
+            data = data[triangnum*(species):(species+1)*triangnum]
             label = label
-        elif isinstance(data,pd.Series):
-            var = data[triangnum*(species-1):species*triangnum-1]
+        # elif isinstance(data,pd.Series):
+        #     var = data[triangnum*(species):(species+1)*triangnum-1]
+        #     label = label
+        elif isinstance(data,pd.DataFrame):
+
+            data = data[triangnum*(species):(species+1)*triangnum]
+            data=data[data.columns[var+1]]
             label = label
-        #     var
         else:
             logger.error('choose between MOL/ATM \n')
             return
@@ -582,11 +620,11 @@ class Eirene():
 
 
         if lowerbound is None:
-            lower = min(var)
+            lower = min(data)
         else:
           lower=lowerbound
         if upperbound is None:
-            upper = max(var)
+            upper = max(data)
         else:
           upper=upperbound
         x1 = []
@@ -619,7 +657,7 @@ class Eirene():
         logger.log(5, " normalisation of the variable \n ")
         norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
         collection = PatchCollection(patches, match_original=True)
-        collection.set(array=var, cmap='jet', norm=norm)
+        collection.set(array=data, cmap='jet', norm=norm)
 
         #plotting patches
         logger.log(5, " plotting patches \n ")

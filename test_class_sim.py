@@ -639,11 +639,11 @@ if __name__ == "__main__":
 
     simu.read_eirene(simu.fullpath[:-4])
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-   #  simu.data.eirene.plot_eirene()
+    # simu.data.eirene.plot_eirene()
    #
    #
-   #  simu.data.eirene.plot_eirene(species='MOL')
-   #  simu.data.eirene.plot_eirene(species='ATM')
+    # simu.data.eirene.plot_eirene(data='MOL')
+    # simu.data.eirene.plot_eirene(data='ATM')
 
 
 
@@ -686,8 +686,8 @@ if __name__ == "__main__":
     #
     #
    #
-    # simu.data.eirene.plot_eirene(species=pD2)
-    # simu.data.eirene.plot_eirene(species=TD2)
+    # simu.data.eirene.plot_eirene(data=pD2)
+    # simu.data.eirene.plot_eirene(data=TD2)
 
     # simu.data.eirene.PLS.names
     # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
@@ -701,10 +701,16 @@ if __name__ == "__main__":
 
 
     # I want Be1+
-    species =2
-    data = simu.data.eirene.PLS.vol_avg_data[27]
+    species =1
+    data = simu.data.eirene.PLS.vol_avg_data
     label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
 
+    # I want D
+    species = 0
+    species_name = simu.data.eirene.ATM.names[species]
+    data = simu.data.eirene.ATM.vol_avg_data
+    label = simu.data.eirene.ATM.names[species] + \
+            simu.data.eirene.ATM.dataName[species]
 
     simu.data.eirene.plot_eirene(data=data,species=species,label=label)
 
