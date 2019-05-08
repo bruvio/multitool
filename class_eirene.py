@@ -39,11 +39,11 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
-        # self.NPLSdataname = 27
-        # self.NMOLdataname = 11
-        # self.NATMdataName = 15
-        # self.NIONdataname = 7
-        # self.NMISCdataname = 11
+        self.NPLSdataname = 27
+        self.NMOLdataname = 11
+        self.NATMdataName = 15
+        self.NIONdataname = 7
+        self.NMISCdataname = 11
 
         #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
@@ -66,36 +66,105 @@ class Eirene():
         self.ATM.dataName = []
         self.ATM.unitName = []
         self.ATM.names = {}
-        self.ATM.data = []
+        self.ATM.vol_avg_data = []
+        self.ATM.surf_avg_data = []
 
         self.MOL.dataName = []
         self.MOL.unitName =  []
         self.MOL.names ={}
-        self.MOL.data = []
+        self.MOL.vol_avg_data = []
+        self.MOL.surf_avg_data = []
 
         self.ION.dataName = []
         self.ION.unitName= []
         self.ION.names ={}
-        self.ION.data = []
+        self.ION.vol_avg_data = []
+        self.ION.surf_avg_data = []
 
         self.PHOT.dataName = []
         self.PHOT.unitName= []
         self.PHOT.names ={}
-        self.PHOT.data = []
+        self.PHOT.vol_avg_data = []
+        self.PHOT.surf_avg_data = []
 
         self.PLS.dataName = []
         self.PLS.unitName= []
         self.PLS.names ={}
-        self.PLS.data = []
+        self.PLS.vol_avg_data = []
+        self.PLS.surf_avg_data = []
 
 
         self.MISC.dataName= []
         self.MISC.unitName= []
         self.MISC.names = {}
-        self.MISC.data = []
+        self.MISC.vol_avg_data = []
+        self.MISC.surf_avg_data = []
 
 
         #initialising names - check with Gerard/Derek
+
+        self.PLS.dataName.append('papl - part.source atm coll.')
+        self.PLS.dataName.append('pmpl - part.source mol coll.')
+        self.PLS.dataName.append('pipl - part.source ion coll.')
+        self.PLS.dataName.append('pphpl - part.source phot coll.')
+        self.PLS.dataName.append('papl+pmpl+pipl - part.source')
+        self.PLS.dataName.append('mapl - mom.source atm coll.')
+        self.PLS.dataName.append('mmpl - mom.source mol coll.')
+        self.PLS.dataName.append('mipl - mom.source ion coll.')
+        self.PLS.dataName.append('mphpl - mom.source phot coll.')
+        self.PLS.dataName.append('mapl+mmpl+mipl - mom.source')
+        self.PLS.dataName.append('diin - plasma density bulk plasma')
+        self.PLS.dataName.append('vxin - plasma drift velocity (x)')
+        self.PLS.dataName.append('vyin - plasma drift velocity (y)')
+        self.PLS.dataName.append('vzin - plasma drift velocity (z)')
+        self.PLS.dataName.append('bvin - ')
+        self.PLS.dataName.append('tiin - plasma temperature bulk plasma')
+        self.PLS.dataName.append('edrift - kinetic energy in drift motion bulk plasma')
+        self.PLS.dataName.append('eapl - eng.source atm coll.')
+        self.PLS.dataName.append('empl - eng.source mol coll.')
+        self.PLS.dataName.append('eipl - eng.source ion coll.')
+        self.PLS.dataName.append('ephpl - eng.source phot coll.')
+        self.PLS.dataName.append('eapl+empl+eipl - eng.source')
+        self.PLS.dataName.append('eael - eng.source electrons atm coll.')
+        self.PLS.dataName.append('emel - eng.source electrons mol coll.')
+        self.PLS.dataName.append('eiel - eng.source electrons ion coll.')
+        self.PLS.dataName.append('ephel - eng.source electrons phot coll.')
+        self.PLS.dataName.append('eael+emel+eiel - eng.source electrons')
+
+
+        # set unit names for bulk plasma ions
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp/cm^3')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append( 'amp*g*cm/(s*cm^3)')
+        self.PLS.unitName.append( '1/cm^3')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( 'cm/s')
+        self.PLS.unitName.append( '?')
+        self.PLS.unitName.append( 'eV')
+        self.PLS.unitName.append( 'eV')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.unitName.append( 'watt/cm^3')
+
+
+
+
+
         self.ATM.dataName.append('pdena - atom density')
         self.ATM.dataName.append('vxdena - atom momentum density (x)')
         self.ATM.dataName.append('vydena - atom momentum density (y)')
@@ -330,18 +399,35 @@ class Eirene():
                 self.nsts = int(dummy[2])
                 break
         row_to_skip=index+3
+        logger.log(5, row_to_skip)
                 # 5          27        6086
         logger.log(5,' reading bulk plasma data')
         for i in range(0, self.npls):
             dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0]+ self.nlimps+3
-            self.PLS.data.append(dummy1)
+            row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip +self.nlimps+ 2
+            logger.log(5, row_to_skip)
+            self.PLS.vol_avg_data.append(dummy1)
+            self.PLS.surf_avg_data.append(dummy2)
 
-        self.PLS.data = pd.concat(self.PLS.data, axis=0)#concatenates as row
-        self.PLS.data.reset_index(drop=True, inplace=True)
+        self.PLS.vol_avg_data = pd.concat(self.PLS.vol_avg_data, axis=0)#concatenates as row
+        self.PLS.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.PLS.surf_avg_data = pd.concat(self.PLS.surf_avg_data, axis=0)#concatenates as row
+        self.PLS.surf_avg_data.reset_index(drop=True, inplace=True)
+
+
         row_to_skip = row_to_skip +1
+        logger.log(5, row_to_skip)
 
         # row_to_skip = 30648
         #row to skip should be 30647
@@ -349,64 +435,164 @@ class Eirene():
         for i in range(0,self.natm):
             dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             # 36730
-            dummy1.fillna(0, inplace=True)#converts nan into 0
-            # a = dummy2[dummy2.columns[0:3]][-1:]
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps +2
-            self.ATM.data.append(dummy1)
-        #
-        self.ATM.data = pd.concat(self.ATM.data, axis=0)#concatenates as row
-        self.ATM.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+            dummy1.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip +self.nlimps+ 1
+            logger.log(5, row_to_skip)
+            self.ATM.vol_avg_data.append(dummy1)
+            self.ATM.surf_avg_data.append(dummy2)
 
+        self.ATM.vol_avg_data = pd.concat(self.ATM.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.ATM.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.ATM.surf_avg_data = pd.concat(self.ATM.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.ATM.surf_avg_data.reset_index(drop=True, inplace=True)
+
+        row_to_skip = row_to_skip + 1
+        logger.log(5,row_to_skip)
         logger.log(5, ' reading neutral molecules data')
         for i in range(0,self.nmol):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
-            self.MOL.data.append(dummy1)
-        self.MOL.data = pd.concat(self.MOL.data, axis=0)#concatenates as row
-        self.MOL.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.nlimps + 2
+            logger.log(5, row_to_skip)
+            self.MOL.vol_avg_data.append(dummy1)
+            self.MOL.surf_avg_data.append(dummy2)
+
+        self.MOL.vol_avg_data = pd.concat(self.MOL.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.MOL.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.MOL.surf_avg_data = pd.concat(self.MOL.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.MOL.surf_avg_data.reset_index(drop=True, inplace=True)
+
+        # row_to_skip = row_to_skip + 1
+        # logger.log(5, row_to_skip)
+
+
 
         logger.log(5, ' reading test ions data')
         for i in range(0,self.nion):
             dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + self.nlimps+ 2
-            self.ION.data.append(dummy1)
+            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            logger.log(5, row_to_skip)
+            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+                                 compression='gzip', skiprows=row_to_skip,
+                                 nrows=self.nlimps,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            dummy2.fillna(0, inplace=True)  # converts nan into 0
+            row_to_skip = row_to_skip + self.nlimps + 2
+            logger.log(5, row_to_skip)
+            self.ION.vol_avg_data.append(dummy1)
+            self.ION.surf_avg_data.append(dummy2)
 
-        self.ION.data = pd.concat(self.ION.data, axis=0)#concatenates as row
-        self.ION.data.reset_index(drop=True, inplace=True)
-        row_to_skip = row_to_skip + 1
+        self.ION.vol_avg_data = pd.concat(self.ION.vol_avg_data,
+                                          axis=0)  # concatenates as row
+        self.ION.vol_avg_data.reset_index(drop=True, inplace=True)
+        self.ION.surf_avg_data = pd.concat(self.ION.surf_avg_data,
+                                           axis=0)  # concatenates as row
+        self.ION.surf_avg_data.reset_index(drop=True, inplace=True)
+
 
         logger.log(5, ' reading miscellaneous data')
-        self.MISC.data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-        self.MISC.data.reset_index(drop=True, inplace=True)
+        self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
+
+
+        logger.log(5, "stratum data is not read YET!")
+
         logger.log(5, 'done \n')
         logger.info( 'reading eirene data done! \n')
                         
 
 
-    def plot_eirene(self,species=None, lowerbound=None,upperbound=None,label=None):
+    def plot_eirene(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
-        :param species:
-        :param label:
-        :return:
+        :param data input data (dataframe, string or empty)
+        as data is stored by read_eirene as a dataframe species and var determine for which species user want the data (row index) and which variable (column index)
+        :param species: simu.data.eirene.PLS.names
+        {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+        :param var:
+        column number indentifying variables
+        :param label: simu.data.eirene.ATM.names[species] + \
+            simu.data.eirene.ATM.dataName[species]
+        :param lowerbound minimum value to be used to normalise data
+        :param upperbound minimum value to be used to normalise data
+
+
+        :return: contour plot of data
+        usage
+
+            # I want Be1+
+            species =1
+            data = simu.data.eirene.PLS.vol_avg_data
+            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
+
+            # I want D
+            species = 0
+            species_name = simu.data.eirene.ATM.names[species]
+            data = simu.data.eirene.ATM.vol_avg_data
+            label = simu.data.eirene.ATM.names[species] + \
+            simu.data.eirene.ATM.dataName[species]
+
+            simu.data.eirene.plot_eirene(data=data,species=species,label=label)
+
         """
-
-
         if species is None:
-            var = self.MOL.data[1]
+            species =0
+        else:
+            species=species
+
+        if var is None:
+            var =0
+        else:
+            var=var
+
+        triangnum = self.geom.trimap.shape[0]
+        if data is None:
+            data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
+            data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
-        elif species is "MOL":
-            var = self.MOL.data[1]
+        elif data is "MOL":
+            data = self.MOL.vol_avg_data[triangnum*(species):(species)*triangnum]
+            data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
-        elif species is "ATM":
-            var = self.ATM.data[1]
+        elif data is "ATM":
+            data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
+            data = data[data.columns[1]]
             label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
-        elif isinstance(species,np.ndarray):
-            var = species
+        elif isinstance(data,np.ndarray):
+            data = data[triangnum*(species):(species+1)*triangnum]
+            label = label
+        # elif isinstance(data,pd.Series):
+        #     var = data[triangnum*(species):(species+1)*triangnum-1]
+        #     label = label
+        elif isinstance(data,pd.DataFrame):
+
+            data = data[triangnum*(species):(species+1)*triangnum]
+            data=data[data.columns[var+1]]
             label = label
         else:
             logger.error('choose between MOL/ATM \n')
@@ -417,7 +603,7 @@ class Eirene():
         # x = [self.geom.xv[i] for i in self.geom.trimap]
         # y = [self.geom.yv[i] for i in self.geom.trimap]
         #
-        # plt.tricontourf(x,y,self.MOL.data)
+        # plt.tricontourf(x,y,self.MOL.vol_avg_data)
         # plt.show()
 
 
@@ -428,17 +614,17 @@ class Eirene():
         y = [self.geom.yv[i] for i in
              self.geom.trimap]
 
-        # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.data.eirene.MOL.data)
+        # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data)
 
-        # plt.tricontourf(sim_hfe_Nrad0.data.eirene.geom.xv,sim_hfe_Nrad0.data.eirene.geom.yv,sim_hfe_Nrad0.data.eirene.geom.trimap,sim_hfe_Nrad0.data.eirene.MOL.data[1])
+        # plt.tricontourf(sim_hfe_Nrad0.vol_avg_data.eirene.geom.xv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.yv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.trimap,sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data[1])
 
 
         if lowerbound is None:
-            lower = min(var)
+            lower = min(data)
         else:
           lower=lowerbound
         if upperbound is None:
-            upper = max(var)
+            upper = max(data)
         else:
           upper=upperbound
         x1 = []
@@ -471,7 +657,7 @@ class Eirene():
         logger.log(5, " normalisation of the variable \n ")
         norm = mpl.colors.Normalize(vmin=lower, vmax=upper)
         collection = PatchCollection(patches, match_original=True)
-        collection.set(array=var, cmap='jet', norm=norm)
+        collection.set(array=data, cmap='jet', norm=norm)
 
         #plotting patches
         logger.log(5, " plotting patches \n ")
