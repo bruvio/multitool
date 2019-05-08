@@ -40,11 +40,18 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
-        self.NPLSdataname = 27 # number of columns of PLS data
-        self.NMOLdataname = 11 # number of columns of MOL data
-        self.NATMdataName = 15# number of columns of ATM data
-        self.NIONdataname = 7# number of columns of ION data
+        self.NPLS_vol_dataname = 27 # number of columns of PLS data
+        self.NMOL_vol_dataname = 11 # number of columns of MOL data
+        self.NATM_vol_VoldataName = 15# number of columns of ATM data
+        self.NION_vol_dataname = 7# number of columns of ION data
         self.NMISCdataname = 11 # number of columns of MISC data
+
+        self.NPLS_surf_dataname = 4
+        self.NATM_surf_dataname = 4
+        self.NMOL_surf_dataname = 14
+        self.NION_surf_dataname = 14
+
+
 
         #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
@@ -63,207 +70,381 @@ class Eirene():
         self.geom.pump = []
         self.geom.puff = []
 
+        self.ESRF_TYPE_NAMES = []
 
-        self.ATM.dataName = []
-        self.ATM.unitName = []
+
+        self.ATM.VoldataName = []
+        self.ATM.VolunitName = []
+        self.ATM.SurfdataName = []
+        self.ATM.SurfunitName = []
         self.ATM.names = {}
         self.ATM.vol_avg_data = []
         self.ATM.surf_avg_data = []
 
-        self.MOL.dataName = []
-        self.MOL.unitName =  []
+        self.MOL.VoldataName = []
+        self.MOL.VolunitName =  []
+        self.MOL.SurfdataName = []
+        self.MOL.SurfunitName = []
         self.MOL.names ={}
         self.MOL.vol_avg_data = []
         self.MOL.surf_avg_data = []
 
-        self.ION.dataName = []
-        self.ION.unitName= []
+        self.ION.VoldataName = []
+        self.ION.VolunitName= []
+        self.ION.SurfdataName = []
+        self.ION.SurfunitName = []
         self.ION.names ={}
         self.ION.vol_avg_data = []
         self.ION.surf_avg_data = []
 
-        self.PHOT.dataName = []
-        self.PHOT.unitName= []
+        self.PHOT.VoldataName = []
+        self.PHOT.VolunitName= []
+        self.PHOT.SurfdataName = []
+        self.PHOT.SurfunitName = []
         self.PHOT.names ={}
         self.PHOT.vol_avg_data = []
         self.PHOT.surf_avg_data = []
 
-        self.PLS.dataName = []
-        self.PLS.unitName= []
+        self.PLS.VoldataName = []
+        self.PLS.VolunitName= []
+        self.PLS.SurfdataName = []
+        self.PLS.SurfunitName = []
         self.PLS.names ={}
         self.PLS.vol_avg_data = []
         self.PLS.surf_avg_data = []
 
 
-        self.MISC.dataName= []
-        self.MISC.unitName= []
+        self.MISC.VoldataName= []
+        self.MISC.VolunitName= []
+        self.MISC.SurfunitName = []
+        self.MISC.SurfunitName = []
         self.MISC.names = {}
         self.MISC.vol_avg_data = []
         self.MISC.surf_avg_data = []
 
-
-        #initialising names - check with Gerard/Derek
-
-        self.PLS.dataName.append('papl - part.source atm coll.')
-        self.PLS.dataName.append('pmpl - part.source mol coll.')
-        self.PLS.dataName.append('pipl - part.source ion coll.')
-        self.PLS.dataName.append('pphpl - part.source phot coll.')
-        self.PLS.dataName.append('papl+pmpl+pipl - part.source')
-        self.PLS.dataName.append('mapl - mom.source atm coll.')
-        self.PLS.dataName.append('mmpl - mom.source mol coll.')
-        self.PLS.dataName.append('mipl - mom.source ion coll.')
-        self.PLS.dataName.append('mphpl - mom.source phot coll.')
-        self.PLS.dataName.append('mapl+mmpl+mipl - mom.source')
-        self.PLS.dataName.append('diin - plasma density bulk plasma')
-        self.PLS.dataName.append('vxin - plasma drift velocity (x)')
-        self.PLS.dataName.append('vyin - plasma drift velocity (y)')
-        self.PLS.dataName.append('vzin - plasma drift velocity (z)')
-        self.PLS.dataName.append('bvin - ')
-        self.PLS.dataName.append('tiin - plasma temperature bulk plasma')
-        self.PLS.dataName.append('edrift - kinetic energy in drift motion bulk plasma')
-        self.PLS.dataName.append('eapl - eng.source atm coll.')
-        self.PLS.dataName.append('empl - eng.source mol coll.')
-        self.PLS.dataName.append('eipl - eng.source ion coll.')
-        self.PLS.dataName.append('ephpl - eng.source phot coll.')
-        self.PLS.dataName.append('eapl+empl+eipl - eng.source')
-        self.PLS.dataName.append('eael - eng.source electrons atm coll.')
-        self.PLS.dataName.append('emel - eng.source electrons mol coll.')
-        self.PLS.dataName.append('eiel - eng.source electrons ion coll.')
-        self.PLS.dataName.append('ephel - eng.source electrons phot coll.')
-        self.PLS.dataName.append('eael+emel+eiel - eng.source electrons')
+        #
+        #initialising names for volumetric data- check with Gerard/Derek
+        #
+        self.PLS.VoldataName.append('papl - part.source atm coll.')
+        self.PLS.VoldataName.append('pmpl - part.source mol coll.')
+        self.PLS.VoldataName.append('pipl - part.source ion coll.')
+        self.PLS.VoldataName.append('pphpl - part.source phot coll.')
+        self.PLS.VoldataName.append('papl+pmpl+pipl - part.source')
+        self.PLS.VoldataName.append('mapl - mom.source atm coll.')
+        self.PLS.VoldataName.append('mmpl - mom.source mol coll.')
+        self.PLS.VoldataName.append('mipl - mom.source ion coll.')
+        self.PLS.VoldataName.append('mphpl - mom.source phot coll.')
+        self.PLS.VoldataName.append('mapl+mmpl+mipl - mom.source')
+        self.PLS.VoldataName.append('diin - plasma density bulk plasma')
+        self.PLS.VoldataName.append('vxin - plasma drift velocity (x)')
+        self.PLS.VoldataName.append('vyin - plasma drift velocity (y)')
+        self.PLS.VoldataName.append('vzin - plasma drift velocity (z)')
+        self.PLS.VoldataName.append('bvin - ')
+        self.PLS.VoldataName.append('tiin - plasma temperature bulk plasma')
+        self.PLS.VoldataName.append('edrift - kinetic energy in drift motion bulk plasma')
+        self.PLS.VoldataName.append('eapl - eng.source atm coll.')
+        self.PLS.VoldataName.append('empl - eng.source mol coll.')
+        self.PLS.VoldataName.append('eipl - eng.source ion coll.')
+        self.PLS.VoldataName.append('ephpl - eng.source phot coll.')
+        self.PLS.VoldataName.append('eapl+empl+eipl - eng.source')
+        self.PLS.VoldataName.append('eael - eng.source electrons atm coll.')
+        self.PLS.VoldataName.append('emel - eng.source electrons mol coll.')
+        self.PLS.VoldataName.append('eiel - eng.source electrons ion coll.')
+        self.PLS.VoldataName.append('ephel - eng.source electrons phot coll.')
+        self.PLS.VoldataName.append('eael+emel+eiel - eng.source electrons')
 
 
         # set unit names for bulk plasma ions
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append( 'amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append( '1/cm^3')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( '?')
-        self.PLS.unitName.append( 'eV')
-        self.PLS.unitName.append( 'eV')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append( 'amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append( '1/cm^3')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( '?')
+        self.PLS.VolunitName.append( 'eV')
+        self.PLS.VolunitName.append( 'eV')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
 
-
-
-
-
-        self.ATM.dataName.append('pdena - atom density')
-        self.ATM.dataName.append('vxdena - atom momentum density (x)')
-        self.ATM.dataName.append('vydena - atom momentum density (y)')
-        self.ATM.dataName.append('vzdena - atom momentum density (z)')
-        self.ATM.dataName.append('vdenpara - atom momentum density (B)')
-        self.ATM.dataName.append('edena - atom energy density')
-        self.ATM.dataName.append('edena/pdena - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('sigma - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('paat - part.source atm coll.')
-        self.ATM.dataName.append('pmat - part.source mol coll.')
-        self.ATM.dataName.append('piat - part.source ion coll.')
-        self.ATM.dataName.append('paat+pmat+piat - part.source')
+        self.ATM.VoldataName.append('pdena - atom density')
+        self.ATM.VoldataName.append('vxdena - atom momentum density (x)')
+        self.ATM.VoldataName.append('vydena - atom momentum density (y)')
+        self.ATM.VoldataName.append('vzdena - atom momentum density (z)')
+        self.ATM.VoldataName.append('vdenpara - atom momentum density (B)')
+        self.ATM.VoldataName.append('edena - atom energy density')
+        self.ATM.VoldataName.append('edena/pdena - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('sigma - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('paat - part.source atm coll.')
+        self.ATM.VoldataName.append('pmat - part.source mol coll.')
+        self.ATM.VoldataName.append('piat - part.source ion coll.')
+        self.ATM.VoldataName.append('paat+pmat+piat - part.source')
 
         # set unit names for neutral atoms
 
-        self.ATM.unitName.append('1/cm^3')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('eV/cm^3')
-        self.ATM.unitName.append('eV*s/(g*cm)')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append('?')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('1/cm^3')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('eV/cm^3')
+        self.ATM.VolunitName.append('eV*s/(g*cm)')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append('?')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
 
         # set data names for neutral molecules
 
-        self.MOL.dataName.append('pdenm - molecule density')
-        self.MOL.dataName.append('vxdenm - molecule momentum density (x)')
-        self.MOL.dataName.append('vydenm - molecule momentum density (y)')
-        self.MOL.dataName.append('vzdenm - molecule momentum density (z)')
-        self.MOL.dataName.append('vdenpara - molecule momentum density (B)')
-        self.MOL.dataName.append('edenm - molecule energy density')
-        self.MOL.dataName.append('edenm/pdenm - ')
+        self.MOL.VoldataName.append('pdenm - molecule density')
+        self.MOL.VoldataName.append('vxdenm - molecule momentum density (x)')
+        self.MOL.VoldataName.append('vydenm - molecule momentum density (y)')
+        self.MOL.VoldataName.append('vzdenm - molecule momentum density (z)')
+        self.MOL.VoldataName.append('vdenpara - molecule momentum density (B)')
+        self.MOL.VoldataName.append('edenm - molecule energy density')
+        self.MOL.VoldataName.append('edenm/pdenm - ')
 
         # set unit names for neutral molecules
-        self.MOL.unitName.append('1/cm^3')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('eV/cm^3')
-        self.MOL.unitName.append('eV*s/(g*cm)')
+        self.MOL.VolunitName.append('1/cm^3')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('eV/cm^3')
+        self.MOL.VolunitName.append('eV*s/(g*cm)')
 
         # set data names for test ions
 
-        self.ION.dataName.append('pdeni - test ion density')
-        self.ION.dataName.append('vxdeni - test ion momentum density (x)')
-        self.ION.dataName.append('vydeni - test ion momentum density (y)')
-        self.ION.dataName.append('vzdeni - test ion momentum density (z)')
-        self.ION.dataName.append('vdenpara - test ion momentum density (B)')
-        self.ION.dataName.append('edeni - test ion energy density')
-        self.ION.dataName.append('edeni/pdeni - ')
+        self.ION.VoldataName.append('pdeni - test ion density')
+        self.ION.VoldataName.append('vxdeni - test ion momentum density (x)')
+        self.ION.VoldataName.append('vydeni - test ion momentum density (y)')
+        self.ION.VoldataName.append('vzdeni - test ion momentum density (z)')
+        self.ION.VoldataName.append('vdenpara - test ion momentum density (B)')
+        self.ION.VoldataName.append('edeni - test ion energy density')
+        self.ION.VoldataName.append('edeni/pdeni - ')
 
         # set unit names for test ions
-        self.ION.unitName.append('1/cm^3')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('eV/cm^3')
-        self.ION.unitName.append('eV*s/(g*cm)')
+        self.ION.VolunitName.append('1/cm^3')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('eV/cm^3')
+        self.ION.VolunitName.append('eV*s/(g*cm)')
         #
         # set data names for misc data
 
-        self.MISC.dataName.append('ncltal - ')
-        self.MISC.dataName.append('not used - 1')
-        self.MISC.dataName.append('not used - 2')
-        self.MISC.dataName.append('vol - zone volume')
-        self.MISC.dataName.append('voltal - ')
-        self.MISC.dataName.append('dein - plasma density electrons')
-        self.MISC.dataName.append('tein - plasma temperature electrons')
-        self.MISC.dataName.append('bxin - B unit vector (x)')
-        self.MISC.dataName.append('byin - B unit vector (y)')
-        self.MISC.dataName.append('bzin - B unit vector (z)')
-        self.MISC.dataName.append('bfin - B strength')
+        self.MISC.VoldataName.append('ncltal - ')
+        self.MISC.VoldataName.append('not used - 1')
+        self.MISC.VoldataName.append('not used - 2')
+        self.MISC.VoldataName.append('vol - zone volume')
+        self.MISC.VoldataName.append('voltal - ')
+        self.MISC.VoldataName.append('dein - plasma density electrons')
+        self.MISC.VoldataName.append('tein - plasma temperature electrons')
+        self.MISC.VoldataName.append('bxin - B unit vector (x)')
+        self.MISC.VoldataName.append('byin - B unit vector (y)')
+        self.MISC.VoldataName.append('bzin - B unit vector (z)')
+        self.MISC.VoldataName.append('bfin - B strength')
         #
         # set unit names for misc data
-        self.MISC.unitName.append('?')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append('cm^3')
-        self.MISC.unitName.append('?')
-        self.MISC.unitName.append('1/cm^3')
-        self.MISC.unitName.append('eV')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append('tesla')
+        self.MISC.VolunitName.append('?')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append('cm^3')
+        self.MISC.VolunitName.append('?')
+        self.MISC.VolunitName.append('1/cm^3')
+        self.MISC.VolunitName.append('eV')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append('tesla')
+
+
+        #
+        #initialising names for surface data- check with Gerard/Derek
+        #
+
+        # ; set data names for bulk plasma ions
+
+        self.PLS.SurfdataName.append("potpl - Incident part. flux bulk ions")
+        self.PLS.SurfdataName.append("eotpl - Incident enrg. flux bulk ions")
+        self.PLS.SurfdataName.append(
+            "sptpl - Sputtered flux by incident bulk ions")
+        self.PLS.SurfdataName.append("spump - Pumped flux by bulk ions")
+
+        # ; set unit names for bulk plasma ions
+
+        self.PLS.SurfunitName.append("amp")
+        self.PLS.SurfunitName.append("watt")
+        self.PLS.SurfunitName.append("amp")
+        self.PLS.SurfunitName.append("amp")
+
+        # ; set data names for neutral atoms
+
+        self.ATM.SurfdataName.append("potat - Incident part. flux atoms")
+        self.ATM.SurfdataName.append("prfaat - Emitted part. flux atm => atm")
+        self.ATM.SurfdataName.append("prfmat - Emitted part. flux mol => atm")
+        self.ATM.SurfdataName.append(
+            "prfiat - Emitted part. flux test ion => atm")
+        self.ATM.SurfdataName.append(
+            "prfphat - Emitted part. flux photon => atm")
+        self.ATM.SurfdataName.append(
+            "prfpat - Emitted part. flux bulk ion => atm")
+        self.ATM.SurfdataName.append("eotat - Incident enrg. flux atoms")
+        self.ATM.SurfdataName.append("erfaat - Emitted enrg. flux atm => atm")
+        self.ATM.SurfdataName.append("erfmat - Emitted enrg. flux mol => atm")
+        self.ATM.SurfdataName.append(
+            "erfiat - Emitted enrg. flux test ion => atm")
+        self.ATM.SurfdataName.append(
+            "erfphat - Emitted enrg. flux photon => atm")
+        self.ATM.SurfdataName.append(
+            "erfpat - Emitted enrg. flux bulk ion => atm")
+        self.ATM.SurfdataName.append("sptat - Sputtered flux by incident atoms")
+        self.ATM.SurfdataName.append("spump - Pumped flux by atoms")
+
+        # ; set unit names for neutral atoms
+
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+
+        # ; set data names for neutral molecules
+
+        self.MOL.SurfdataName.append("potml - Incident part. flux molecules")
+        self.MOL.SurfdataName.append("prfaml - Emitted part. flux atm => mol")
+        self.MOL.SurfdataName.append("prfmml - Emitted part. flux mol => mol")
+        self.MOL.SurfdataName.append(
+            "prfiml - Emitted part. flux test ion => mol")
+        self.MOL.SurfdataName.append(
+            "prfphml - Emitted part. flux photon => mol")
+        self.MOL.SurfdataName.append(
+            "prfpml - Emitted part. flux bulk ion => mol")
+        self.MOL.SurfdataName.append("eotml - Incident enrg. flux molecules")
+        self.MOL.SurfdataName.append("erfaml - Emitted enrg. flux atm => mol")
+        self.MOL.SurfdataName.append("erfmml - Emitted enrg. flux mol => mol")
+        self.MOL.SurfdataName.append(
+            "erfiml - Emitted enrg. flux test ion => mol")
+        self.MOL.SurfdataName.append(
+            "erfphml - Emitted enrg. flux photon => mol")
+        self.MOL.SurfdataName.append(
+            "erfpml - Emitted enrg. flux bulk ion => mol")
+        self.MOL.SurfdataName.append(
+            "sptml - Sputtered flux by incident molecules")
+        self.MOL.SurfdataName.append("spump - Pumped flux by molecules")
+
+        # ; set unit names for neutral molecules
+
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+
+        # ; set data names for test ions
+
+        self.ION.SurfdataName.append("potio - Incident part. flux test ions")
+        self.ION.SurfdataName.append("prfaio - Emitted part. flux atm => t.i.")
+        self.ION.SurfdataName.append("prfmio - Emitted part. flux mol => t.i.")
+        self.ION.SurfdataName.append(
+            "prfiio - Emitted part. flux test ion => t.i.")
+        self.ION.SurfdataName.append(
+            "prfphio - Emitted part. flux photon => t.i.")
+        self.ION.SurfdataName.append(
+            "prfpio - Emitted part. flux bulk ion => t.i.")
+        self.ION.SurfdataName.append("eotio - Incident enrg. flux test ions")
+        self.ION.SurfdataName.append("erfaio - Emitted enrg. flux atm => t.i.")
+        self.ION.SurfdataName.append("erfmio - Emitted enrg. flux mol => t.i.")
+        self.ION.SurfdataName.append(
+            "erfiio - Emitted enrg. flux test ion => t.i.")
+        self.ION.SurfdataName.append(
+            "erfphio - Emitted enrg. flux photon => t.i.")
+        self.ION.SurfdataName.append(
+            "erfpio - Emitted enrg. flux bulk ion => t.i.")
+        self.ION.SurfdataName.append(
+            "sptio - Sputtered flux by incident test ions")
+        self.ION.SurfdataName.append("spump - Pumped flux by test ions")
+
+        # ; set unit names for test ions
+
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+
+
+        # ; Set necessary version number
+        # chemFluxDepFileVersion_withSAREA = 1.
+        # 2d0
+        # transferFileVersion_withSurfaceResolution = 1.
+        # 1d0
+        #
+        # ; init eirene surface type names
+
+        self.ESRF_TYPE_NAMES.append("time surface")
+        self.ESRF_TYPE_NAMES.append("puffing surface")
+        self.ESRF_TYPE_NAMES.append("pumping surface")
+        self.ESRF_TYPE_NAMES.append("inner core boundary")
+        self.ESRF_TYPE_NAMES.append("target")
+        self.ESRF_TYPE_NAMES.append("radial SOL/private boundary")
+        self.ESRF_TYPE_NAMES.append("vessel surface")
+        self.ESRF_TYPE_NAMES.append("diagnostic surfaces")
+        self.ESRF_TYPE_NAMES.append("semi transparent surfaces")
+
+
+
 
         super(Eirene, self).__init__()
 
@@ -545,7 +726,7 @@ class Eirene():
         :param var:
         column number indentifying variables
         :param label: simu.data.eirene.ATM.names[species] + \
-            simu.data.eirene.ATM.dataName[species]
+            simu.data.eirene.ATM.VoldataName[species]
         :param lowerbound minimum value to be used to normalise data
         :param upperbound minimum value to be used to normalise data
 
@@ -556,14 +737,14 @@ class Eirene():
             # I want Be1+
             species =1
             data = simu.data.eirene.PLS.vol_avg_data
-            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
+            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.VoldataName[26]
 
             # I want D
             species = 0
             species_name = simu.data.eirene.ATM.names[species]
             data = simu.data.eirene.ATM.vol_avg_data
             label = simu.data.eirene.ATM.names[species] + \
-            simu.data.eirene.ATM.dataName[species]
+            simu.data.eirene.ATM.VoldataName[species]
 
             simu.data.eirene.plot_eirene(data=data,species=species,label=label)
 
@@ -583,15 +764,15 @@ class Eirene():
             #accessing data inside the block matrix
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
         elif data is "MOL":
-            data = self.MOL.vol_avg_data[triangnum*(species):(species)*triangnum]
+            data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
         elif data is "ATM":
             data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
+            label = self.ATM.names[0] +' - '+ self.ATM.VolunitName[0]
         elif isinstance(data,np.ndarray):
             data = data[triangnum*(species):(species+1)*triangnum]
             label = label
