@@ -14,7 +14,8 @@ import xarray as xr
 from types import SimpleNamespace
 from utility import *
 from class_geom import geom
-# from class_sim import sim
+import eproc as ep
+
 
 # ----------------------------
 __author__ = "Bruno Viola"
@@ -26,7 +27,7 @@ __email__ = "bruno.viola@ukaea.uk"
 __status__ = "Testing"
 # __status__ = "Production"
 # __credits__ = [""]
-import eproc as ep
+
 
 class Eirene():
     """
@@ -39,11 +40,11 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
-        self.NPLSdataname = 27
-        self.NMOLdataname = 11
-        self.NATMdataName = 15
-        self.NIONdataname = 7
-        self.NMISCdataname = 11
+        self.NPLSdataname = 27 # number of columns of PLS data
+        self.NMOLdataname = 11 # number of columns of MOL data
+        self.NATMdataName = 15# number of columns of ATM data
+        self.NIONdataname = 7# number of columns of ION data
+        self.NMISCdataname = 11 # number of columns of MISC data
 
         #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
@@ -403,11 +404,14 @@ class Eirene():
                 # 5          27        6086
         logger.log(5,' reading bulk plasma data')
         for i in range(0, self.npls):
+            #READING DATA AS A BLOCK
             dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            #dummy1 contains all volumetric average data for a species (has NPLSdataname column +1, the index)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1
+            row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1#
             logger.log(5, row_to_skip)
+            #dummy2 contains surface average data for the same specie
             dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
                                  nrows=self.nlimps,
@@ -417,9 +421,13 @@ class Eirene():
             dummy2.fillna(0, inplace=True)  # converts nan into 0
             row_to_skip = row_to_skip +self.nlimps+ 2
             logger.log(5, row_to_skip)
+
+            #as I loop through species I append this block, creating a big block matrix
+
+
             self.PLS.vol_avg_data.append(dummy1)
             self.PLS.surf_avg_data.append(dummy2)
-
+        # concatenate all data as a big dataframe
         self.PLS.vol_avg_data = pd.concat(self.PLS.vol_avg_data, axis=0)#concatenates as row
         self.PLS.vol_avg_data.reset_index(drop=True, inplace=True)
         self.PLS.surf_avg_data = pd.concat(self.PLS.surf_avg_data, axis=0)#concatenates as row
@@ -569,9 +577,10 @@ class Eirene():
             var =0
         else:
             var=var
-
+#number of triangles in the mesh, i.e. number of data points
         triangnum = self.geom.trimap.shape[0]
         if data is None:
+            #accessing data inside the block matrix
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
@@ -590,6 +599,7 @@ class Eirene():
         #     var = data[triangnum*(species):(species+1)*triangnum-1]
         #     label = label
         elif isinstance(data,pd.DataFrame):
+            #if input data is the whole dataframe use species and var to determine which block of the matrix to use for plotting
 
             data = data[triangnum*(species):(species+1)*triangnum]
             data=data[data.columns[var+1]]
@@ -833,7 +843,7 @@ class Eirene():
     def plot_eirene_grid(self,pufffile=None):
         """
         function to read and plot EIRENE grids
-        :param pufffile:
+        :param pufffile: if using a catalogued puff file is not saved, so user can provide it
         :return:
         """
         logger.info('plotting eirene grid \n')
