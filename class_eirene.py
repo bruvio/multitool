@@ -40,6 +40,9 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
+        # following are not used (yet)
+        # #########
+
         self.NPLS_vol_dataname = 27 # number of columns of PLS data
         self.NMOL_vol_dataname = 11 # number of columns of MOL data
         self.NATM_vol_VoldataName = 15# number of columns of ATM data
@@ -50,6 +53,18 @@ class Eirene():
         self.NATM_surf_dataname = 4
         self.NMOL_surf_dataname = 14
         self.NION_surf_dataname = 14
+        # #########
+
+        #puff information
+        self.npuff = 0
+        self.nz1puff = 0
+        self.nz2puff = 0
+
+
+        self.nD2puff = 0
+        self.nDpuff = 0
+        self.nImp1Puff = 0
+        self.nImp2Puff = 0
 
 
 
@@ -443,6 +458,24 @@ class Eirene():
         self.ESRF_TYPE_NAMES.append("diagnostic surfaces")
         self.ESRF_TYPE_NAMES.append("semi transparent surfaces")
 
+        self.npump = 0
+        self.npuff = 0
+        self.npuf2 = 0
+        self.nzpuff = 0
+        self.poly = []
+
+        self.nImp1puff = 0
+        self.nImp2puff = 0
+
+
+
+        self.D2puff_sfnum = []
+        self.Dpuff_sfnum = []
+        self.Imp1puff_sfnum = []
+        self.Imp2puff_sfnum = []
+
+
+
 
 
 
@@ -474,87 +507,382 @@ class Eirene():
         logger.info( 'collecting information from eirene.input file \n')
         with open(self.runfolder + 'eirene.input') as f:
             lines = f.readlines()
+
+            text_block3 = '** 3b'
+
             text_atoms_spec = '** 4a NEUTRAL ATOMS SPECIES CARDS:'
             text_mole_spec = '** 4b NEUTRAL MOLECULES SPECIES CARDS'
             text_ion_spec = '**4c TEST ION SPECIES CARDS:'
             text_bulk_spec = '*** 5. DATA FOR PLASMA-BACKGROUND'
             text_phot      = '** 4d photons'
-            info1 = False
-            info2 = False
-            info3 = False
-            info4 = False
-            info_phot = False
+            text_block7 = '*** 7.'
+
+            text_molecular = "*       D2 molecular puff"
+            text_molecular_bis = "molecular fuel puff (wall puff)"
+            text_atomic = "*        D atom puff (CX "
+            text_atomic_bis="atom fuel puff (CX"
+            text_imp1="*   IMP 01 atom puff"
+            text_imp1_bis= "IMP. 1 puff "
+            text_imp2 = "*   IMP 02 atom puff"
+            text_imp2_bis = "IMP. 2 puff "
+            info_text_phot = False
+            info_text_molecular = False
+            info_text_mole_spec = False
+            info_text_phot = False
+            info_text_block7 = False
+            info_text_atoms_spec = False
+            info_text_atomic = False
+            info_text_imp1 = False
+            info_text_imp2 = False
+            info_text_bulk_spec = False
+            info_text_ion_spec = False
 
             for index, line in enumerate(lines):
 
-                if text_atoms_spec in str(line):
-                    index = index +1
+                if text_block3 in str(line):
+                    index =index+1
                     dummy = lines[index].split()
-                    self.natm = int(dummy[0])
-
-                    for i in range(0,self.natm):
+                    self.ntot = int(dummy[0])
+                    index = index + 1
+                    for i in range(0,self.ntot):
+                        if lines[index].startswith('* puff (wall)'):
+                            self.npuff=self.npuff+1
+                            poly=1.0
+                        if lines[index].startswith('* core puff (atomic)'):
+                            self.npuf2 = self.npuf2+1
+                            poly=2.0
+                        if lines[index].startswith('* pump'):
+                            self.npump= self.npump +1
+                            poly=3.0
+                        if lines[index].startswith('* semi'):
+                            self.npump= self.npump+1
+                            poly=3.0
+                        if lines[index].startswith('* zpuff'):
+                            self.nzpuff = self.nzpuff
+                            poly=4.0
+                        index = index + 3
+                        dummy = lines[index].split()
+                        r1 = float(dummy[0])
+                        z1 = float(dummy[1])
+                        phi1 = float(dummy[2])
+                        r2 = float(dummy[3])
+                        z2 = float(dummy[4])
+                        phi2 = float(dummy[5])
+                        self.poly.append([poly,r1,z1,r2,z2])
+                        logger.log(5,"{}".format([poly,r1,z1,r2,z2]))
                         index = index + 1
-                        dummy=lines[index].split()
-                        self.ATM.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2*nreac
-                    info1=True
+                        if not lines[index].startswith('SURFMOD'):
+                            index = index + 3
+                        else:
+                            break
+
+
+
+
+                if text_atoms_spec in str(line):
+                    if info_text_atoms_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.natm = int(dummy[0])
+
+                        for i in range(0,self.natm):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.ATM.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2*nreac
+                        info_text_atoms_spec=True
 
 
                 if text_mole_spec in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nmol = int(dummy[0])
+                    if info_text_mole_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nmol = int(dummy[0])
 
-                    for i in range(0,self.nmol):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.MOL.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info2 = True
+                        for i in range(0,self.nmol):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.MOL.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                        info_text_mole_spec = True
 
                 if text_ion_spec in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nion = int(dummy[0])
+                    if info_text_ion_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nion = int(dummy[0])
 
-                    for i in range(0,self.nion):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.ION.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info3=True
+                        for i in range(0,self.nion):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.ION.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                            info_text_ion_spec=True
 
                 if text_phot in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nphot = int(dummy[0])
+                    if info_text_phot:
+                        pass
+                    else:
 
-                    for i in range(0,self.nphot):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.PHOT.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info_phot=True
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nphot = int(dummy[0])
+
+                        for i in range(0,self.nphot):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.PHOT.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                        info_text_phot=True
 
                 if text_bulk_spec in str(line):
-                    index = index +2
-                    dummy = lines[index].split()
-                    self.npls = int(dummy[0])
+                    if info_text_bulk_spec:
+                        pass
+                    else:
+                        index = index +2
+                        dummy = lines[index].split()
+                        self.npls = int(dummy[0])
 
-                    for i in range(0,self.npls):
+                        for i in range(0,self.npls):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.PLS.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                            info_text_bulk_spec=True
+
+
+                if text_block7 in str(line):
+                    if info_text_block7:
+                        pass
+                    else:
+                        index =index +1
+                        dummy = lines[index].split()
+                        self.nstrata = int(dummy[0])
+                        info_text_block7 = True
+
+
+
+                if text_molecular in str(line):
+                    if info_text_molecular:
+                        pass
+                    else:
+
+                        index =index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nD2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D molecular puff with{} segments in EIRENE input block 7".format(
+                                       self.nD2puff))
+                        index =index +1
+                        for i in range(0, self.nD2puff):
+                            dummy = lines[index].split()
+                            self.D2puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_molecular = True
+
+                if text_molecular_bis in str(line):
+                    if info_text_molecular:
+                        pass
+                    else:
+                        index =index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nD2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D molecular puff with {} segments in EIRENE input block 7".format(
+                                       self.nD2puff))
+
+                        for i in range(0, self.nD2puff):
+                            index = index + 1
+                            dummy = lines[index].split()
+                            self.D2puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_molecular = True
+
+                if text_atomic in str(line):
+                    if info_text_atomic:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nDpuff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nDpuff))
                         index = index + 1
-                        dummy=lines[index].split()
-                        self.PLS.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info4=True
-                if info1 & info2 & info3 & info4 & info_phot is True:
-                    break
+                        for i in range(0, self.nDpuff):
+                            dummy = lines[index].split()
+                            self.Dpuff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_atomic = True
+
+                if text_imp1 in str(line):
+                    if info_text_imp1:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp1puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 01 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp1puff))
+                        index = index + 1
+                        for i in range(0, self.nImp1puff):
+                            dummy = lines[index].split()
+                            self.Imp1puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                            info_text_imp1 = True
+
+                if text_imp2 in str(line):
+                    if info_text_imp2:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 02 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp2puff))
+                        index = index + 1
+                        for i in range(0, self.nImp2puff):
+                            dummy = lines[index].split()
+                            self.Imp2puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_imp2 = True
+
+                if text_atomic_bis in str(line):
+                    if info_text_atomic:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nDpuff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nDpuff))
+                        index = index + 1
+                        for i in range(0, self.nDpuff):
+                            dummy = lines[index].split()
+                            self.Dpuff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_atomic= True
+
+                if text_imp1_bis in str(line):
+                    if info_text_imp1:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp1puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 01 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp1puff))
+                        index = index + 1
+                        for i in range(0, self.nImp1puff):
+                            dummy = lines[index].split()
+                            self.Imp1puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_imp1 = True
+
+                if text_imp2_bis in str(line):
+                    if info_text_imp2:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 02 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp2puff))
+                        index = index + 1
+                        for i in range(0, self.nImp2puff):
+                            dummy = lines[index].split()
+                            self.Imp2puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_imp2 = True
+
+                # if info_text_imp2 & info_text_imp1 & info_text_atomic & info_text_phot & info_text_atoms_spec & info_text_block7 & info_text_mole_spec  & info_text_molecular  is True:
+                #     break
             f.close()
+
+        logger.info("Found {} D2 wall puffs".format(self.npuff))
+        logger.info("Found {} D core puffs".format(self.nDpuff))
+        logger.info("Found {} impurity 01 puffs".format(self.nImp1puff))
+        logger.info("Found {} impurity 02 puffs".format(self.nImp2puff))
+        logger.info("Found {} pumps".format(self.npump))
+
+        self.puff_polygon  = []
+        self.puf2_polygon  = []
+        self.pump_polygon  = []
+        self.zpuff2_polygon  = []
+        self.zpuff1_polygon  = []
+
+
+        for i in range(0, self.npuff):
+            if (self.poly[i][0] == 3.0):
+                newlist=self.poly[i][1:4]
+                newlist = [x / 100 for x in newlist]
+                # self.pump_polygon.append(self.poly[i][1:4] )
+                self.pump_polygon.append(newlist )
+        # self.pump_polygon = [x / 100 for x in self.pump_polygon]
+
+        for i in range(0,self.nD2puff):
+            newlist = self.poly[self.D2puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.puff_polygon.append(self.D2puff_sfnum[i][1:4])
+            # self.puff_polygon.append(self.poly[self.D2puff_sfnum[i]][1:4])
+            self.puff_polygon.append(newlist)
+        # self.puff_polygon = [x / 100 for x in self.puff_polygon]
+
+        for i in range(0,self.nDpuff):
+            newlist = self.poly[self.Dpuff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.puf2_polygon.append(self.Dpuff_sfnum[i][1:4])
+            self.puf2_polygon.append(newlist)
+            # self.puf2_polygon.append(self.poly[self.Dpuff_sfnum[i]][1:4])
+        # self.puf2_polygon = [x / 100 for x in self.puf2_polygon]
+
+        for i in range(0,self.nImp1puff):
+            newlist = self.poly[self.Imp1puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.zpuff2_polygon.append(self.Imp1puff_sfnum[i][1:4])
+            self.zpuff2_polygon.append(newlist)
+            # self.zpuff2_polygon.append(self.poly[self.Imp1puff_sfnum[i]][1:4])
+        # self.zpuff2_polygon = [x / 100 for x in self.zpuff2_polygon]
+
+        for i in range(0,self.nImp2puff):
+            newlist = self.poly[self.Imp2puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.zpuff1_polygon.append(self.Imp2puff_sfnum[i][1:4])
+            self.zpuff1_polygon.append(newlist)
+            # self.zpuff1_polygon.append(self.poly[self.Imp2puff_sfnum[i]][1:4])
+        # self.zpuff1_polygon = [x / 100 for x in self.zpuff1_polygon]
 
 
 
