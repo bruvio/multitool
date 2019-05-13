@@ -237,6 +237,8 @@ read_eirene
         ownerArg = os.getenv('USR')
     else:
         ownerArg = ownerArg
+
+
     geom.__init__(self,shotIDArg,dateIDArg,seqNumArg,ownerArg, codeArg, macArg, fileArg )
     self.path_e2d = os.getcwd()+'/e2d_data/runs'
 

@@ -159,7 +159,21 @@ def read_puff_file(filename,alternativefile=None):
             return dummy
 
 
+def read_surfaces_file(filename):
+    # dummy = np.genfromtxt(filename, skip_header=1,dtype=str)
+    dummy1 = pd.read_csv(filename,
+                skiprows=1,dtype=str,
+                delim_whitespace=True, header=None, index_col=False,
+                error_bad_lines=False, warn_bad_lines=False)
 
+    dummy1["combined"] = [' '.join(row.astype(str)) for row in dummy1[dummy1.columns[4:]].values]
+
+    data = pd.concat([dummy1[dummy1.columns[0:3]],dummy1["combined"]],axis=1)
+    data.rename(columns={0: 'isurf', 1: 'type', 2: 'material',
+                         'combined': 'description'}, inplace=True)
+
+
+    return data
 
 
 

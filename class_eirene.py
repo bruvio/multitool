@@ -40,6 +40,11 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
+        # Set         necessary        version         number
+        self.chemFluxDepFileVersion_withSAREA = 1.2
+
+        self.transferFileVersion_withSurfaceResolution = 1.1
+
         # following are not used (yet)
         # #########
 
@@ -440,12 +445,7 @@ class Eirene():
         self.ION.SurfunitName.append('amp')
 
 
-        # ; Set necessary version number
-        # chemFluxDepFileVersion_withSAREA = 1.
-        # 2d0
-        # transferFileVersion_withSurfaceResolution = 1.
-        # 1d0
-        #
+
         # ; init eirene surface type names
 
         self.ESRF_TYPE_NAMES.append("time surface")
@@ -503,6 +503,7 @@ class Eirene():
         logger.info( 'reading puff file \n')
         self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
+###################################
         #start reading informations
         logger.info( 'collecting information from eirene.input file \n')
         with open(self.runfolder + 'eirene.input') as f:
@@ -690,7 +691,7 @@ class Eirene():
                         for i in range(0, self.nD2puff):
                             dummy = lines[index].split()
                             self.D2puff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 2
                         info_text_molecular = True
 
                 if text_molecular_bis in str(line):
@@ -729,7 +730,7 @@ class Eirene():
                         for i in range(0, self.nDpuff):
                             dummy = lines[index].split()
                             self.Dpuff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 2
                         info_text_atomic = True
 
                 if text_imp1 in str(line):
@@ -748,7 +749,7 @@ class Eirene():
                         for i in range(0, self.nImp1puff):
                             dummy = lines[index].split()
                             self.Imp1puff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 4
                             info_text_imp1 = True
 
                 if text_imp2 in str(line):
@@ -767,7 +768,7 @@ class Eirene():
                         for i in range(0, self.nImp2puff):
                             dummy = lines[index].split()
                             self.Imp2puff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 4
                         info_text_imp2 = True
 
                 if text_atomic_bis in str(line):
@@ -786,7 +787,7 @@ class Eirene():
                         for i in range(0, self.nDpuff):
                             dummy = lines[index].split()
                             self.Dpuff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 4
                         info_text_atomic= True
 
                 if text_imp1_bis in str(line):
@@ -805,7 +806,7 @@ class Eirene():
                         for i in range(0, self.nImp1puff):
                             dummy = lines[index].split()
                             self.Imp1puff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 4
                         info_text_imp1 = True
 
                 if text_imp2_bis in str(line):
@@ -824,7 +825,7 @@ class Eirene():
                         for i in range(0, self.nImp2puff):
                             dummy = lines[index].split()
                             self.Imp2puff_sfnum.append(int(dummy[2]))
-                            index = index + 3
+                            index = index + 4
                         info_text_imp2 = True
 
                 # if info_text_imp2 & info_text_imp1 & info_text_atomic & info_text_phot & info_text_atoms_spec & info_text_block7 & info_text_mole_spec  & info_text_molecular  is True:
@@ -884,7 +885,7 @@ class Eirene():
             # self.zpuff1_polygon.append(self.poly[self.Imp2puff_sfnum[i]][1:4])
         # self.zpuff1_polygon = [x / 100 for x in self.zpuff1_polygon]
 
-
+###################################
 
         # read transfer file and store data as pandas dataframe (first column is always a pandas index!)
         logger.info( 'reading eirene.transfer file \n')
@@ -899,6 +900,20 @@ class Eirene():
 
         
         lines = f.readlines()
+        text_version = '* Neutral transfer file version:'
+        row_to_skip = 0
+        for index, line in enumerate(lines):
+            if text_version in str(line):
+                dummy = lines[index].split()
+                transfer_version = float(dummy[-1])
+
+                if transfer_version < self.transferFileVersion_withSurfaceResolution:
+                    logger.warning(
+                'Need at least eirene.transfer file version {} to allow surface plotting of EIRENE data'.format(
+                    self.transferFileVersion_withSurfaceResolution))
+            break
+
+
         text = '* nlimps'
         for index, line in enumerate(lines):
             if text in str(line):
@@ -907,28 +922,50 @@ class Eirene():
                 self.nlimps = int(dummy[0])
                 self.nlim = int(dummy[1])
                 self.nsts = int(dummy[2])
-                break
-        row_to_skip=index+3
+                if transfer_version>= self.transferFileVersion_withSurfaceResolution:
+                    self.nlmps= int(dummy[3])
+                    row_to_skip = index + 3
+                    surface_points = self.nlmps
+                    break
+                else:
+                    surface_points=self.nlimps
+                    row_to_skip = index + 2
+                    break
+
         logger.log(5, row_to_skip)
                 # 5          27        6086
         logger.log(5,' reading bulk plasma data')
         for i in range(0, self.npls):
             #READING DATA AS A BLOCK
-            dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             #dummy1 contains all volumetric average data for a species (has NPLSdataname column +1, the index)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1#
             logger.log(5, row_to_skip)
             #dummy2 contains surface average data for the same specie
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip +self.nlimps+ 2
+            row_to_skip = row_to_skip +surface_points+ 2
             logger.log(5, row_to_skip)
 
             #as I loop through species I append this block, creating a big block matrix
@@ -950,19 +987,33 @@ class Eirene():
         #row to skip should be 30647
         logger.log(5, ' reading neutral atom data')
         for i in range(0,self.natm):
-            dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-            # 36730
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
+                # 36730
             dummy1.fillna(0, inplace=True)  # converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip +self.nlimps+ 1
+            row_to_skip = row_to_skip +surface_points+ 1
             logger.log(5, row_to_skip)
             self.ATM.vol_avg_data.append(dummy1)
             self.ATM.surf_avg_data.append(dummy2)
@@ -978,18 +1029,32 @@ class Eirene():
         logger.log(5,row_to_skip)
         logger.log(5, ' reading neutral molecules data')
         for i in range(0,self.nmol):
-            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip + self.nlimps + 2
+            row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.MOL.vol_avg_data.append(dummy1)
             self.MOL.surf_avg_data.append(dummy2)
@@ -1008,18 +1073,32 @@ class Eirene():
 
         logger.log(5, ' reading test ions data')
         for i in range(0,self.nion):
-            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip + self.nlimps + 2
+            row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.ION.vol_avg_data.append(dummy1)
             self.ION.surf_avg_data.append(dummy2)
@@ -1033,18 +1112,136 @@ class Eirene():
 
 
         logger.log(5, ' reading miscellaneous data')
-        self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        try:
+            self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        except:
+            self.MISC.vol_avg_data = pd.read_csv(
+                self.runfolder + 'eirene.transfer',
+                skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],
+                delim_whitespace=True, header=None, index_col=False,
+                error_bad_lines=False, warn_bad_lines=False)
         self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
 
 
         logger.log(5, "stratum data is not read YET!")
 
+###################################
+        logger.info('reading EIRENE ChemFluxDep')
+
+        exists = os.path.isfile(self.runfolder + 'eirene.chemFluxDep')
+
+        if exists:
+
+            f = open(self.runfolder + 'eirene.chemFluxDep', 'rb')
+            lines = f.readlines()
+            text='*  NLIM'
+            text_version = '* Neutral flux file version:'
+            # if
+            row_to_skip =0
+            for index, line in enumerate(lines):
+                if text_version in str(line):
+                    dummy = lines[index].split()
+                    version= float(dummy[-1])
+                    break
+            if version < self.chemFluxDepFileVersion_withSAREA:
+                logger.warning(
+                    'Need at least eirene.chemFluxDep file version {} to allow surface plotting of EIRENE data'.format(
+                        self.chemFluxDepFileVersion_withSAREA))
+                return
+            else:
+                for index, line in enumerate(lines):
+
+                        if text in str(line):
+                            index = index + 1
+                            dummy = lines[index].split()
+                            self.NLIM_tmp = int(dummy[0])
+                            self.NSTS_tmp = int(dummy[1])
+                            self.NGITT = int(dummy[2])
+                            self.NGSTAL = int(dummy[3])
+                            # self.NATM = int(dummy[4])
+                            # self.NMOL = int(dummy[5])
+                            self.NLMPGS  = int(dummy[6])
+                            self.NTRII = int(dummy[7])
+
+
+                            if self.nlim != self.NLIM_tmp:
+                                logger.error('NLIM from eirene.chemFluxDep not equal to eirene.transfer! STOPPING')
+                            # return
+                            else:
+                                row_to_skip = index + 3
+                                logger.log(5, row_to_skip)
+                                # 5          27        6086
+                                logger.log(5, ' reading bulk plasma data')
+                                # for i in range(0, self.NLIM_tmp):
+                                    # READING DATA AS A BLOCK
+                                dummy1 = pd.read_csv(self.runfolder + 'eirene.chemFluxDep',
+                                                         skiprows=row_to_skip,
+                                                         nrows=self.NLMPGS,
+                                                         delim_whitespace=True, header=None,
+                                                         index_col=False, error_bad_lines=False,
+                                                         warn_bad_lines=False)
+
+                                    # readf,1,idum1,rdum1,rdum2,idum2,idum3,idum4
+                                self.ESRF_SAREA_atom = np.asarray(dummy1[dummy1.columns[2]])
+                                self.ESRF_ITRIA_atom = np.asarray(dummy1[dummy1.columns[3]])
+                                self.ESRF_ISIDE_atom = np.asarray(dummy1[dummy1.columns[4]])
+                                self.ESRF_ISURF_atom = np.asarray(dummy1[dummy1.columns[5]])
+
+                                row_to_skip = row_to_skip + self.NLMPGS +2
+
+                                dummy1 = pd.read_csv(
+                                    self.runfolder + 'eirene.chemFluxDep',
+                                    skiprows=row_to_skip,
+                                    nrows=self.NLMPGS,
+                                    delim_whitespace=True, header=None,
+                                    index_col=False, error_bad_lines=False,
+                                    warn_bad_lines=False)
+
+                                # readf,1,idum1,rdum1,rdum2,idum2,idum3,idum4
+                                self.ESRF_SAREA_mol = np.asarray(
+                                    dummy1[dummy1.columns[2]])
+                                self.ESRF_ITRIA_mol = np.asarray(
+                                    dummy1[dummy1.columns[3]])
+                                self.ESRF_ISIDE_mol = np.asarray(
+                                    dummy1[dummy1.columns[4]])
+                                self.ESRF_ISURF_mol = np.asarray(
+                                    dummy1[dummy1.columns[5]])
+
+
+
+
+        else:
+            logger.warning('eirene.ChemFluxDep file was NOT found')
+###################################
+        logger.info('reading EIRENE surfaces')
+
+        exists = os.path.isfile(self.runfolder + 'eirene.surfaces')
+
+        if exists:
+            data = read_surfaces_file(self.runfolder + 'eirene.surfaces')
+            
+            self.ESRF_TYPES = np.asarray(data[data.columns[1]])
+            self.ESRF_NAMES = np.asarray(data[data.columns[3]])
+
+        else:
+            logger.warning('eirene.surfaces file was NOT found')
+
+
+
+###################################
+        logger.info('reading geometrical info')
+        sh = ep.data(self.runfolder + 'tran', 'SH').data
+        self.sh = np.trim_zeros(sh, 'b')
+        hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
+        self.hrho = np.trim_zeros(hrho, 'b')
+        rmesh = ep.data(self.runfolder + 'tran', 'RMESH').data
+        self.rmesh = np.trim_zeros(rmesh, 'b')
+
+###################################
         logger.log(5, 'done \n')
         logger.info( 'reading eirene data done! \n')
-                        
 
-
-    def plot_eirene(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
+    def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
         :param data input data (dataframe, string or empty)
