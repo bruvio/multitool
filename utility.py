@@ -161,17 +161,44 @@ def read_puff_file(filename,alternativefile=None):
 
 def read_surfaces_file(filename):
     # dummy = np.genfromtxt(filename, skip_header=1,dtype=str)
+    # The max column count a line in the file could have
+    largest_column_count = 0
+
+    # Loop the data lines
+    with open(filename, 'r') as temp_f:
+        # Read the lines
+        lines = temp_f.readlines()
+
+        for l in lines:
+            # Count the column count for the current line
+            column_count = len(l.split()) + 1
+
+            # Set the new most column count
+            largest_column_count = column_count if largest_column_count < column_count else largest_column_count
+
+    # Close file
+    temp_f.close()
+
+    # Generate column names (will be 0, 1, 2, ..., largest_column_count - 1)
+    column_names = [i for i in range(0, largest_column_count)]
     dummy1 = pd.read_csv(filename,
                 skiprows=1,dtype=str,
                 delim_whitespace=True, header=None, index_col=False,
-                error_bad_lines=False, warn_bad_lines=False)
-
+                error_bad_lines=False, warn_bad_lines=False, names=column_names, na_values = '')
+    dummy1 = dummy1.fillna('')
     dummy1["combined"] = [' '.join(row.astype(str)) for row in dummy1[dummy1.columns[4:]].values]
-
+#     dummy1['combined'].replace(
+#     to_replace=['nan'],
+#     value=' ',
+#     inplace=True
+# )
     data = pd.concat([dummy1[dummy1.columns[0:3]],dummy1["combined"]],axis=1)
     data.rename(columns={0: 'isurf', 1: 'type', 2: 'material',
                          'combined': 'description'}, inplace=True)
-
+    # data =data.fillna(' ', inplace=True)
+    # data = data.replace(np.nan, '', regex=True)
+    # data = data.fillna('')
+    # data.dropna(axis=1, how='all', inplace=True)
 
     return data
 

@@ -1237,10 +1237,13 @@ class Eirene():
 
         logger.info( 'reading eirene data done! \n')
 
-        self.create_connected_eirene_surface(3)
+        self.create_connected_eirene_surface(0)
 
     def create_connected_eirene_surface(self, iselect,atmmol=None):
 
+        if iselect >9:
+            logger.error('Surface number must be <9')
+            return
 
         if atmmol =='atm':
             ESRF_SAREA = self.ESRF_SAREA_atom
@@ -1263,7 +1266,7 @@ class Eirene():
         surface_number = isrf + 1
         logger.log(5,
                    "creating connected polygon groups for surface {}, EIRENE surface number= {}".format(
-                       self.ESRF_NAMES[isrf], isrf + 1))
+                       self.ESRF_NAMES[isrf], surface_number))
         surface_name = self.ESRF_NAMES[isrf]
 
         # poly = lonarr(NLMPGS,2)
@@ -1394,7 +1397,7 @@ class Eirene():
         logger.log(5, "Found {} polygon groups in this surface".format(self.surface_npoly_group))
         for i in range(0,self.surface_npoly_group):
             n = self.surface_poly_group[1][i] - self.surface_poly_group[0][i] + 1
-            logger.log(5,"Group {} has {} polygons".format(i,n))
+            logger.log(5,"Group {} has {} polygons".format(i+1,n))
             # for j in range(self.surface_poly_group[0][i] ,  self.surface_poly_group[1][i] ):
             #     logger.log(5,"{} {} {} {}".format( j, self.surface_poly_idx[j], poly[0][poly_idx[j]], poly[1][poly_idx[j]]))
         #
