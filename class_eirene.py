@@ -490,7 +490,7 @@ class Eirene():
         :return:
         """
         #read triangles coordinates
-        logger.info('reading eirene.npco_char file \n')
+        logger.info(' reading eirene.npco_char file \n')
         self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
         #reads triangles map and vertices
         logger.info( 'reading eirene.elemente file \n')
@@ -934,7 +934,7 @@ class Eirene():
 
         logger.log(5, row_to_skip)
                 # 5          27        6086
-        logger.log(5,' reading bulk plasma data')
+        logger.info(' reading bulk plasma data')
         for i in range(0, self.npls):
             #READING DATA AS A BLOCK
             try:
@@ -985,7 +985,7 @@ class Eirene():
 
         # row_to_skip = 30648
         #row to skip should be 30647
-        logger.log(5, ' reading neutral atom data')
+        logger.info(' reading neutral atom data')
         for i in range(0,self.natm):
             try:
                 dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
@@ -1027,7 +1027,7 @@ class Eirene():
 
         row_to_skip = row_to_skip + 1
         logger.log(5,row_to_skip)
-        logger.log(5, ' reading neutral molecules data')
+        logger.info(' reading neutral molecules data')
         for i in range(0,self.nmol):
             try:
                 dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
@@ -1069,9 +1069,7 @@ class Eirene():
         # row_to_skip = row_to_skip + 1
         # logger.log(5, row_to_skip)
 
-
-
-        logger.log(5, ' reading test ions data')
+        logger.info('  reading test ions data')
         for i in range(0,self.nion):
             try:
                 dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
@@ -1110,8 +1108,7 @@ class Eirene():
                                            axis=0)  # concatenates as row
         self.ION.surf_avg_data.reset_index(drop=True, inplace=True)
 
-
-        logger.log(5, ' reading miscellaneous data')
+        logger.info('  reading miscellaneous data')
         try:
             self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
         except:
@@ -1122,11 +1119,10 @@ class Eirene():
                 error_bad_lines=False, warn_bad_lines=False)
         self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
 
-
-        logger.log(5, "stratum data is not read YET!")
+        logger.debug(" stratum data is not read YET!")
 
 ###################################
-        logger.info('reading EIRENE ChemFluxDep')
+        logger.info(' reading EIRENE ChemFluxDep \n')
 
         exists = os.path.isfile(self.runfolder + 'eirene.chemFluxDep')
 
@@ -1171,7 +1167,7 @@ class Eirene():
                                 row_to_skip = index + 3
                                 logger.log(5, row_to_skip)
                                 # 5          27        6086
-                                logger.log(5, ' reading bulk plasma data')
+                                logger.info('  reading bulk plasma data')
                                 # for i in range(0, self.NLIM_tmp):
                                     # READING DATA AS A BLOCK
                                 dummy1 = pd.read_csv(self.runfolder + 'eirene.chemFluxDep',
@@ -1213,7 +1209,7 @@ class Eirene():
         else:
             logger.warning('eirene.ChemFluxDep file was NOT found')
 ###################################
-        logger.info('reading EIRENE surfaces')
+        logger.info(' reading EIRENE surfaces \n')
 
         exists = os.path.isfile(self.runfolder + 'eirene.surfaces')
 
@@ -1229,7 +1225,7 @@ class Eirene():
 
 
 ###################################
-        logger.info('reading geometrical info')
+        logger.info(' reading geometrical info \n')
         sh = ep.data(self.runfolder + 'tran', 'SH').data
         self.sh = np.trim_zeros(sh, 'b')
         hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
@@ -1238,8 +1234,177 @@ class Eirene():
         self.rmesh = np.trim_zeros(rmesh, 'b')
 
 ###################################
-        logger.log(5, 'done \n')
+
         logger.info( 'reading eirene data done! \n')
+
+        self.create_connected_eirene_surface(3)
+
+    def create_connected_eirene_surface(self, iselect,atmmol=None):
+
+
+        if atmmol =='atm':
+            ESRF_SAREA = self.ESRF_SAREA_atom
+            ESRF_ITRIA = self.ESRF_ITRIA_atom
+            ESRF_ISIDE = self.ESRF_ISIDE_atom
+            ESRF_ISURF = self.ESRF_ISURF_atom
+        elif atmmol =='mol':
+            ESRF_SAREA = self.ESRF_SAREA_mol
+            ESRF_ITRIA = self.ESRF_ITRIA_mol
+            ESRF_ISIDE = self.ESRF_ISIDE_mol
+            ESRF_ISURF = self.ESRF_ISURF_mol
+        else:
+            ESRF_SAREA = self.ESRF_SAREA_mol
+            ESRF_ITRIA = self.ESRF_ITRIA_mol
+            ESRF_ISIDE = self.ESRF_ISIDE_mol
+            ESRF_ISURF = self.ESRF_ISURF_mol
+
+
+        isrf = self.nlim + iselect
+        surface_number = isrf + 1
+        logger.log(5,
+                   "creating connected polygon groups for surface {}, EIRENE surface number= {}".format(
+                       self.ESRF_NAMES[isrf], isrf + 1))
+        surface_name = self.ESRF_NAMES[isrf]
+
+        # poly = lonarr(NLMPGS,2)
+
+        poly_sfidx = np.zeros(self.NLMPGS,dtype=int)
+        npoly = 0
+        x = []
+        y = []
+        for i in range(0, self.NLMPGS):
+            if ESRF_ISURF[i] == isrf+1:
+                itria = ESRF_ITRIA[i] - 1
+                iside = ESRF_ISIDE[i] - 1
+                ip1 = iside
+                ip2 = ip1 + 1
+                if ip2 > 2: ip2=ip2-3
+
+                x.append(self.geom.trimap[itria, ip1])
+                y.append(self.geom.trimap[itria, ip2])
+                poly_sfidx = np.append(poly_sfidx,i)
+        poly=np.stack([x,y])
+        npoly = poly.shape[1]
+        logger.log(5, "Found {} polygons for this surface".format(npoly))
+        #
+        # # Check connectivity
+        poly_added = np.zeros(npoly,dtype=bool)
+
+        poly_idx = np.zeros(npoly,dtype=int)
+
+        #
+        npoly_group = 0
+        poly_group_x = np.zeros(npoly,dtype=int)
+        poly_group_y = np.zeros(npoly,dtype=int)
+        #
+        tip = 0
+        tail = 0
+
+        poly_idx[tail] =0
+        poly_added[0]=True
+        #
+        piece_left = True  # true
+        piece_added = False  # false
+        #
+        while piece_left:
+            piece_added = False  # false
+            for i in range(0, npoly):
+                # logger.log(5," i= {}".format(i))
+                if not poly_added[i]:
+                    if (poly[1][poly_idx[tail]] == poly[0][i]):
+        #
+                        tail = tail + 1
+                        # poly_idx = np.append(poly_idx, 1)
+                        poly_idx[tail] = i
+                        poly_added[i]=True  # mark poly piece to be already added
+
+                        piece_added = True  # remember that a piece was added
+                    elif poly[1][poly_idx[tail]] == poly[1][i]:
+        # #             switch order of points in poly
+                        idummy = poly[0][i]
+                        poly[0][i] = poly[1][i]
+                        poly[1][i] = idummy
+
+        # #             add poly piece to tail
+                        tail = tail + 1
+                        poly_idx[tail] = i
+                        poly_added[i] = True  # mark poly piece to be already added
+
+                        piece_added = True  # remember that a piece was added
+                    elif poly[0][poly_idx[tail]] == poly[1][i]:
+        # #             shift polygon upwards
+                        for j in range(tail, tip):
+                            poly_idx[j + 1] = poly_idx[j]
+
+        # #             add poly piece to tip
+                        tail = tail + 1
+
+                        poly_idx[tip] = i
+
+                        poly_added[i] = True   # mark poly piece to be already added
+                        piece_added = True  # remember that a piece was added
+                    elif poly[0][poly_idx[tail]] == poly[0][i]:
+        # #             switch order of points in poly
+                        idummy = poly[0][i]
+                        poly[0][i] = poly[1][i]
+                        poly[1][i] = idummy
+                    #             shift polygon upwards
+                        for j in range(tail, tip):
+                            poly_idx[j + 1] = poly_idx[j]
+
+            # #             add poly piece to tip
+                        tail = tail + 1
+
+                        poly_idx[tip] = i
+                        poly_added[i] = True   # mark poly piece to be already added
+                        piece_added = True  # remember that a piece was added
+            if not piece_added:
+        # #       No piece was added so the poly group is finished
+        # #       add new poly group
+                poly_group_x[npoly_group] = tip
+                poly_group_y[npoly_group] = tail
+                npoly_group = npoly_group + 1
+                logger.log(5,"Polygon indices in group {}".format(npoly_group))
+
+            # #       get next group start piece
+                piece_left = False  # false
+                for j in range(0,npoly):
+                    # logger.log(5, " j= {}".format(j))
+                    if not poly_added[j]:
+                        piece_left = True
+                        tip = tail + 1
+                        tail = tail + 1
+                        poly_idx[tail] = j
+
+                        poly_added[i] = True   # mark poly piece to be already added
+                        break
+
+        poly_group = np.stack([poly_group_x, poly_group_y])
+        self.surface_npoly_group = npoly_group
+        # surface_poly_group = lonarr(npoly_group, 2)
+        self.surface_poly_group = [poly_group[0][0:npoly_group],poly_group[1][0:npoly_group]]
+        self.surface_npoly = npoly
+        # surface_poly = lonarr(npoly, 2)
+        self.surface_poly = [poly[0][0:npoly],poly[1][0:npoly]]
+        # surface_poly_idx = lonarr(npoly)
+        self.surface_poly_idx = poly_idx[0:npoly]
+        # surface_poly_sfidx = lonarr(npoly)
+        self.surface_poly_sfidx = poly_sfidx[0:npoly]
+
+        logger.log(5, "Found {} polygon groups in this surface".format(self.surface_npoly_group))
+        for i in range(0,self.surface_npoly_group):
+            n = self.surface_poly_group[1][i] - self.surface_poly_group[0][i] + 1
+            logger.log(5,"Group {} has {} polygons".format(i,n))
+            # for j in range(self.surface_poly_group[0][i] ,  self.surface_poly_group[1][i] ):
+            #     logger.log(5,"{} {} {} {}".format( j, self.surface_poly_idx[j], poly[0][poly_idx[j]], poly[1][poly_idx[j]]))
+        #
+
+        #
+        # end  # create_connected_eirene_surface
+
+
+
+
 
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
@@ -1403,7 +1568,7 @@ class Eirene():
         :param subdivertor_file: location of subdivertor structure file
         :return:
         """
-        logger.info('plotting subdivertor structure \n')
+        logger.info(' plotting subdivertor structure \n')
         #reading edge2d mesh
         rvert = ep.data(path, 'RVERTP').data
         rvert = np.trim_zeros(rvert, 'b')
@@ -1552,7 +1717,7 @@ class Eirene():
         :param pufffile: if using a catalogued puff file is not saved, so user can provide it
         :return:
         """
-        logger.info('plotting eirene grid \n')
+        logger.info(' plotting eirene grid \n')
 
         logger.log(5," reading puff file")
         if pufffile is None:#

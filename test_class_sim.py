@@ -639,8 +639,8 @@ if __name__ == "__main__":
 
 
 
-    simu.read_eirene(simu.fullpath[:-4])
-    # simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
+    # simu.read_eirene(simu.fullpath[:-4])
+    simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
     # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')
 
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
