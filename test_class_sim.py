@@ -37,6 +37,8 @@ from class_sim import initread
 from class_sim import find_indices
 import eproc as ep
 from ppf import *
+import pdb
+
 
 def e2d_variables(file):
     with open(file) as f:
@@ -143,8 +145,8 @@ if __name__ == "__main__":
 
 
 
-    EDGE2dfold='/work/bviola/Python/EDGE2D/e2d_data'
-    workfold='work/Python/EDGE2D'
+    EDGE2dfold='/work/bviola/Python/bruvio_tool/e2d_data'
+    workfold='work/Python/bruvio_tool'
     #
 
     del sys.modules['class_sim']
@@ -308,7 +310,7 @@ if __name__ == "__main__":
     #sim.write_pump_cur2file(sim_list, EDGE2dfold, targetfilename)
     ## raise SystemExit
     ## omp = simu1.read_profiles('OMP')
-    #sim.write_edge2d_profiles(sim_list,targetfilename)
+    # sim.write_edge2d_profiles1(sim_list,targetfilename)
     ## print(omp)
     ## result=simu1.read_print_file_edge2d()
     ## print(result.values())
@@ -522,7 +524,7 @@ if __name__ == "__main__":
 
 
     EDGE2dfold='./e2d_data'
-    workfold='work/Python/EDGE2D'
+    workfold='work/Python/bruvio_tool'
     #
     #import sys
     #del sys.modules['class_sim']
@@ -536,7 +538,17 @@ if __name__ == "__main__":
     # sim_hfe = sim('92123', 'aug1717', '2', workfold)
     
     
-    sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
+    # sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
+    sim_hfe_Nrad0 = sim('84600', 'oct1618', '1', workfold)
+    sim_hfe_Nrad0 = sim('84599X', 'oct1618', '1', workfold)
+    sim_hfe_Nrad0 = sim('84598X', 'oct1618', '1', workfold)
+    simlist = []
+    simlist.append([sim_hfe_Nrad0, 'first'])
+
+    sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
+
+
+    pdb.set_trace()
     # sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
     #
     # sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)

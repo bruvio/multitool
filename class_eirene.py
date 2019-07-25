@@ -1237,7 +1237,7 @@ class Eirene():
 
         logger.info( 'reading eirene data done! \n')
 
-        self.create_connected_eirene_surface(0)
+        self.create_connected_eirene_surface(1)
 
     def create_connected_eirene_surface(self, iselect,atmmol=None):
 
@@ -1285,9 +1285,13 @@ class Eirene():
 
                 x.append(self.geom.trimap[itria, ip1])
                 y.append(self.geom.trimap[itria, ip2])
-                poly_sfidx = np.append(poly_sfidx,i)
+
+                poly_sfidx[npoly] = i
+                npoly = npoly+1
+
         poly=np.stack([x,y])
-        npoly = poly.shape[1]
+        npoly_size = poly.shape[1]
+
         logger.log(5, "Found {} polygons for this surface".format(npoly))
         #
         # # Check connectivity
@@ -1309,16 +1313,25 @@ class Eirene():
         piece_left = True  # true
         piece_added = False  # false
         #
+        # self.plot_eirene_grid()
+        # plt.plot(poly[0],poly[1],'b')
+        # plt.show()
         while piece_left:
+            # logger.log(5,"Current tip: {} {} {} {}".format(tip,poly_idx[tip], poly[0][poly_idx[tip]], poly[1][poly_idx[tip]]))
+            # logger.log(5,"Current tail: {} {} {} {}".format(tail,poly_idx[tail], poly[0][poly_idx[tail]], poly[1][poly_idx[tail]]))
+
             piece_added = False  # false
             for i in range(0, npoly):
                 # logger.log(5," i= {}".format(i))
                 if not poly_added[i]:
+                    # ;          found poly piece which is not yet added
+                    logger.log(5,"Checking poly {} {} {}: ".format(i,poly[0][i],poly[1][i]))
                     if (poly[1][poly_idx[tail]] == poly[0][i]):
         #
-                        tail = tail + 1
+
                         # poly_idx = np.append(poly_idx, 1)
                         poly_idx[tail] = i
+                        tail = tail + 1
                         poly_added[i]=True  # mark poly piece to be already added
 
                         piece_added = True  # remember that a piece was added
@@ -1329,8 +1342,9 @@ class Eirene():
                         poly[1][i] = idummy
 
         # #             add poly piece to tail
-                        tail = tail + 1
+
                         poly_idx[tail] = i
+                        tail = tail + 1
                         poly_added[i] = True  # mark poly piece to be already added
 
                         piece_added = True  # remember that a piece was added
@@ -1376,9 +1390,9 @@ class Eirene():
                     if not poly_added[j]:
                         piece_left = True
                         tip = tail + 1
-                        tail = tail + 1
-                        poly_idx[tail] = j
 
+                        poly_idx[tail] = j
+                        tail = tail + 1
                         poly_added[i] = True   # mark poly piece to be already added
                         break
 
@@ -1400,13 +1414,36 @@ class Eirene():
             logger.log(5,"Group {} has {} polygons".format(i+1,n))
             # for j in range(self.surface_poly_group[0][i] ,  self.surface_poly_group[1][i] ):
             #     logger.log(5,"{} {} {} {}".format( j, self.surface_poly_idx[j], poly[0][poly_idx[j]], poly[1][poly_idx[j]]))
-        #
 
-        #
-        # end  # create_connected_eirene_surface
+        print('surface_npoly_group',self.surface_npoly_group)
+        print('surface_poly_group',self.surface_poly_group)
+        print('surface_npoly',self.surface_npoly)
+        print('surface_poly',self.surface_poly)
+        print('surface_poly_idx',self.surface_poly_idx)
+        print('surface_poly_sfidx',self.surface_poly_sfidx)
 
+    def assemble_eirene_surfaces(self,group,iselect):
 
+        isrf = self.nlim + iselect
+        surface_number = isrf + 1
 
+        logger.info("assembling surface group {} for surface {}".format(group+1),self.ESRF_NAMES[isrf])
+
+        npolygon = self.surface_poly_group[1][group] - self.surface_poly_group[0][group] + 1
+        logger.log(5, "Surface group has {} polygons".format(npolygon))
+        # surface_polygon = dblarr(npolygon,4)
+        self.surface_polygon_sfidx = np.zeros(npolygon)
+
+        for i in range(0,npolygon):
+            idx = surface_poly_group[0][group]+i
+            surface_polygon_x1.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[0][idx]]])
+            surface_polygon_y1.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[0][idx]]])
+            surface_polygon_x2.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[1][idx]]])
+            surface_polygon_y2.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[1][idx]]])
+
+            self.surface_polygon_sfidx[i]=surface_poly_sfidx[self.surface_poly_idx[idx]]
+
+        self.surface_polygon= np.stack([surface_polygon_x1,surface_polygon_y1,surface_polygon_x2,surface_polygon_y2])
 
 
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):

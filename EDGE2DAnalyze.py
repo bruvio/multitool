@@ -8,11 +8,12 @@ modified by tmp
 final version
 """
 from class_sim import *
+import os
 import os.path
-
 import csv
 import pandas as pd
 import numpy as np
+
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.pylab import yticks,xticks,ylabel,xlabel
@@ -28,6 +29,7 @@ import eproc as ep
 from matplotlib import rcParams
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.ticker import AutoMinorLocator
+import pdb
 logger = logging.getLogger(__name__)
 #import plot_e2d
 #%%
@@ -57,11 +59,11 @@ def plot_e2d(dataname,x,y,labelname,colorname,**kwargs):
     linew=kwargs.pop('linew',2)
     plt.scatter(dataname[x],dataname[y],label=labelname,s=50, color=colorname)
 
-    
-    
+
+
     #plt.axvline(x=0.0, ymin=0., ymax = 500, linewidth=2, color='k')
     #plt.axhline(y=3, xmin=-.15, xmax=500, linewidth=2, color = 'k')
-    
+
     axes = plt.axes()
 #    axes.set_xlim([-.02, .02])
     #axes.set_ylim([0, 50.0])
@@ -79,7 +81,7 @@ def plot_e2d(dataname,x,y,labelname,colorname,**kwargs):
     #    plt.ioff()
     # plt.tight_layout()
     #plt.savefig('./figures/'+fname,dpi=300) #
-    
+
     #plt.show()
 
 #%%
@@ -111,9 +113,9 @@ class shot:
         self.sim_user =input_dict['sim_user']
         self.reload = input_dict['reload']
         # self.profile_omp= input_dict['omp_profiles']
-        self.profile_omp= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_omp= '/u/bviola/'+input_dict['save_dir']+"/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
         # self.profile_ot= input_dict['ot_profiles']
-        self.profile_ot= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_ot= '/u/bviola/'+input_dict['save_dir']+"/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
         self.plot_sim = input_dict['plot_sim']
         self.plot_exp = input_dict['plot_exp']
         self.label = input_dict['label']
@@ -165,19 +167,28 @@ class shot:
         self.filename_bolov_highN_e2d = input_dict['filename_bolov_highN_e2d']
 
         self.filename_spectroh_highN = input_dict['filename_spectroh_highN']
-        self.filename_spectroh_medN = input_dict['filename_spectroh_medN']       
+        self.filename_spectroh_medN = input_dict['filename_spectroh_medN']
         self.filename_spectroh_highN_e2d = input_dict['filename_spectroh_highN_e2d']
         self.filename_spectroh_medN_e2d = input_dict['filename_spectroh_medN_e2d']
-        workfold = 'work/Python/EDGE2D'
+        workfold = input_dict['save_dir']
+        # print(workfold)
         conf = self.conf
         date = conf.split('_')[0]
         seq = (conf.split('_')[1]).split('#')[1]
         self.sim_1 = sim(str((self.pulse)), str(date), str(seq), workfold)
+        # print(self.sim_1.workingdir)
+
+
+        # raise SystemExit
         eproccat = ep.cat;
         self.tranfile = (eproccat(str((self.pulse)), str(date), str(seq),
                                   OWNER=self.sim_user,
                                   CODE='edge2d',
                                   MACHINE='jet')).__str__();
+
+
+
+
         if os.path.isfile(self.profile_omp) & os.path.isfile(
                 self.profile_ot):
             logger.info('profile files exist')
@@ -189,6 +200,7 @@ class shot:
 
                 simlist = []
                 simlist.append([self.sim_1, 'first'])
+
                 sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
                 logger.info('profile created')
 
@@ -217,11 +229,14 @@ class shot:
 
 
         try:
+            logging.info('reading OMP profiles {}'.format(self.profile_omp))
+            # pdb.set_trace()
             self.e2d_profiles = pd.read_csv(self.profile_omp,skiprows=0,delim_whitespace=True)
         except:
             logger.info('no e2d omp data!')
         try:
             # ot profiles
+            logging.info('reading OMP profiles {}'.format(self.e2d_profiles_ot))
             self.e2d_profiles_ot = pd.read_csv(self.profile_ot,skiprows=0,delim_whitespace=True)
         except:
             logger.info('no e2d ot data!')
@@ -467,7 +482,9 @@ class shot:
             # logger.debug('%s',str(self.pulse))
 
             # print(self)
-            fname = str(self.pulse)  + 'Te_omp'
+
+            fname = str(self.pulse) +'_'+str(self.label) + 'Te_omp'
+
             logger.debug('')
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
@@ -541,8 +558,8 @@ class shot:
             logger.debug('')
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
             logger.debug('')
             # raise SystemExit
         except :
@@ -555,7 +572,7 @@ class shot:
             logger.info('plotting HRTS NE')
             # %%
             logger.debug('')
-            fname = str(self.pulse)  +  'ne_omp'
+            fname = str(self.pulse) +'_'+str(self.label) +   'ne_omp'
             fnorm = 1
             ftitle = 'Electron Density OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
@@ -607,15 +624,15 @@ class shot:
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         except :
             logger.info("Could not plot HRTS ne")
             # logger.error("Could not plot HRTS ne")
         # logger.info('plotting ne_ot')
         try:
             logger.info('plotting ne_ot')
-            fname=str(self.pulse)  +'ne_ot'
+            fname = str(self.pulse) +'_'+str(self.label) +  +'ne_ot'
             fnorm=1
             ftitle='Electron Density OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -649,15 +666,15 @@ class shot:
 
 
 
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
             logger.error("Could not plot ne ot")
             # logger.error("Could not plot ne ot")
         #     logger.info('plotting te_ot')
         try:
             logger.info('plotting te_ot')
-            fname=str(self.pulse) + 'te_ot'
+            fname = str(self.pulse) +'_'+str(self.label) +  'te_ot'
             fnorm=1
             ftitle='Electron Temperature OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -689,8 +706,8 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
             #%%
 
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
             logger.info("Could not plot te ot")
             # logger.error("Could not plot te ot")
@@ -698,7 +715,7 @@ class shot:
         try:
             logger.info('plotting jsat_ot')
             #%%
-            fname=str(self.pulse) +'jsat_ot'
+            fname = str(self.pulse) +'_'+str(self.label) + 'jsat_ot'
             ftitle='Saturation Current  OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
             fylabel='$J_{sat,OT}\quad A m^{-2}$'
@@ -728,8 +745,8 @@ class shot:
             logger.debug('')
             #%%
             # plt.tight_layout()
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
             logger.error("Could not plot jsat")
                 # logger.error("Could not plot jsat")
@@ -937,7 +954,7 @@ class shot:
 
         try:
             logger.info('plotting dperp')
-            fname=str(self.pulse)+'dperp'
+            fname = str(self.pulse) +'_'+str(self.label) +'dperp'
             fnorm=1
             ftitle='D perpendicular'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -961,7 +978,7 @@ class shot:
             #%%
         try:
             logger.info('plotting Xperp')
-            fname=str(self.pulse)+'Xperp'
+            fname = str(self.pulse) +'_'+str(self.label) + 'Xperp'
             fnorm=1
             ftitle='X perpendicular'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -1024,7 +1041,7 @@ class shot:
         try:
             logger.info('plotting OMP Te')
             #%%
-            fname=str(self.pulse)+'OMP Te Core'
+            fname = str(self.pulse) +'_'+str(self.label) + 'OMP Te Core'
             plt.figure(num=fname+"_"+self.label)
             ftitle='OMP Te'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -1048,8 +1065,8 @@ class shot:
                 except:
                     logger.info('no HRTS fit data')
 
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
             # plt.tight_layout()
         except :
                 # logger.error("Could not plot te omp")
@@ -1057,7 +1074,7 @@ class shot:
         try:
             logger.info('plotting OMP pressure')
             #%%
-            fname=str(self.pulse)+'OMP pressure'
+            fname = str(self.pulse) +'_'+str(self.label) + 'OMP pressure'
             #fnorm=1e-6
             plt.figure(num=fname+"_"+self.label)
             ftitle='OMP pressure'
@@ -1071,8 +1088,8 @@ class shot:
                     plt.scatter(self.lidrpe_profiles['Rmaj(m)']+float(self.shift),self.lidrpe_profiles['Pe(kPa)'],label='Press_omp_lidr',color='red')
                 except:
                     logger.error("Could not plot OMP pressure")
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
             # plt.tight_layout()
 
         except :
@@ -1210,8 +1227,8 @@ class shot:
         #    plt.ioff()
         plt.tight_layout()
         # plt.savefig(fname,dpi=300) #
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # plt.show(block=True)
         # %%
         # %%
@@ -1263,8 +1280,8 @@ class shot:
         plt.ylabel(fylabel, {'color': 'k', 'size': 28})
         #    plt.ioff()
         plt.tight_layout()
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
         # plt.show(block=True)
         # %%
@@ -1317,8 +1334,8 @@ class shot:
         plt.ylabel(fylabel, {'color': 'k', 'size': 28})
         #    plt.ioff()
         plt.tight_layout()
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  # #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  # #
 
         plt.show(block=True)
         # plt.waitforbuttonpress(0)  # this will wait for indefinite time
@@ -1383,8 +1400,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
         # %%
         fname = 'spectro_'+str(self.pulse)+'$D_{\delta}\  radiance'
@@ -1426,8 +1443,8 @@ class shot:
         #
 
         #
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # %%
 
         fname = 'spectro_'+str(self.pulse)+'_N_lines radiance'
@@ -1483,8 +1500,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # # 92123 just exp nitrogen lines
 
         fname = 'exp spectro_'+str(self.pulse)+'_N_lines'
@@ -1530,8 +1547,8 @@ class shot:
 
         # plt.tight_layout()
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         #
         # #
         # #
@@ -1571,8 +1588,8 @@ class shot:
 
         # plt.tight_layout()
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
         # %%
         # %%
@@ -1629,8 +1646,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # %%
         fname = 'spectro_'+str(self.pulse)+' radiance low seeding'
         fnorm = 1
@@ -1669,8 +1686,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         plt.show(block=True)
         # plt.waitforbuttonpress(0)  # this will wait for indefinite time
         # plt.close('all')
@@ -1747,8 +1764,8 @@ class shot:
 
         # plt.tight_layout()
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
         # %%
         fname = 'spectro_'+str(pulse1.pulse)+str(pulse2.pulse)+'  radiance'
@@ -1798,8 +1815,8 @@ class shot:
         #
 
         #
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # %%
 
         fname = 'spectro_'+str(pulse1.pulse)+str(pulse2.pulse)+'_N_lines'
@@ -1882,8 +1899,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # # 92123 just exp nitrogen lines
         fname = 'exp spectro_'+str(pulse1.pulse)+str(pulse2.pulse)+'_N_lines'
         fnorm = 1
@@ -1950,8 +1967,8 @@ class shot:
 
         # plt.tight_layout()
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         #
         # #
         # #
@@ -1998,8 +2015,8 @@ class shot:
 
         # plt.tight_layout()
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
         # %%
         # %%
@@ -2074,8 +2091,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         # %%
         fname = 'spectro_'+str(pulse1.pulse)+'_'+str(pulse2.pulse)+'_N_lines low seeding'
         fnorm = 1
@@ -2121,8 +2138,8 @@ class shot:
 
 
 
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
+        plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         plt.show(block=True)
         # plt.waitforbuttonpress(0)  # this will wait for indefinite time
         # plt.close('all')
@@ -2228,8 +2245,8 @@ class shot:
             #    plt.ioff()
             plt.tight_layout()
             # plt.savefig(fname,dpi=300) #
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
             #
             # # %%
             # # %%
@@ -2296,8 +2313,8 @@ class shot:
             plt.ylabel(fylabel, {'color': 'k', 'size': 28})
             #    plt.ioff()
             plt.tight_layout()
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
             #
             # # plt.show(block=True)
             # # %%
@@ -2363,8 +2380,8 @@ class shot:
             plt.ylabel(fylabel, {'color': 'k', 'size': 28})
             #    plt.ioff()
             plt.tight_layout()
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  # #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  # #
         else:
             name='KB5H'
             channel='HORI'
@@ -2420,8 +2437,8 @@ class shot:
             #    plt.ioff()
             plt.tight_layout()
             # plt.savefig(fname,dpi=300) #
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
             # %%
             # %%
@@ -2482,8 +2499,8 @@ class shot:
             plt.ylabel(fylabel, {'color': 'k', 'size': 28})
             #    plt.ioff()
             plt.tight_layout()
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
 
             # plt.show(block=True)
             # %%
@@ -2545,8 +2562,8 @@ class shot:
             plt.ylabel(fylabel, {'color': 'k', 'size': 28})
             #    plt.ioff()
             plt.tight_layout()
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  # #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  # #
 
         plt.show(block=True)
         # plt.waitforbuttonpress(0)  # this will wait for indefinite time
@@ -2580,7 +2597,8 @@ class shot:
         logger.debug('pulse2 ot fieldnames')
         logger.debug(fieldnames_ot)
 
-
+        logger.info('%s',str(pulse1.label))
+        logger.info('%s',str(pulse2.label))
         if ms is None:
             ms = 40
         else:
@@ -2602,10 +2620,11 @@ class shot:
         try:
             logger.debug('')
             logger.info('plotting HRTS TE')
-            # logger.debug('%s',str(pulse1.pulse))
-            # logger.debug('%s',str(pulse2.pulse))
-            # print(pulse1)
-            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Te_omp'
+
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Te_omp'
+            else:
+                fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Te_omp'
             logger.debug('')
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
@@ -2684,21 +2703,26 @@ class shot:
             logger.debug('')
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
             logger.debug('')
             # raise SystemExit
         except :
 
             logger.error("Could not plot HRTS te")
     # %%
-
+    #     pdb.set_trace()
         #    logger.info('plotting HRTS NE')
         try:
             logger.info('plotting HRTS NE')
             # %%
             logger.debug('')
-            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) +  'ne_omp'
+
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'ne_omp'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'ne_omp'
+
             fnorm = 1
             ftitle = 'Electron Density OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
@@ -2775,14 +2799,18 @@ class shot:
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
         except :
             logger.error("Could not plot HRTS ne")
-        
+
         try:
             logger.info('plotting ne_ot')
-            fname=str(pulse1.pulse) +'_'+str(pulse2.pulse) +'ne_ot'
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'ne_ot'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'ne_ot'
+
             fnorm=1
             ftitle='Electron Density OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -2830,15 +2858,19 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
 
 
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
             logger.error("Could not plot ne ot")
             # logger.error("Could not plot ne ot")
         #     logger.info('plotting te_ot')
         try:
             logger.info('plotting te_ot')
-            fname=str(pulse1.pulse) +'_'+str(pulse2.pulse)+ 'te_ot'
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Te_ot'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Te_ot'
+
             fnorm=1
             ftitle='Electron Temperature OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -2884,8 +2916,8 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
             #%%
 
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
             logger.error("Could not plot te ot")
 
@@ -2893,7 +2925,11 @@ class shot:
         try:
             logger.info('plotting jsat_ot')
             #%%
-            fname=str(pulse1.pulse) +'_'+str(pulse2.pulse)+'jsat_ot'
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'jsat_ot'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'jsat_ot'
+
             ftitle='Saturation Current  OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
             fylabel='$J_{sat,OT}\quad A m^{-2}$'
@@ -2937,8 +2973,8 @@ class shot:
             logger.debug('')
             #%%
             # plt.tight_layout()
-            plt.savefig('./figures/'+fname, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
         except :
 
             logger.error("Could not plot jsat")
@@ -2946,7 +2982,13 @@ class shot:
 
         try:
             logger.info('plotting Dperp')
-            fname=str(pulse1.pulse) +'_'+str(pulse2.pulse)+'Dperp'
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Dperp'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Dperp'
+
+
+
             fnorm=1
             ftitle='D perpendicular'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -2977,7 +3019,13 @@ class shot:
             #%%
         try:
             logger.info('plotting Xperp')
-            fname=str(pulse1.pulse) +'_'+str(pulse2.pulse)+'Xperp'
+            if int(pulse1.pulse) == int(pulse2.pulse):
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Xperp'
+            else:
+                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Xperp'
+
+
+
 
             fnorm=1
             ftitle='X perpendicular'
@@ -3640,7 +3688,7 @@ class shot:
         input_dict = read_json(dict1)
 
         pulse1 = shot(input_dict)
-
+        # pdb.set_trace()
         var=var.lower()
 
         loc=loc
@@ -3707,7 +3755,7 @@ class shot:
             pulse = shot(json_dict)
 
             logger.debug('')
-
+            label = pulse.label
             fname = var + '_' + loc + '_comparison'
             fnorm = 1
             names = ep.getnames(pulse.tranfile, 1)
@@ -3766,8 +3814,8 @@ class shot:
             # axes.set_ylim(bottom=0)
             plt.legend(loc=0, prop={'size': 18})
 
+
         fname = var + '_' + loc + '_comparison'
         plt.figure(num=fname)
-        plt.savefig('./figures/' + fname, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname, dpi=300)  #
-
+        plt.savefig('./figures/' + fname+'_'+pulse1.label, format='eps', dpi=300)
+        plt.savefig('./figures/' + fname+'_'+pulse1.label, dpi=300)  #
