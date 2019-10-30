@@ -3,7 +3,7 @@
 
 # ----------------------------
 __author__ = "Bruno Viola"
-__Name__ = "KG1 RO tool GUI"
+__Name__ = "bruvio tool GUI"
 __version__ = "0"
 __release__ = "2"
 __maintainer__ = "Bruno Viola"
@@ -91,14 +91,14 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             import getpass
             self.owner = getpass.getuser()
 
-        logger.debug('this is your username {}'.format(self.owner))
+        logger.info('this is your username {}'.format(self.owner))
         self.homefold = os.path.join(os.sep, 'u', self.owner)
-        logger.debug('this is your homefold {}'.format(self.homefold))
-        logger.debug('this is edge2d fold {}'.format(self.edge2dfold))
+        logger.info('this is your homefold {}'.format(self.homefold))
+        logger.info('this is edge2d fold {}'.format(self.edge2dfold))
         home = str(Path.home())
 
 
-        logger.debug('we are in %s', cwd)
+        logger.info('we are in %s', cwd)
 
 
         pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
@@ -1965,7 +1965,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
                              " 3: Error, 4: Debug Plus; \n default level is INFO",
-                        default=4)
+                        default=0)
     # parser.add_argument("-d", "--debug", type=int,
     #                     help="Debug level. 0: Info, 1: Warning, 2: Debug,"
     #                         " 3: Error; \n default level is INFO", default=2)

@@ -39,7 +39,7 @@
   "te_omp_factor_exp": "1e3",
   "ne_ot_factor": "1",
   "te_ot_factor": "1",
-  "unseeded": "True",
+  "unseeded": "False",
   "plot_sim": "True",
   "plot_exp":"True",
   "plot_bolo":"False",
@@ -50,9 +50,10 @@
 //hrts
 // "filename_hrts_data": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_84600_[51.772324]_estefan_T033_0_python.dat",
 // "filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84600_[51.772324]_estefan_T033_0_python.dat",
-// "filename_hrts_data": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_84598_[51.422127]_estefan_T040_0_python.dat",
-  "filename_hrts_data":"",
-  "filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84598_[51.422127]_estefan_T040_0_python.dat",
+  "filename_hrts_data": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_84598_[51.422127]_estefan_T040_0_python.dat",
+//  "filename_hrts_data":"",
+  "filename_hrts_fit":"",
+//"filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84598_[51.422127]_estefan_T040_0_python.dat",
 //  "filename_hrts_data": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_84599_[51.27203]_estefan_T035_0_python.dat",
 //  "filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84599_[51.27203]_estefan_T035_0_python.dat",
 //LP

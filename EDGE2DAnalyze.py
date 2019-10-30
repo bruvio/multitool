@@ -8,7 +8,6 @@ modified by tmp
 final version
 """
 from class_sim import *
-import os
 import os.path
 import csv
 import pandas as pd
@@ -113,9 +112,9 @@ class shot:
         self.sim_user =input_dict['sim_user']
         self.reload = input_dict['reload']
         # self.profile_omp= input_dict['omp_profiles']
-        self.profile_omp= '/u/bviola/'+input_dict['save_dir']+"/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_omp= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
         # self.profile_ot= input_dict['ot_profiles']
-        self.profile_ot= '/u/bviola/'+input_dict['save_dir']+"/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_ot= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
         self.plot_sim = input_dict['plot_sim']
         self.plot_exp = input_dict['plot_exp']
         self.label = input_dict['label']
@@ -170,25 +169,16 @@ class shot:
         self.filename_spectroh_medN = input_dict['filename_spectroh_medN']
         self.filename_spectroh_highN_e2d = input_dict['filename_spectroh_highN_e2d']
         self.filename_spectroh_medN_e2d = input_dict['filename_spectroh_medN_e2d']
-        workfold = input_dict['save_dir']
-        # print(workfold)
+        workfold = 'work/Python/EDGE2D'
         conf = self.conf
         date = conf.split('_')[0]
         seq = (conf.split('_')[1]).split('#')[1]
         self.sim_1 = sim(str((self.pulse)), str(date), str(seq), workfold)
-        # print(self.sim_1.workingdir)
-
-
-        # raise SystemExit
         eproccat = ep.cat;
         self.tranfile = (eproccat(str((self.pulse)), str(date), str(seq),
                                   OWNER=self.sim_user,
                                   CODE='edge2d',
                                   MACHINE='jet')).__str__();
-
-
-
-
         if os.path.isfile(self.profile_omp) & os.path.isfile(
                 self.profile_ot):
             logger.info('profile files exist')
@@ -200,7 +190,6 @@ class shot:
 
                 simlist = []
                 simlist.append([self.sim_1, 'first'])
-
                 sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
                 logger.info('profile created')
 
@@ -229,14 +218,11 @@ class shot:
 
 
         try:
-            logging.info('reading OMP profiles {}'.format(self.profile_omp))
-            # pdb.set_trace()
             self.e2d_profiles = pd.read_csv(self.profile_omp,skiprows=0,delim_whitespace=True)
         except:
             logger.info('no e2d omp data!')
         try:
             # ot profiles
-            logging.info('reading OMP profiles {}'.format(self.e2d_profiles_ot))
             self.e2d_profiles_ot = pd.read_csv(self.profile_ot,skiprows=0,delim_whitespace=True)
         except:
             logger.info('no e2d ot data!')
@@ -558,8 +544,8 @@ class shot:
             logger.debug('')
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+self.label, dpi=300)  #
             logger.debug('')
             # raise SystemExit
         except :
@@ -624,8 +610,8 @@ class shot:
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
+            plt.savefig('./figures/' + fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname+'_'+self.label, dpi=300)  #
         except :
             logger.info("Could not plot HRTS ne")
             # logger.error("Could not plot HRTS ne")
@@ -666,8 +652,8 @@ class shot:
 
 
 
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
         except :
             logger.error("Could not plot ne ot")
             # logger.error("Could not plot ne ot")
@@ -706,8 +692,8 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
             #%%
 
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
         except :
             logger.info("Could not plot te ot")
             # logger.error("Could not plot te ot")
@@ -745,8 +731,8 @@ class shot:
             logger.debug('')
             #%%
             # plt.tight_layout()
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
         except :
             logger.error("Could not plot jsat")
                 # logger.error("Could not plot jsat")
@@ -1065,8 +1051,8 @@ class shot:
                 except:
                     logger.info('no HRTS fit data')
 
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
             # plt.tight_layout()
         except :
                 # logger.error("Could not plot te omp")
@@ -1088,8 +1074,8 @@ class shot:
                     plt.scatter(self.lidrpe_profiles['Rmaj(m)']+float(self.shift),self.lidrpe_profiles['Pe(kPa)'],label='Press_omp_lidr',color='red')
                 except:
                     logger.error("Could not plot OMP pressure")
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
             # plt.tight_layout()
 
         except :
@@ -2615,17 +2601,19 @@ class shot:
             color2 = 'red'
         else:
             color2 = color2
-        logger.debug('')
+
         # logger.info('plotting HRTS TE')
         try:
             logger.debug('')
-            logger.info('plotting HRTS TE')
+            logger.info('plotting HRTS TE \n')
 
-            if int(pulse1.pulse) == int(pulse2.pulse):
-                fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Te_omp'
+            if str(pulse1.pulse) == str(pulse2.pulse):
+                 fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Te_omp'
+
             else:
-                fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Te_omp'
-            logger.debug('')
+                fname = str(pulse1.pulse) + '_' + str(pulse1.label) + '_' + str(
+                    pulse2.pulse) + '_' + str(pulse2.label) + 'Te_omp'
+
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
@@ -2695,7 +2683,7 @@ class shot:
             # axes.set_xticks([-.15, -0.1, -0.05, -0.02, 0, 0.02, 0.05, 0.1])
             # axes.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
 
-            plt.legend(loc=0, prop={'size': 8})
+            plt.legend(loc=0, prop={'size': 18})
             locs, labels = xticks()
             xticks(locs, list(map(lambda x: "%g" % x, locs)))
             locs, labels = yticks()
@@ -2703,25 +2691,24 @@ class shot:
             logger.debug('')
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
             logger.debug('')
             # raise SystemExit
         except :
 
             logger.error("Could not plot HRTS te")
     # %%
-    #     pdb.set_trace()
         #    logger.info('plotting HRTS NE')
         try:
             logger.info('plotting HRTS NE')
             # %%
             logger.debug('')
 
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'ne_omp'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'ne_omp'
+                            fname = str(pulse1.pulse) +'_'+str(pulse1.label) +'_'+str(pulse2.pulse) +'_'+str(pulse2.label) + 'ne_omp'
 
             fnorm = 1
             ftitle = 'Electron Density OMP'
@@ -2789,7 +2776,7 @@ class shot:
 
             # axes.set_xticks([-.15,-0.1, -0.05, -0.02, 0, 0.02, 0.05,0.1])
             # axes.set_yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.0])
-            plt.legend(loc=2,prop={'size':8})
+            plt.legend(loc=0,prop={'size':18})
 
 
 
@@ -2799,17 +2786,19 @@ class shot:
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+pulse.label, dpi=300)  #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
             logger.error("Could not plot HRTS ne")
 
         try:
             logger.info('plotting ne_ot')
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'ne_ot'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'ne_ot'
+
+                fname = str(pulse1.pulse) + '_' + str(pulse1.label) + '_' + str(
+                    pulse2.pulse) + '_' + str(pulse2.label) + 'ne_ot'
 
             fnorm=1
             ftitle='Electron Density OT'
@@ -2857,19 +2846,18 @@ class shot:
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
 
-
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
             logger.error("Could not plot ne ot")
             # logger.error("Could not plot ne ot")
         #     logger.info('plotting te_ot')
         try:
             logger.info('plotting te_ot')
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Te_ot'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Te_ot'
+                            fname = str(pulse1.pulse) +'_'+str(pulse1.label) +'_'+str(pulse2.pulse) + 'Te_ot'
 
             fnorm=1
             ftitle='Electron Temperature OT'
@@ -2916,8 +2904,8 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
             #%%
 
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
             logger.error("Could not plot te ot")
 
@@ -2925,10 +2913,11 @@ class shot:
         try:
             logger.info('plotting jsat_ot')
             #%%
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'jsat_ot'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'jsat_ot'
+                fname = str(pulse1.pulse) + '_' + str(pulse1.label) + '_' + str(
+                    pulse2.pulse) + '_' + str(pulse2.label) + 'jsat_ot'
 
             ftitle='Saturation Current  OT'
             fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
@@ -2973,8 +2962,8 @@ class shot:
             logger.debug('')
             #%%
             # plt.tight_layout()
-            plt.savefig('./figures/'+fname+'_'+pulse.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+pulse.label,  dpi=300) #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
 
             logger.error("Could not plot jsat")
@@ -2982,10 +2971,11 @@ class shot:
 
         try:
             logger.info('plotting Dperp')
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Dperp'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Dperp'
+                fname = str(pulse1.pulse) + '_' + str(pulse1.label) + '_' + str(
+                    pulse2.pulse) + '_' + str(pulse2.label) + 'Dperp'
 
 
 
@@ -3013,16 +3003,19 @@ class shot:
 
             axes = plt.axes()
             plt.legend(loc=0, prop={'size': 18})
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
 
             logger.error("Could not plot dperp")
             #%%
         try:
             logger.info('plotting Xperp')
-            if int(pulse1.pulse) == int(pulse2.pulse):
+            if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'Xperp'
             else:
-                            fname = str(pulse1.pulse) +'_'+str(pulse2.pulse) + 'Xperp'
+                fname = str(pulse1.pulse) + '_' + str(pulse1.label) + '_' + str(
+                    pulse2.pulse) + '_' + str(pulse2.label) + 'Xperp'
 
 
 
@@ -3052,6 +3045,9 @@ class shot:
                     plt.scatter(pulse2.e2d_profiles['dsrad'],pulse2.e2d_profiles['chii'],label=pulse2.conf,color=color2)
             axes = plt.axes()
             plt.legend(loc=0, prop={'size': 18})
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
+
 
         except :
             logger.error("Could not plot xperp")
@@ -3688,7 +3684,7 @@ class shot:
         input_dict = read_json(dict1)
 
         pulse1 = shot(input_dict)
-        # pdb.set_trace()
+
         var=var.lower()
 
         loc=loc
@@ -3813,7 +3809,7 @@ class shot:
             axes = plt.axes()
             # axes.set_ylim(bottom=0)
             plt.legend(loc=0, prop={'size': 18})
-
+            label = pulse.label
 
         fname = var + '_' + loc + '_comparison'
         plt.figure(num=fname)
