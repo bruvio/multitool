@@ -2620,6 +2620,34 @@ def initread(shot,userid,seq):
   ppfuid(userid,'r')
   ier=ppfgo(int(shot),int(seq))
 #@staticmethod
+
+def getdata(shot,dda,dtype,uid=None,seq=None):
+    if seq is None:
+        ier = ppfgo(shot, seq=0)
+    else:
+        ier = ppfgo(shot, seq=seq)
+    if uid is None:
+        ppfuid('jetppf', rw="R")
+    else:
+        ppfuid(uid, rw="R")
+    ihdata, iwdata, data, x, time, ier = ppfget(shot, dda, dtype)
+    pulse, seq, iwdat, comment, numdda, ddalist, ier = ppfinf(comlen=50,
+                                                              numdda=50)
+
+    name=dict()
+    name['ihdata']=ihdata
+    name['iwdata']=iwdata
+    name['data']=data
+    name['x']=x
+    name['time']=time
+    name['ier']=ier
+    name['seq']=seq
+    name['pulse']=pulse
+    name['dda']=dda
+    name['dtype']=dtype
+    return name,seq
+
+
 def Getdata(pulse, dda,dtype,sequence,user):
 
     '''

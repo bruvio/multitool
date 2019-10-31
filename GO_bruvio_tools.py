@@ -230,10 +230,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
 
 
-        self.ui_edge2d.lineEdit_1st.setText('input_dict_84600.json')
-        self.JSONSS1 = 'input_dict_84600.json'
-        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600.json')
-        self.JSONSS2 = 'compare_dict_84600.json'
+        self.ui_edge2d.lineEdit_1st.setText('compare_dict_84600.json')
+        self.JSONSS1 = 'compare_dict_84600.json'
+        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600_tuningVassili.json')
+        self.JSONSS2 = 'compare_dict_84600_tuningVassili.json'
 
         fsm = Qt.QFileSystemModel()
         index = fsm.setRootPath(self.PathCatalog)

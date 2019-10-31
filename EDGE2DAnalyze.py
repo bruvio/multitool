@@ -22,7 +22,7 @@ import argparse
 import sys
 import eproc as ep
 # import pylab
-
+from utility import *
 #sys.path.append('/Users/bruvio/Work/Python/fit_langmu/lib_langmu/')
 #from langmu_routines import myplot, myfigure,savitzky_golay
 from matplotlib import rcParams
@@ -30,6 +30,7 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.ticker import AutoMinorLocator
 import pdb
 logger = logging.getLogger(__name__)
+
 #import plot_e2d
 #%%
 plt.ion()
@@ -141,7 +142,8 @@ class shot:
         self.filename_lp_data = input_dict['filename_lp_data']
 
         # other exp signals
-
+        self.hrts_ppf = input_dict['hrts_ppf']
+        self.hrts_uid = input_dict['hrts_uid']
         self.filename_HRTS_Ne = input_dict['filename_HRTS_Ne']
         self.filename_HRTS_Pe = input_dict['filename_HRTS_Pe']
         self.filename_HRTS_Te = input_dict['filename_HRTS_Te']
@@ -453,17 +455,19 @@ class shot:
 
         # logger.info(hrtstecore_profiles)
 
-        logger.info('')
+        
         logger.info('filename simulation')
         logger.info(self.profile_omp)
         logger.info(self.profile_ot)
-        logger.info('')
+        
 
 
         # logger.info('plotting HRTS')
         # logger.info('plotting HRTS TE')
+        # pdb.set_trace()
+
         try:
-            logger.debug('')
+
             logger.info('plotting HRTS TE')
             # logger.debug('%s',str(self.pulse))
 
@@ -471,34 +475,14 @@ class shot:
 
             fname = str(self.pulse) +'_'+str(self.label) + 'Te_omp'
 
-            logger.debug('')
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
             fylabel = '$T_{e,OMP}\quad keV$'
 
             plt.figure(num=fname + "_" + self.label)
-            # if self.plot_exp == "True":
-            #     try:
-            #         plt.errorbar(
-            #             self.hrts_profiles['RmRsep'] + float(self.shift),
-            #             self.hrts_profiles['TE'], label='_nolegend_',
-            #             yerr=self.hrts_profiles['DTE'], fmt=None, ecolor=color1)
-            #         plt.scatter(self.hrts_fit['Rfit'] + float(self.shift_fit),
-            #                     self.hrts_fit['tef5'], label='_nolegend_',
-            #                     color=color1)
-            #     except:
-            #         logger.error('impossible to print self TE from HRTS')
-            #
-            # if self.plot_sim == "True":
-            #     try:
-            #         logger.debug('')
-            #         plt.scatter(self.e2d_profiles['dsrad'],
-            #                 self.e2d_profiles['teve'] / self.te_omp_factor, label=self.conf+'_sim',
-            #                 color=color1)
-            #     except:
-            #         logger.debug('')
-            #         logger.debug('no te HRTS sim data found for self')
+
+            
 
             if self.plot_sim == "True":
                 try:
@@ -510,9 +494,7 @@ class shot:
 
                 except:
 
-                    plt.scatter(self.e2d_profiles['dsrad'],
-                                self.e2d_profiles['teve'] / self.te_omp_factor,
-                                label=self.conf+'_sim', color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['teve'] / self.te_omp_factor,label=self.conf+'_sim', color=color1)
                     logger.debug('except plotting e2d ne self')
             #
             if self.plot_exp == "True":
@@ -529,7 +511,7 @@ class shot:
 
 
             plt.axvline(x=0.0, ymin=0., ymax=500, linewidth=2, color='k')
-            plt.axhline(y=0.1, xmin=-.15, xmax=500, linewidth=2, color='k')
+            # plt.axhline(y=0.1, xmin=-.15, xmax=500, linewidth=2, color='k')
             axes = plt.axes()
             axes.set_xlim([-.15, .1])
             axes.set_ylim([0, 1.0])
@@ -541,12 +523,12 @@ class shot:
             xticks(locs, list(map(lambda x: "%g" % x, locs)))
             locs, labels = yticks()
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
-            logger.debug('')
+            
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
             plt.savefig('./figures/' + fname+'_'+self.label, format='eps', dpi=300)
             plt.savefig('./figures/' + fname+'_'+self.label, dpi=300)  #
-            logger.debug('')
+            
             # raise SystemExit
         except :
             # logger.info("Could not plot HRTS Te")
@@ -557,7 +539,7 @@ class shot:
         try:
             logger.info('plotting HRTS NE')
             # %%
-            logger.debug('')
+            
             fname = str(self.pulse) +'_'+str(self.label) +   'ne_omp'
             fnorm = 1
             ftitle = 'Electron Density OMP'
@@ -593,7 +575,7 @@ class shot:
 
 
             plt.axvline(x=0.0, ymin=0., ymax = 500, linewidth=2, color='k')
-            plt.axhline(y=3.5, xmin=-.15, xmax=500, linewidth=2, color = 'k')
+            # plt.axhline(y=3.5, xmin=-.15, xmax=500, linewidth=2, color = 'k')
 
             axes = plt.axes()
             axes.set_xlim([-.15, .1])
@@ -688,7 +670,7 @@ class shot:
 
             axes = plt.axes()
             axes.set_ylim(bottom=0)
-            logger.debug('')
+            
             plt.legend(loc =0,prop={'size':18})
             #%%
 
@@ -728,7 +710,7 @@ class shot:
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
-            logger.debug('')
+            
             #%%
             # plt.tight_layout()
             plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
@@ -737,207 +719,6 @@ class shot:
             logger.error("Could not plot jsat")
                 # logger.error("Could not plot jsat")
                          #%%
-    #     try:
-    #         # logger.info('plotting HRTS TE')
-    #         plt.close("all")
-    #         fname=str(self.pulse)+'Te_omp'
-    #         fnorm=1
-    #         ftitle='Electron Temperature OMP'
-    #         fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-    #         fylabel='$T_{e,OMP}\quad keV$'
-    #
-    #
-    #         plt.figure(num=fname+"_"+self.label)
-    #         if self.plot_sim == "True":
-    #             try:
-    #                 logger.debug('try plot sim pulse')
-    #                 plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['te_omp']/self.te_omp_factor,label='Te_omp_e2d',color='blue')
-    #             except:
-    #                 logger.debug('except plot sim pulse')
-    #                 plt.scatter(self.e2d_profiles['dsrad'],
-    #                             self.e2d_profiles['teve'] / self.te_omp_factor, label='Te_omp_e2d',
-    #                             color='blue')
-    #         if self.plot_exp == "True":
-    #             logger.debug('try plot exp pulse')
-    #             try:
-    #                 plt.errorbar(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['TE'],label='_nolegend_', yerr=self.hrts_profiles['DTE'], fmt=None, ecolor='black')
-    #                 logger.debug('try plot exp pulse errorbar')
-    #             except:
-    #                 plt.scatter(self.hrts_profiles['RmRsep'] + float(self.shift),
-    #                             self.hrts_profiles['TE'] / self.te_omp_factor,
-    #                             label='_nolegend_', color='black')
-    #                 logger.debug('try plot exp pulse scatter')
-    #             plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['tef5']/self.te_omp_factor_exp,label='_nolegend_',color='red')
-    #
-    #         plt.axvline(x=0.0, ymin=0., ymax = 500, linewidth=2, color='k')
-    #         plt.axhline(y=0.1, xmin=-.15, xmax=500, linewidth=2, color = 'k')
-    #         axes = plt.axes()
-    #         axes.set_xlim([-.15, .1])
-    #         axes.set_ylim([0, 1.0])
-    #         axes.set_xticks([-.15,-0.1, -0.05, -0.02, 0, 0.02, 0.05,0.1])
-    #         axes.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-    #
-    #         plt.legend(loc=2,prop={'size':8})
-    #         locs,labels = xticks()
-    #         xticks(locs, list(map(lambda x: "%g" % x, locs)))
-    #         locs,labels = yticks()
-    #         yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
-    #
-    #         plt.xlabel(fxlabel,{'color': 'k','size': 16})
-    #         plt.ylabel(fylabel,{'color': 'k','size': 16})
-    #         plt.savefig('./figures/'+fname, format='eps', dpi=300)
-    #         plt.savefig('./figures/'+fname,  dpi=300) #
-    #
-    #     except :
-    #         # logger.error("Could not plot HRTS Te")
-    #         logger.error("Could not plot HRTS te")
-    # #%%
-    #     try:
-    #         # logger.info('plotting HRTS NE')
-    #                  #%%
-    #         fname=str(self.pulse)+'ne_omp'
-    #         fnorm=1
-    #         ftitle='Electron Density OMP'
-    #         fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-    #         fylabel='$n_{e,OMP}\quad 10 x 10^{19} m^{-3}})$'
-    #
-    #         plt.figure(num=fname+"_"+self.label)
-    #         if self.plot_sim == "True":
-    #             try:
-    #                 plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['denel_omp']/self.ne_omp_factor,label='ne_omp_e2d',color='blue')
-    #             except:
-    #                 plt.scatter(self.e2d_profiles['dsrad'],
-    #                             self.e2d_profiles['denel'] / self.ne_omp_factor,
-    #                             label='ne_omp_e2d', color='blue')
-    #
-    #
-    #         if self.plot_exp == "True":
-    #             try:
-    #                 plt.errorbar(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['NE']/self.ne_omp_factor_exp,label='_nolegend_', yerr=self.hrts_profiles['DNE'], fmt=None, ecolor='black')
-    #             except:
-    #                 plt.scatter(self.hrts_profiles['RmRsep']  +float(self.shift),
-    #                             self.hrts_profiles['NE'], label='_nolegend_',
-    #                             color='black')
-    #             plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['nef3']/1e19,label='_nolegend_',color='red')
-    #
-    #         plt.axvline(x=0.0, ymin=0., ymax = 500, linewidth=2, color='k')
-    #         plt.axhline(y=3.5, xmin=-.15, xmax=500, linewidth=2, color = 'k')
-    #
-    #         axes = plt.axes()
-    #         axes.set_xlim([-.15, .1])
-    #         axes.set_ylim([0, 10.0])
-    #         axes.set_xticks([-.15,-0.1, -0.05, -0.02, 0, 0.02, 0.05,0.1])
-    #         axes.set_yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.0])
-    #         plt.legend(loc=2,prop={'size':8})
-    #         locs,labels = xticks()
-    #         xticks(locs, list(map(lambda x: "%g" % x, locs)))
-    #         locs,labels = yticks()
-    #         yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
-    #         plt.xlabel(fxlabel,{'color': 'k','size': 16})
-    #         plt.ylabel(fylabel,{'color': 'k','size': 16})
-    #         plt.savefig('./figures/'+fname, format='eps', dpi=300)
-    #         plt.savefig('./figures/'+fname,  dpi=300) #
-    #     except :
-    #         # logger.error("Could not plot HRTS ne")
-    #         logger.error("Could not plot HRTS ne")
-    #
-    # #%%
-    #     try:
-    #         # logger.info('plotting ne_ot')
-    #         fname=str(self.pulse)+'ne_ot'
-    #         fnorm=1
-    #         ftitle='Electron Density OT'
-    #         fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-    #         fylabel='$n_{e,OT}\quad 10 x 10^{19} m^{-3}})$'
-    #
-    #         plt.figure(num=fname+"_"+self.label)
-    #         # plt.suptitle(ftitle, fontsize=11)
-    #         if self.plot_exp == "True":
-    #             try:
-    #                 plt.scatter(self.lp_profiles['dSsep']+3e-2,self.lp_profiles['ne'],label='ne_ot_lp',color='black')
-    #             except:
-    #                 FileNotFoundError
-    #         if self.plot_sim == "True":
-    #             try:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['denel_ot'],'-',label='ne_ot_e2d',color='blue')
-    #             except:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['denel'],'-',label='ne_ot_e2d',color='blue')
-    #
-    #         axes = plt.axes()
-    #         axes.set_ylim([0, 50.0e19])
-    #         plt.legend(loc ='upper right',prop={'size':18})
-    #
-    #
-    #         plt.savefig('./figures/'+fname, format='eps', dpi=300)
-    #         plt.savefig('./figures/'+fname,  dpi=300) #
-    #     except :
-    #             # logger.error("Could not plot ne ot")
-    #             logger.error("Could not plot ne ot")
-    #     try:
-    #         # logger.info('plotting te_ot')
-    #         fname=str(self.pulse)+'te_ot'
-    #         fnorm=1
-    #         ftitle='Electron Temperature OT'
-    #         fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-    #         fylabel='$T_{e,OT}\quad keV$'
-    #
-    #         plt.figure(num=fname+"_"+self.label)
-    #         if self.plot_exp == "True":
-    #             try:
-    #                 plt.scatter(self.lp_profiles['dSsep']+1e-2,self.lp_profiles['teve'],label='te_ot_lp',color='black')
-    #             except:
-    #                 FileNotFoundError
-    #         if self.plot_sim == "True":
-    #             try:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['temp_ot'],label='te_ot_e2d',color='blue')
-    #             except:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['teve'],label='te_ot_e2d',color='blue')
-    #             finally:
-    #                 pass
-    #         axes = plt.axes()
-    #         plt.legend(loc ='upper right',prop={'size':18})
-    #         #%%
-    #
-    #         plt.savefig('./figures/'+fname, format='eps', dpi=300)
-    #         plt.savefig('./figures/'+fname,  dpi=300) #
-    #     except :
-    #             # logger.error("Could not plot te ot")
-    #             logger.error("Could not plot te ot")
-    #     try:
-    #         # logger.info('plotting jsat_ot')
-    #         #%%
-    #         fname=str(self.pulse)+'jsat_ot'
-    #         ftitle='Saturation Current  OT'
-    #         fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-    #         fylabel='$J_{sat,OT}\quad A m^{-2}$'
-    #
-    #
-    #         plt.figure(num=fname+"_"+self.label)
-    #         if self.plot_exp == "True":
-    #             try:
-    #                 plt.scatter(self.lp_profiles['dSsep']+2e-2,self.lp_profiles['jsat'],label='jsat_ot_lp',color='black')
-    #             except:
-    #                 FileNotFoundError
-    #         if self.plot_sim == "True":
-    #             try:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad_ot'],-self.e2d_profiles_ot['jtargi_ot'],'-o',label='jsat_ot_e2d',color='blue')
-    #             except:
-    #                 plt.plot(self.e2d_profiles_ot['dsrad'],-self.e2d_profiles_ot['jtargi'],'-o',label='jsat_ot_e2d',color='blue')
-    #             finally:
-    #                 pass
-    #
-    #         axes = plt.axes()
-    #         plt.legend(loc =0,prop={'size':18})
-    #
-    #         #%%
-    #         # plt.tight_layout()
-    #         plt.savefig('./figures/'+fname, format='eps', dpi=300)
-    #         plt.savefig('./figures/'+fname,  dpi=300) #
-    #     except :
-    #             # logger.error("Could not plot jsat")
-    #             logger.error("Could not plot jsat")
-    #%
-
         try:
             logger.info('plotting dperp')
             fname = str(self.pulse) +'_'+str(self.label) +'dperp'
@@ -955,7 +736,7 @@ class shot:
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
-            logger.debug('')
+            
 
 
         except :
@@ -982,7 +763,7 @@ class shot:
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
-            logger.debug('')
+            
 
         except :
             # logger.error("Could not plot xperp")
@@ -990,102 +771,225 @@ class shot:
             #logger.error("stop here")
             #%%
 
+        try:
+            logger.info('plotting HRTS NE/TE')
+            # %%
+
+            fname = str(self.pulse) + '_' + str(self.label) + '_ne_Te_omp'
+
+            fnorm = 1
+            ftitle = 'Electron Temperature OMP'
+            fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
+            fylabel = '$n_{e} and T_{e} normalized$'
+
+            plt.figure(num=fname + "_" + self.label)
+
+            # ax2 = ax1.twinx()
+            # # ax1.yaxis.tick_right()
+            # # ax1.yaxis.set_label_position('right')
+            # ax2.set_ylabel('$T_{e,OMP}\quad keV$')
+            # # ax2 = fig.add_subplot(111,sharex=ax1,frameon=False)
 
 
+
+            if self.plot_sim == "True":
+                try:
+                    density = self.e2d_profiles['denel_omp'] / self.ne_omp_factor
+                    temp = self.e2d_profiles['teve_omp'] / self.te_omp_factor
+                    r_ped_mask = np.ma.masked_where((self.e2d_profiles['dsrad_omp'] > 0) , density)
+                    index_ped = np.argmax(r_ped_mask)
+                    density_ped = density[index_ped]
+
+                    r_ped_mask = np.ma.masked_where(
+                        (self.e2d_profiles['dsrad_omp'] > 0), temp)
+                    index_ped = np.argmax(r_ped_mask)
+                    temp_ped = temp[index_ped]
+
+                    # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), density)
+                    # index = np.argmax(data_masked)
+
+                    # density = [2 * i / (density[index]) for i in
+                    #            density]
+                    # density_exp /= 2*np.max(np.abs(density_exp), axis=0)
+                    # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), temp)
+                    # index = np.argmax(data_masked)
+
+                    # temp = [i / (temp[index]) for i in temp]
+                    # density = [1*i /np.max(density) for i in density]
+                    density = [i /density_ped for i in density]
+                    # temp = [2*i /np.max(temp) for i in temp]
+                    temp = [i /temp_ped for i in temp]
+
+                    plt.scatter(self.e2d_profiles['dsrad_omp'],density,label=self.conf+'NE_sim', color='green')
+                    plt.scatter(self.e2d_profiles['dsrad_omp'],temp,label=self.conf+'TE_sim', color='magenta',marker='^')
+
+
+
+
+                    logger.debug('try plotting e2d ne/te pulse')
+
+                except:
+                    # pdb.set_trace()
+                    density = self.e2d_profiles['denel'] / self.ne_omp_factor
+                    temp = self.e2d_profiles['teve'] / self.te_omp_factor
+                    r_ped_mask = np.ma.masked_where((self.e2d_profiles['dsrad'] > 0) , density)
+                    index_ped = np.argmax(r_ped_mask)
+                    density_ped = density[index_ped]
+
+                    r_ped_mask = np.ma.masked_where(
+                        (self.e2d_profiles['dsrad'] > 0), temp)
+                    index_ped = np.argmax(r_ped_mask)
+                    temp_ped = temp[index_ped]
+
+                    # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), density)
+                    # index = np.argmax(data_masked)
+
+                    # density = [2 * i / (density[index]) for i in
+                    #            density]
+                    # density_exp /= 2*np.max(np.abs(density_exp), axis=0)
+                    # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), temp)
+                    # index = np.argmax(data_masked)
+
+                    # temp = [i / (temp[index]) for i in temp]
+                    # density = [1*i /np.max(density) for i in density]
+                    density = [i /density_ped for i in density]
+                    # temp = [2*i /np.max(temp) for i in temp]
+                    temp = [i /temp_ped for i in temp]
+
+                    plt.scatter(self.e2d_profiles['dsrad'],density,label=self.conf+'NE_sim', color='green')
+                    plt.scatter(self.e2d_profiles['dsrad'],temp,label=self.conf+'TE_sim', color='magenta',marker='^')
+
+
+                    logger.debug('except plotting e2d ne pulse')
+
+            if self.plot_exp == "True":
+                try:
+                    # pdb.set_trace()
+                    density_exp = self.hrts_profiles['NE']
+                    temp_exp = self.hrts_profiles['TE']
+                    # data_masked = np.ma.masked_where((self.hrts_profiles['RmRsep']+float(self.shift)<-.15) | (self.hrts_profiles['RmRsep']+float(self.shift)>0),density_exp)
+                    # index = np.argmax(data_masked)
+                    #
+                    # density_exp = [ i / (density_exp[index]) for i in density_exp]
+                    # # # density_exp /= 2*np.max(np.abs(density_exp), axis=0)
+                    # data_masked1 = np.ma.masked_where((self.hrts_profiles['RmRsep']+float(self.shift)<-.15) | (self.hrts_profiles['RmRsep']+float(self.shift)>0),temp_exp)
+                    # index1 = np.argmax(data_masked1)
+                    # #
+                    # temp_exp = [2*i / (temp_exp[index1]) for i in temp_exp]
+                    ppfuid(str(self.hrts_uid), rw="R")
+                    ihdata, iwdata, data, x, time, ier = ppfget(int(self.pulse[0:5]), str(self.hrts_ppf),'HN1')
+                    ped_density=data[0]
+
+                    ihdata, iwdata, data, x, time, ier = ppfget(
+                        int(self.pulse[0:5]), str(self.hrts_ppf), 'HT1')
+                    ped_temp=data[0]
+
+                    density_exp /= ped_density
+                    temp_exp /= ped_temp
+
+                    plt.scatter(self.hrts_profiles['RmRsep']+float(self.shift),density_exp,label=None, color='green', s= 1)
+                    plt.scatter(self.hrts_profiles['RmRsep']+float(self.shift),temp_exp,label=None, color='magenta',s = 1,marker='^')
+                except:
+                    logger.error('impossible to plot pulse NE TE from HRTS')
+                try:
+                    density_exp = self.hrts_fit['nef3']
+                    temp_exp  = self.hrts_fit['tef5']
+                    data_masked = np.ma.masked_where((self.hrts_profiles[
+                                                          'RmRsep'] + float(
+                        self.shift) < -.15) | (self.hrts_profiles[
+                                                   'RmRsep'] + float(
+                        self.shift) > .1), density_exp)
+                    index = np.argmax(data_masked)
+
+                    density_exp = [2 * i / (density_exp[index]) for i in
+                                   density_exp]
+                    # density_exp /= 2*np.max(np.abs(density_exp), axis=0)
+                    data_masked = np.ma.masked_where((self.hrts_profiles[
+                                                          'RmRsep'] + float(
+                        self.shift) < -.15) | (self.hrts_profiles[
+                                                   'RmRsep'] + float(
+                        self.shift) > .1), temp_exp)
+                    index = np.argmax(data_masked)
+
+                    temp_exp = [i / (temp_exp[index]) for i in temp_exp]
+
+                    # temp_exp /= np.max(np.abs(temp_exp), axis=0)
+                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),density_exp,label=None,color='green')
+                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),temp_exp,label=None,color=color1,marker='^')
+                except:
+                    logger.error('impossible to plot pulse NE TE HRTS fit')
+
+
+
+
+
+
+            # ax1.set_ylim(bottom=0)
+
+            plt.axvline(x=0.0, ymin=0., ymax=500, linewidth=2, color='k')
+            # plt.axhline(y=0.1, xmin=-.15, xmax=500, linewidth=2, color='k')
+            axes = plt.axes()
+            axes.set_xlim([-.15, .1])
+            axes.set_ylim([0, 2.0])
+            # axes.set_xticks([-.15, -0.1, -0.05, -0.02, 0, 0.02, 0.05, 0.1])
+            # axes.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+
+            plt.legend(loc=0, prop={'size': 8})
+            locs, labels = xticks()
+            xticks(locs, list(map(lambda x: "%g" % x, locs)))
+            locs, labels = yticks()
+            yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
+
+            plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
+            plt.ylabel(fylabel, {'color': 'k', 'size': 16})
+            plt.savefig('./figures/' + fname + '_' + self.label, format='eps',
+                        dpi=300)
+            plt.savefig('./figures/' + fname + '_' + self.label, dpi=300)  #
+
+        except :
+            logger.error("Could not plot HRTS ne/te data")
+        # pdb.set_trace()
+
+
+
+        #
         # try:
-        #     # logger.info('plotting pressure_balance')
+        #     logger.info('plotting OMP Te')
         #     #%%
-        #     fname=str(self.pulse)+'pressure_balance'
-        #     ftitle='pressure balance'
-        #     fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-        #     fylabel='$pressure Pa$'
-        #     axes = plt.axes()
-        #     # axes.set_xlim([-.02, .04])
-        #     # axes.set_ylim([0, 2000.0])
+        #     fname = str(self.pulse) +'_'+str(self.label) + 'OMP Te Core'
         #     plt.figure(num=fname+"_"+self.label)
+        #     ftitle='OMP Te'
+        #     fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
+        #     fylabel='$T_{e} keV$'
+        #     axes = plt.axes()
         #     if self.plot_exp == "True":
         #         try:
-        #             plt.scatter(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['NE']*self.hrts_profiles['TE']*1e3,label='Press_omp_hrts',color='black')
+        #             plt.scatter(self.hrtstecore_profiles['Rmaj(m)']-3.8+float(self.shift),self.hrtstecore_profiles['Te(keV)'],label='te_omp_hrts',color='black')
         #         except:
         #             FileNotFoundError
         #         try:
-        #             plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['nef3']/1e19*self.hrts_fit['tef5'],label='_nolegend_',color='red')
+        #             plt.scatter(self.lidrte_profiles['Rmaj(m)']-3.8+float(self.shift),self.lidrte_profiles['Te(keV)'],label='te_omp_lidr',color='red')
         #         except:
         #             FileNotFoundError
         #         try:
-        #             plt.scatter(self.lp_profiles['dSsep']+2e-2,self.lp_profiles['te']*self.lp_profiles['te']*2,label='Press_ot_lp',color='blue')
+        #             plt.scatter(self.ecm1_profiles['Rmaj(m)'] - 3.8 + float(self.shift),self.ecm1_profiles['Te(keV)'], label='te_omp_ecm1', color='blue')
         #         except:
         #             FileNotFoundError
+        #         try:
+        #             plt.scatter(self.hrts_fit['Rfit']+float(self.shift),self.hrts_fit['tef5']/1e3,label='_nolegend_',color='red')
+        #         except:
+        #             logger.info('no HRTS fit data')
         #
-        #     plt.savefig('./figures/'+fname, format='eps', dpi=300)
-        #     plt.savefig('./figures/'+fname,  dpi=300) #
+        #     plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+        #     plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
         #     # plt.tight_layout()
         # except :
-        #         # logger.error("Could not plot pressure balance")
-        #         logger.error("Could not plot pressure balance")
-    #%
-        try:
-            logger.info('plotting OMP Te')
-            #%%
-            fname = str(self.pulse) +'_'+str(self.label) + 'OMP Te Core'
-            plt.figure(num=fname+"_"+self.label)
-            ftitle='OMP Te'
-            fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-            fylabel='$T_{e} keV$'
-            axes = plt.axes()
-            if self.plot_exp == "True":
-                try:
-                    plt.scatter(self.hrtstecore_profiles['Rmaj(m)']-3.8+float(self.shift),self.hrtstecore_profiles['Te(keV)'],label='te_omp_hrts',color='black')
-                except:
-                    FileNotFoundError
-                try:
-                    plt.scatter(self.lidrte_profiles['Rmaj(m)']-3.8+float(self.shift),self.lidrte_profiles['Te(keV)'],label='te_omp_lidr',color='red')
-                except:
-                    FileNotFoundError
-                try:
-                    plt.scatter(self.ecm1_profiles['Rmaj(m)'] - 3.8 + float(self.shift),self.ecm1_profiles['Te(keV)'], label='te_omp_ecm1', color='blue')
-                except:
-                    FileNotFoundError
-                try:
-                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift),self.hrts_fit['tef5']/1e3,label='_nolegend_',color='red')
-                except:
-                    logger.info('no HRTS fit data')
-
-            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
-            # plt.tight_layout()
-        except :
-                # logger.error("Could not plot te omp")
-                logger.error("Could not plot te omp")
-        try:
-            logger.info('plotting OMP pressure')
-            #%%
-            fname = str(self.pulse) +'_'+str(self.label) + 'OMP pressure'
-            #fnorm=1e-6
-            plt.figure(num=fname+"_"+self.label)
-            ftitle='OMP pressure'
-            fxlabel='$R - R_{sep,LFS-mp}\quad  m$'
-            fylabel='$pressure kPa$'
-            axes = plt.axes()
-
-            if self.plot_exp == "True":
-                try:
-                    plt.scatter(self.hrtspecore_profiles['Rmaj(m)']+float(self.shift),self.hrtspecore_profiles['Pe(kPa)'],label='Press_omp_hrts',color='black')
-                    plt.scatter(self.lidrpe_profiles['Rmaj(m)']+float(self.shift),self.lidrpe_profiles['Pe(kPa)'],label='Press_omp_lidr',color='red')
-                except:
-                    logger.error("Could not plot OMP pressure")
-            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
-            # plt.tight_layout()
-
-        except :
-                # logger.error("Could not plot omp pressure")
-                logger.error("Could not plot omp pressure")
-
+        #         # logger.error("Could not plot te omp")
+        #         logger.error("Could not plot te omp")
         # try:
-        #     # logger.info('plotting OMP pressure')
+        #     logger.info('plotting OMP pressure')
         #     #%%
-        #     fname=str(self.pulse)+'OMP pressure'
+        #     fname = str(self.pulse) +'_'+str(self.label) + 'OMP pressure'
         #     #fnorm=1e-6
         #     plt.figure(num=fname+"_"+self.label)
         #     ftitle='OMP pressure'
@@ -1098,16 +1002,16 @@ class shot:
         #             plt.scatter(self.hrtspecore_profiles['Rmaj(m)']+float(self.shift),self.hrtspecore_profiles['Pe(kPa)'],label='Press_omp_hrts',color='black')
         #             plt.scatter(self.lidrpe_profiles['Rmaj(m)']+float(self.shift),self.lidrpe_profiles['Pe(kPa)'],label='Press_omp_lidr',color='red')
         #         except:
-        #             FileNotFoundError
-        #     plt.savefig('./figures/'+fname, format='eps', dpi=300)
-        #     plt.savefig('./figures/'+fname,  dpi=300) #
+        #             logger.error("Could not plot OMP pressure")
+        #     plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
+        #     plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
         #     # plt.tight_layout()
         #
         # except :
         #         # logger.error("Could not plot omp pressure")
         #         logger.error("Could not plot omp pressure")
 
-        # plt.show()
+
         plt.show(block=True)
 
         # plt.waitforbuttonpress(0)  # this will wait for indefinite time
@@ -2602,9 +2506,10 @@ class shot:
         else:
             color2 = color2
 
+
         # logger.info('plotting HRTS TE')
         try:
-            logger.debug('')
+            
             logger.info('plotting HRTS TE \n')
 
             if str(pulse1.pulse) == str(pulse2.pulse):
@@ -2638,12 +2543,12 @@ class shot:
 
             if pulse1.plot_sim == "True":
                 try:
-                    logger.debug('')
+                    
                     plt.scatter(pulse1.e2d_profiles['dsrad'],
                             pulse1.e2d_profiles['teve'] / pulse1.te_omp_factor, label=pulse1.conf+'_sim',
                             color=color1)
                 except:
-                    logger.debug('')
+                    
                     logger.debug('no te HRTS sim data found for pulse1')
 
             if pulse2.plot_exp == "True":
@@ -2664,12 +2569,12 @@ class shot:
 
             if pulse2.plot_sim == "True":
                 try:
-                    logger.debug('')
+                    
                     plt.scatter(pulse2.e2d_profiles['dsrad'],
                                 pulse2.e2d_profiles['teve'] / pulse2.te_omp_factor, label=pulse2.conf+'_sim',
                             color=color2)
                 except:
-                    logger.debug('')
+                    
                     logger.debug('no te HRTS sim data found for pulse1')
 
 
@@ -2688,12 +2593,12 @@ class shot:
             xticks(locs, list(map(lambda x: "%g" % x, locs)))
             locs, labels = yticks()
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
-            logger.debug('')
+            
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
             plt.savefig('./figures/' + fname, format='eps', dpi=300)
             plt.savefig('./figures/' + fname, dpi=300)  #
-            logger.debug('')
+            
             # raise SystemExit
         except :
 
@@ -2703,7 +2608,7 @@ class shot:
         try:
             logger.info('plotting HRTS NE')
             # %%
-            logger.debug('')
+            
 
             if str(pulse1.pulse) == str(pulse2.pulse):
                             fname = str(pulse1.pulse) +'_'+str(pulse2.label) + 'ne_omp'
@@ -2733,7 +2638,7 @@ class shot:
 
             if pulse1.plot_exp == "True":
                 try:
-                    plt.errorbar(pulse1.hrts_profiles['RmRsep']+float(pulse1.shift),pulse1.hrts_profiles['NE'],label='_nolegend_', yerr=pulse1.hrts_profiles['DNE'], fmt=None, ecolor=color1)
+                    plt.errorbar(pulse1.hrts_profiles['RmRsep']+float(pulse1.shift),pulse1.hrts_profiles['NE'],label='_nolegend_', yerr=pulse1.hrts_profiles['DNE'], fmt=None, ecolor=color2)
                 except:
                     logger.error('impossible to plot pulse1 NE from HRTS')
                 try:
@@ -2750,7 +2655,7 @@ class shot:
                     logger.debug('try plotting e2d ne pulse2')
 
                 except:
-                    logger.debug('')
+                    
                     plt.scatter(pulse2.e2d_profiles['dsrad'],
                                 pulse2.e2d_profiles['denel'] / pulse2.ne_omp_factor,
                                 label=pulse2.conf+'_sim', color=color2)
@@ -2900,7 +2805,7 @@ class shot:
 
 
             axes = plt.axes()
-            logger.debug('')
+            
             plt.legend(loc =0,prop={'size':18})
             #%%
 
@@ -2959,7 +2864,7 @@ class shot:
 
             axes = plt.axes()
             plt.legend(loc =0,prop={'size':18})
-            logger.debug('')
+            
             #%%
             # plt.tight_layout()
             plt.savefig('./figures/' + fname, format='eps', dpi=300)
@@ -3031,7 +2936,7 @@ class shot:
             if pulse1.plot_sim == "True":
                 try:
                     logger.debug('try pulse1 Xperp')
-                    plt.scatter(pulse1.e2d_profiles['dsrad_omp'],pulse1.e2d_profiles['chii_omp'],label=pulse1.conf,color=color1)
+                    plt.scatter(pulse1.e2d_profiles['dsrad_omp'],pulse1.e2d_profiles['chii_omp'],label=pulse1.conf,color=color2)
                 except:
                     logger.debug('except pulse1 Xperp')
                     plt.scatter(pulse1.e2d_profiles['dsrad'],pulse1.e2d_profiles['chii'],label=pulse1.conf,color=color1)
@@ -3093,13 +2998,13 @@ class shot:
             logger.debug('pulse1 ot fieldnames')
             logger.debug(fieldnames_ot)
 
-            logger.debug('')
+            
             logger.info('plotting HRTS TE')
             # logger.debug('%s',str(pulse1.pulse))
             # logger.debug('%s',str(vars()['pulse_'+arg].pulse))
             # print(pulse1)
             fname = 'Te_omp_comparison'
-            logger.debug('')
+            
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
@@ -3127,14 +3032,14 @@ class shot:
 
             if pulse1.plot_sim == "True":
                 try:
-                    logger.debug('')
+                    
                     plt.scatter(pulse1.e2d_profiles['dsrad'],
                                 pulse1.e2d_profiles[
                                     'teve'] / pulse1.te_omp_factor,
                                 label=pulse1.pulse,
                                 color=pulse1.color)
                 except:
-                    logger.debug('')
+                    
                     logger.debug('no te HRTS sim data found for pulse1')
 
             plt.axvline(x=0.0, ymin=0., ymax=500, linewidth=2, color='k')
@@ -3151,17 +3056,17 @@ class shot:
             xticks(locs, list(map(lambda x: "%g" % x, locs)))
             locs, labels = yticks()
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
-            logger.debug('')
+            
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
             # plt.savefig('./figures/' + fname, format='eps', dpi=300)
             # plt.savefig('./figures/' + fname, dpi=300)  #
-            logger.debug('')
+            
             # raise SystemExit
 
             logger.info('plotting HRTS NE')
             # %%
-            logger.debug('')
+            
             fname = 'ne_omp_comparison'
             fnorm = 1
             ftitle = 'Electron Density OMP'
@@ -3296,7 +3201,7 @@ class shot:
                     logger.debug('except plotting e2d te pulse1')
 
             axes = plt.axes()
-            logger.debug('')
+            
             plt.legend(loc=0, prop={'size': 18})
             # %%
 
@@ -3335,7 +3240,7 @@ class shot:
 
             axes = plt.axes()
             plt.legend(loc=0, prop={'size': 18})
-            logger.debug('')
+            
             # %%
             # plt.tight_layout()
 
@@ -3397,10 +3302,10 @@ class shot:
             json_dict = read_json(arg)
             pulse = shot(json_dict)
 
-            logger.debug('')
+            
             logger.info('plotting HRTS TE')
             try:
-                logger.debug('')
+                
                 logger.info('plotting HRTS TE')
                 fname = 'Te_omp_comparison'
                 plt.figure(num=fname)
@@ -3422,18 +3327,18 @@ class shot:
 
                 if pulse.plot_sim == "True":
                     try:
-                        logger.debug('')
+                        
                         plt.scatter(pulse.e2d_profiles['dsrad'],
                                     pulse.e2d_profiles[
                                         'teve'] / pulse.te_omp_factor,
                                     label=pulse.pulse ,color=pulse.color)
                     except:
-                        logger.debug('')
+                        
                         logger.error(
                             'impossible to plot sim TE from HRTS for pulse ' + str(
                                 i))
                 plt.legend(loc=0, prop={'size': 18})
-                logger.debug('')
+                
                 # raise SystemExit
             except:
 
@@ -3444,7 +3349,7 @@ class shot:
             try:
                 logger.info('plotting HRTS NE')
                 # %%
-                logger.debug('')
+                
                 fname = 'ne_omp_comparison'
 
                 plt.figure(num=fname)
@@ -3460,7 +3365,7 @@ class shot:
 
 
                     except:
-                        logger.debug('')
+                        
                         plt.scatter(pulse.e2d_profiles['dsrad'],
                                     pulse.e2d_profiles[
                                         'denel'] / pulse.ne_omp_factor,
@@ -3750,7 +3655,7 @@ class shot:
             json_dict = read_json(arg)
             pulse = shot(json_dict)
 
-            logger.debug('')
+            
             label = pulse.label
             fname = var + '_' + loc + '_comparison'
             fnorm = 1

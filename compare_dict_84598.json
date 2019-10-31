@@ -56,6 +56,8 @@
 //"filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84598_[51.422127]_estefan_T040_0_python.dat",
 //  "filename_hrts_data": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_84599_[51.27203]_estefan_T035_0_python.dat",
 //  "filename_hrts_fit": "/u/bviola/work/Python/EDGE2D/exp_data/hrts_conv_84599_[51.27203]_estefan_T035_0_python.dat",
+  "hrts_ppf":"",
+  "hrts_uid" :"",
 //LP
 //filename_lp_data: "/u/bviola/work/Python/EDGE2D/exp_data/KY4D_OT_50.0000_ky4d_noelm4.dat"
   "filename_lp_data": "",

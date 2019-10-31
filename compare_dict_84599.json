@@ -58,6 +58,8 @@
   "filename_hrts_fit":"",
 //LP
 //filename_lp_data: "/u/bviola/work/Python/EDGE2D/exp_data/KY4D_OT_50.0000_ky4d_noelm4.dat"
+  "hrts_ppf":"T035",
+  "hrts_uid" :"estefan",
   "filename_lp_data": "",
   "filename_HRTS_Ne": "",
   "filename_HRTS_Pe": "",
