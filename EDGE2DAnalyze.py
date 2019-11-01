@@ -462,8 +462,6 @@ class shot:
         
 
 
-        # logger.info('plotting HRTS')
-        # logger.info('plotting HRTS TE')
         # pdb.set_trace()
 
         try:
@@ -482,7 +480,7 @@ class shot:
 
             plt.figure(num=fname + "_" + self.label)
 
-            
+
 
             if self.plot_sim == "True":
                 try:
@@ -526,16 +524,15 @@ class shot:
             
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+self.label, dpi=300)  #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
             
             # raise SystemExit
         except :
-            # logger.info("Could not plot HRTS Te")
-            logger.error("Could not plot HRTS te")
-    # %%
 
-        #    logger.info('plotting HRTS NE')
+            logger.error("Could not plot HRTS te")
+
+
         try:
             logger.info('plotting HRTS NE')
             # %%
@@ -592,12 +589,12 @@ class shot:
             yticks(locs, list(map(lambda x: "%.3f" % x, locs)))
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/' + fname+'_'+self.label, dpi=300)  #
+            plt.savefig('./figures/' + fname, format='eps', dpi=300)
+            plt.savefig('./figures/' + fname, dpi=300)  #
         except :
             logger.info("Could not plot HRTS ne")
-            # logger.error("Could not plot HRTS ne")
-        # logger.info('plotting ne_ot')
+
+
         try:
             logger.info('plotting ne_ot')
             fname = str(self.pulse) +'_'+str(self.label) +  +'ne_ot'
@@ -634,12 +631,12 @@ class shot:
 
 
 
-            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
+            plt.savefig('./figures/'+fname, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname,  dpi=300) #
         except :
             logger.error("Could not plot ne ot")
-            # logger.error("Could not plot ne ot")
-        #     logger.info('plotting te_ot')
+
+
         try:
             logger.info('plotting te_ot')
             fname = str(self.pulse) +'_'+str(self.label) +  'te_ot'
@@ -674,12 +671,12 @@ class shot:
             plt.legend(loc =0,prop={'size':18})
             #%%
 
-            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
+            plt.savefig('./figures/'+fname, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname,  dpi=300) #
         except :
             logger.info("Could not plot te ot")
-            # logger.error("Could not plot te ot")
-        #     logger.info('plotting jsat_ot')
+
+
         try:
             logger.info('plotting jsat_ot')
             #%%
@@ -713,11 +710,11 @@ class shot:
             
             #%%
             # plt.tight_layout()
-            plt.savefig('./figures/'+fname+'_'+self.label, format='eps', dpi=300)
-            plt.savefig('./figures/'+fname+'_'+self.label,  dpi=300) #
+            plt.savefig('./figures/'+fname, format='eps', dpi=300)
+            plt.savefig('./figures/'+fname,  dpi=300) #
         except :
             logger.error("Could not plot jsat")
-                # logger.error("Could not plot jsat")
+
                          #%%
         try:
             logger.info('plotting dperp')
@@ -736,11 +733,13 @@ class shot:
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
-            
+            plt.savefig('./figures/' + fname , format='eps',
+                        dpi=300)
+            plt.savefig('./figures/' + fname , dpi=300)  #
 
 
         except :
-            # logger.error("Could not plot dperp")
+
             logger.error("Could not plot dperp")
             #%%
         try:
@@ -763,10 +762,13 @@ class shot:
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
-            
+            plt.savefig('./figures/' + fname , format='eps',
+                        dpi=300)
+            plt.savefig('./figures/' + fname , dpi=300)  #
+
 
         except :
-            # logger.error("Could not plot xperp")
+
             logger.error("Could not plot xperp")
             #logger.error("stop here")
             #%%
@@ -780,7 +782,7 @@ class shot:
             fnorm = 1
             ftitle = 'Electron Temperature OMP'
             fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
-            fylabel = '$n_{e} and T_{e} normalized$'
+            fylabel = '$n_{e}\, and \, T_{e}\quad normalized$'
 
             plt.figure(num=fname + "_" + self.label)
 
@@ -796,13 +798,14 @@ class shot:
                 try:
                     density = self.e2d_profiles['denel_omp'] / self.ne_omp_factor
                     temp = self.e2d_profiles['teve_omp'] / self.te_omp_factor
+
                     r_ped_mask = np.ma.masked_where((self.e2d_profiles['dsrad_omp'] > 0) , density)
-                    index_ped = np.argmax(r_ped_mask)
+                    index_ped = np.argmin(r_ped_mask)-3
                     density_ped = density[index_ped]
 
                     r_ped_mask = np.ma.masked_where(
                         (self.e2d_profiles['dsrad_omp'] > 0), temp)
-                    index_ped = np.argmax(r_ped_mask)
+                    index_ped = np.argmin(r_ped_mask)-5
                     temp_ped = temp[index_ped]
 
                     # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), density)
@@ -833,12 +836,12 @@ class shot:
                     density = self.e2d_profiles['denel'] / self.ne_omp_factor
                     temp = self.e2d_profiles['teve'] / self.te_omp_factor
                     r_ped_mask = np.ma.masked_where((self.e2d_profiles['dsrad'] > 0) , density)
-                    index_ped = np.argmax(r_ped_mask)
+                    index_ped = np.argmin(r_ped_mask)-3
                     density_ped = density[index_ped]
 
                     r_ped_mask = np.ma.masked_where(
                         (self.e2d_profiles['dsrad'] > 0), temp)
-                    index_ped = np.argmax(r_ped_mask)
+                    index_ped = np.argmin(r_ped_mask)-5
                     temp_ped = temp[index_ped]
 
                     # data_masked = np.ma.masked_where((self.e2d_profiles['dsrad'] < -.15) | (self.e2d_profiles['dsrad'] > .1), density)
@@ -942,9 +945,9 @@ class shot:
 
             plt.xlabel(fxlabel, {'color': 'k', 'size': 16})
             plt.ylabel(fylabel, {'color': 'k', 'size': 16})
-            plt.savefig('./figures/' + fname + '_' + self.label, format='eps',
+            plt.savefig('./figures/' + fname , format='eps',
                         dpi=300)
-            plt.savefig('./figures/' + fname + '_' + self.label, dpi=300)  #
+            plt.savefig('./figures/' + fname , dpi=300)  #
 
         except :
             logger.error("Could not plot HRTS ne/te data")
