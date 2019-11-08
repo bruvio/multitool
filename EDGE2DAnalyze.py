@@ -7,6 +7,9 @@ Created on 2017
 modified by tmp
 final version
 """
+import warnings
+warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from class_sim import *
 import os.path
 import csv
@@ -2509,7 +2512,7 @@ class shot:
         else:
             color2 = color2
 
-
+        # pdb.set_trace()
         # logger.info('plotting HRTS TE')
         try:
             
