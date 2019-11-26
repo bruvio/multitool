@@ -2684,7 +2684,7 @@ read_eirene
 ###############################################
 
 ###############################################
-  def read_profiles(self,Region):
+  def read_profiles(self,Region,tran=None):
     """
     reads outer mid plane data
 printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp hrho_omp sh_omp bfi_omp jpar_omp jpari_omp jtarg_omp jtargi_omp gam_omp gamro_omp gamroe_omp pflxd_omp denel_omp te_omp ti_omp vi_omp mach_omp da_omp dm_omp dha_omp soun_omp sirec_omp pre_omp preel_omp prestat_omp pretot_omp qeflxd_omp qiflxd_omp qepcd_omp qepcdd_omp qepcv_omp qipcd_omp qipcdd_omp qipcv_omp qpare_omp qpari_omp qpartot_omp denpe_omp denpi_omp totpden_omp dperp_omp chii_omp chie_omp'
@@ -2693,10 +2693,10 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
     # if ExtraInput is None:
-    # if tran is None:
-    #     pass
-    # else:
-    #     self.fullpath = self.fullpath+str(tran)
+    if tran is None:
+        pass
+    else:
+        self.fullpath = self.fullpath+str(tran)
 
     ade = ep.row(self.fullpath,'DENEL', Region)
     adi = ep.row(self.fullpath,'DEN', Region)

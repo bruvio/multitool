@@ -187,34 +187,99 @@ if __name__ == "__main__":
     sim_4 = sim('84600', 'nov1619', '2', workfold,'vparail')
     sim_5 = sim('84600', 'nov1719', '1', workfold,'vparail')
 
+    timesteps = list(ep.timestep(sim_1.fullpath, ALL_TRANFILES=1))
+    tran = timesteps.index(53.1903)
 
+    res1 = sim_1.read_profiles('omp',tran=tran)
 
-    res1 = sim_1.read_profiles('omp')
-    res2 = sim_2.read_profiles('omp')
-    res3 = sim_3.read_profiles('omp')
-    res4 = sim_4.read_profiles('omp')
-    res5 = sim_5.read_profiles('omp')
+    timesteps = list(ep.timestep(sim_2.fullpath, ALL_TRANFILES=1))
+    tran = timesteps.index(53.1903)
+    res2 = sim_2.read_profiles('omp',tran=tran)
 
+    timesteps = list(ep.timestep(sim_3.fullpath, ALL_TRANFILES=1))
+    tran = timesteps.index(53.1803)
+    res3 = sim_3.read_profiles('omp',tran=tran)
+
+    timesteps = list(ep.timestep(sim_4.fullpath, ALL_TRANFILES=1))
+    tran = timesteps.index(53.1603)
+    res4 = sim_4.read_profiles('omp',tran=tran)
+
+    timesteps = list(ep.timestep(sim_5.fullpath, ALL_TRANFILES=1))
+    tran = timesteps.index(53.1503)
+    res5 = sim_5.read_profiles('omp',tran=tran)
+
+    print(ne1_t[-2])
+    plt.plot(r1[-2],ne1[-2],label='1',color='red',linestyle=':')
+    plt.plot(res1['dsrad'][1:]+r1[-1][-1],res1['ade'].yData[1:],color='red',linestyle=':')
+
+    print(ne2_t[-2])
+    plt.plot(r2[-2],ne2[-2],label='2',color='blue',linestyle=':')
+    plt.plot(res2['dsrad'][1:]+r2[-1][-1],res2['ade'].yData[1:],color='blue',linestyle=':')
+
+    print(ne3_t[-3])
+    plt.plot(r3[-3],ne3[-3],label='3',color='magenta',linestyle=':')
+    plt.plot(res3['dsrad'][1:]+r3[-1][-1],res3['ade'].yData[1:],color='magenta',linestyle=':')
+
+    print(ne4_t[-5])
+    plt.plot(r4[-5],ne4[-5],label='4',color='green',linestyle=':')
+    plt.plot(res4['dsrad'][1:]+r4[-1][-1],res4['ade'].yData[1:],color='green',linestyle=':')
+
+    print(ne5_t[-6])
+    plt.plot(r5[-6],ne5[-6],label='5',color='black',linestyle=':')
+    plt.plot(res5['dsrad'][1:]+r5[-1][-1],res5['ade'].yData[1:],color='black',linestyle=':')
+
+    plt.xlim(left=3.795,right=max(res5['dsrad']+r5[-1][-1]))
+
+    #####just core
     plt.figure()
-    plt.plot(r1[-1],ne1[-1],label='1',color='blue')
-    plt.plot(res1['dsrad']+r1[-1][-1],res1['ade'].yData,color='blue')
+    print(ne1_t[-2])
+    plt.plot(ne1_x,ne1[-2],label='1',color='red')
+    # plt.plot(res1['dsrad']+r1[-1][-1],res1['ade'].yData,color='red')
 
-    plt.plot(r2[-1],ne2[-1],label='2',color='green')
-    plt.plot(res2['dsrad']+r2[-1][-1],res2['ade'].yData,color='green')
+    print(ne2_t[-2])
+    plt.plot(ne2_x,ne2[-2],label='2',color='blue')
+    # plt.plot(res2['dsrad']+r2[-1][-1],res2['ade'].yData,color='blue')
 
-    plt.plot(r3[-1],ne3[-1],label='3',color='red')
-    plt.plot(res3['dsrad']+r3[-1][-1],res3['ade'].yData,color='red')
+    print(ne3_t[-3])
+    plt.plot(ne3_x,ne3[-3],label='3',color='magenta')
+    # plt.plot(res3['dsrad']+r3[-1][-1],res3['ade'].yData,color='magenta')
 
-    plt.plot(r4[-1],ne4[-1],label='4',color='cyan')
-    plt.plot(res4['dsrad']+r4[-1][-1],res4['ade'].yData,color='cyan')
+    print(ne4_t[-5])
+    plt.plot(ne4_x,ne4[-5],label='4',color='green')
+    # plt.plot(res4['dsrad']+r4[-1][-1],res4['ade'].yData,color='green')
 
-    plt.plot(r5[-1],ne5[30],label='5',color='magenta')
-    plt.plot(res5['dsrad']+r5[-1][-1],res5['ade'].yData,color='magenta')
+    print(ne5_t[-6])
+    plt.plot(ne5_x,ne5[-6],label='5',color='black')
+    # plt.plot(res5['dsrad']+r5[-1][-1],res5['ade'].yData,color='black')
+
+    plt.xlim(left=0.79,right=1.01)
 
 
 
 
-    # plt.plot(res1['dsrad'],res1['ade'].yData)
+    #####just edge
+    plt.figure()
+    print(ne1_t[-2])
+    # plt.plot(r1[-2],ne1[-2],label='1',color='red')
+    plt.plot(res1['dsrad'],res1['ade'].yData,color='red')
+
+    print(ne2_t[-2])
+    # plt.plot(r2[-1],ne2[-1],label='2',color='blue')
+    plt.plot(res2['dsrad'],res2['ade'].yData,color='blue')
+
+    print(ne3_t[-3])
+    # plt.plot(r3[-1],ne3[-1],label='3',color='magenta')
+    plt.plot(res3['dsrad'],res3['ade'].yData,color='magenta')
+
+    print(ne4_t[-5])
+    # plt.plot(r4[-1],ne4[-1],label='4',color='green')
+    plt.plot(res4['dsrad'],res4['ade'].yData,color='green')
+
+    print(ne5_t[-6])
+    # plt.plot(r5[-1],ne5[-1],label='5',color='black')
+    plt.plot(res5['dsrad'],res5['ade'].yData,color='black')
+
+    # plt.xlim(left=3.795,right=max(res5['dsrad']+r5[-1][-1]))
 
     # plt.plot(r2[30],ne2[30],label='2')
     # plt.plot(r3[30],ne3[30],label='3')
