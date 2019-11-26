@@ -2693,6 +2693,11 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
     # if ExtraInput is None:
+    # if tran is None:
+    #     pass
+    # else:
+    #     self.fullpath = self.fullpath+str(tran)
+
     ade = ep.row(self.fullpath,'DENEL', Region)
     adi = ep.row(self.fullpath,'DEN', Region)
     asoun = ep.row(self.fullpath,'SOUN', Region)
