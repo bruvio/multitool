@@ -148,6 +148,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
         self.ui_plotdata.savefigure_checkBox.setChecked(False)
+        self.ui_plotdata.smooth_checkBox.setChecked(False)
         self.ui_plotdata.checkBox.setChecked(False)
         self.ui_plotdata.checkBox.toggled.connect(
             lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
@@ -1645,6 +1646,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         else:
             save = False
 
+        if self.ui_plotdata.smooth_checkBox.isChecked():
+            smooth = True
+        else:
+            smooth = False
         # pulselist = pulselist.rstrip()
 
         pulselist = [int(i) for i in pulselist]
@@ -1663,7 +1668,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if self.owner =='bviola':
             os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
 
-        plot_time_traces(self.JSONSSname, inputlist,save=save)
+        plot_time_traces(self.JSONSSname, inputlist,save=save,smooth=smooth)
         #plt.show(block=True)
         if self.owner == 'bviola':
             os.chdir(self.home)

@@ -1037,7 +1037,7 @@ def is_single_item_list(list_to_check):
     return False
 
 
-def plot_time_traces(diag_json,pulselist,save=False):
+def plot_time_traces(diag_json,pulselist,save=False,smooth=False):
     """
     this routines plots time traces of JET diagnostics
 
@@ -1174,10 +1174,17 @@ def plot_time_traces(diag_json,pulselist,save=False):
                         ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
                     else:
                         vars()[ax_name] = plt.subplot(iRow, iColumn,indexSubPlot,sharex=ax_1)
+                    if smooth is True:
+                        plt.plot(vars()[time_name], savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                     label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
+                    else:
+                        plt.plot(vars()[time_name],
+                                 vars()[data_name],
+                                 label=str(pulse) + ' ' + node, marker=marker,
+                                 linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
 
-                    plt.plot(vars()[time_name], vars()[data_name],
-                                 label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
-                             markersize=markersize)
                     plt.legend(loc='best', prop={'size': 6})
                     plt.xlabel('time[s]')
                     plt.ylabel(vars()[
@@ -1225,9 +1232,16 @@ def plot_time_traces(diag_json,pulselist,save=False):
                     else:
                         vars()[ax_name] = plt.subplot(iRow, iColumn,
                                                            indexSubPlot,sharex=ax_1)
-                    plt.plot(vars()[time_name], vars()[data_name],
-                                 label=str(pulse) + ' ' + value, marker = marker, linestyle=linestyle, linewidth=linewidth,
-                             markersize=markersize)
+                    if smooth is True:
+                        plt.plot(vars()[time_name], savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                     label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
+                    else:
+                        plt.plot(vars()[time_name],
+                                 vars()[data_name],
+                                 label=str(pulse) + ' ' + node, marker=marker,
+                                 linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
 
                     plt.legend(loc='best', prop={'size': 6})
                     # plt.ylabel(IplSigTitle)
