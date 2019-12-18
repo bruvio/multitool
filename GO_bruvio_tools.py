@@ -23,7 +23,11 @@ from ppf import *
 import bruvio_tools
 from MAGTool import *  # Magnetics Tool
 
-from PyQt4 import Qt, QtCore,QtGui
+# from PyQt4 import Qt, QtCore,QtGui
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from magSurfGA_SL import Ui_magsurf_window
 from edge2d_window import Ui_edge2d_window
 from eqdsk_window import Ui_eqdsk_window
@@ -55,7 +59,7 @@ myself = lambda: inspect.stack()[1][3]
 logger = logging.getLogger(__name__)
 
 
-class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
+class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
     """
     Class for running the GUI and handling events.
 
@@ -133,7 +137,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('\n')
         logger.info('plotting tool')
 
-        self.window_plotdata = QtGui.QMainWindow()
+        self.window_plotdata = QMainWindow()
         self.ui_plotdata = Ui_plotdata_window()
         self.ui_plotdata.setupUi(self.window_plotdata)
         self.window_plotdata.show()
@@ -165,7 +169,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('\n')
         logger.info('eqdsk tool')
 
-        self.window_eqdsk = QtGui.QMainWindow()
+        self.window_eqdsk = QMainWindow()
         self.ui_eqdsk = Ui_eqdsk_window()
         self.ui_eqdsk.setupUi(self.window_eqdsk)
         self.window_eqdsk.show()
@@ -212,7 +216,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ExtraInput = 0
         self.PathCatalog = '/home'
 
-        self.edge2d_window = QtGui.QMainWindow()
+        self.edge2d_window = QMainWindow()
         self.ui_edge2d = Ui_edge2d_window()
         self.ui_edge2d.setupUi(self.edge2d_window)
         self.edge2d_window.show()
@@ -236,7 +240,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600_tuningVassili.json')
         self.JSONSS2 = 'compare_dict_84600_tuningVassili.json'
 
-        fsm = Qt.QFileSystemModel()
+        fsm = QFileSystemModel()
         index = fsm.setRootPath(self.PathCatalog)
         # self.comboBox = Qt.QComboBox()
         self.ui_edge2d.comboBox_Name.setModel(fsm)
@@ -322,7 +326,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # os.chdir(self.home)
 
     def handle_magsurf_button(self):
-        self.magsurf_window = QtGui.QMainWindow()
+        self.magsurf_window = QMainWindow()
         self.ui_magsurf = Ui_magsurf_window()
         self.ui_magsurf.setupUi(self.magsurf_window)
         plt.close()
@@ -1628,7 +1632,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # filter = "JSON(*.json)"
         # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
         os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
-        self.JSONSS = QtGui.QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+        self.JSONSS = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
 
         self.JSONSSname = os.path.basename(self.JSONSS)
         logger.debug('you have chosen {}'.format(self.JSONSSname))
@@ -1957,7 +1961,7 @@ def main():
     """
     logger.info("Running bruvio tool.")
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     MainWindow = bruvio_tool()
     MainWindow.show()
     app.exec_()
