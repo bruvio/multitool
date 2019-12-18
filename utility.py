@@ -24,7 +24,7 @@ from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-
+import mplcursors
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -1258,7 +1258,7 @@ def plot_time_traces(diag_json,pulselist,save=False,smooth=False):
                     # for l, ms in zip(ax_name.lines, itertools.cycle('>^+*')):
                     #     l.set_marker(ms)
                     #     l.set_color('black')
-
+    mplcursors.cursor(hover=True)
     logger.info(' plot DONE! \n')
     if save is True:
         cwd = os.getcwd()
