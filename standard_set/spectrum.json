@@ -1,0 +1,22 @@
+{  
+"ppf":{
+
+      "jetppf/Ks3/ZEFV":["1","+",":"],
+      "jetppf/Ks3/ZEFV":["1",".",":"],
+      "jetppf/MAGN/IPLA":["2","+","--"],
+      "jetppf/t2i0/be4":["4","+","--"],
+      "jetppf/t2i0/w":["5","+","--"],
+      "jetppf/t2i0/cu19":["3","+","--"],
+      "jetppf/t2i0/cu27":["3",".",":"],
+      "jetppf/t2i0/ni18":["7","+","--"],
+      "jetppf/t2i0/ni25":["7",".",":"],
+      "jetppf/t2i0/ni26":["7",".",":"],
+      "jetppf/t2i0/ti20":["6","+","--"]
+},
+  "icolumn":"1",
+  "irow":"7",
+  "linewidth":"0.5",
+  "markersize":"1"
+
+
+}

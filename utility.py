@@ -24,7 +24,7 @@ from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-
+import mplcursors
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -159,7 +159,48 @@ def read_puff_file(filename,alternativefile=None):
             return dummy
 
 
+def read_surfaces_file(filename):
+    # dummy = np.genfromtxt(filename, skip_header=1,dtype=str)
+    # The max column count a line in the file could have
+    largest_column_count = 0
 
+    # Loop the data lines
+    with open(filename, 'r') as temp_f:
+        # Read the lines
+        lines = temp_f.readlines()
+
+        for l in lines:
+            # Count the column count for the current line
+            column_count = len(l.split()) + 1
+
+            # Set the new most column count
+            largest_column_count = column_count if largest_column_count < column_count else largest_column_count
+
+    # Close file
+    temp_f.close()
+
+    # Generate column names (will be 0, 1, 2, ..., largest_column_count - 1)
+    column_names = [i for i in range(0, largest_column_count)]
+    dummy1 = pd.read_csv(filename,
+                skiprows=1,dtype=str,
+                delim_whitespace=True, header=None, index_col=False,
+                error_bad_lines=False, warn_bad_lines=False, names=column_names, na_values = '')
+    dummy1 = dummy1.fillna('')
+    dummy1["combined"] = [' '.join(row.astype(str)) for row in dummy1[dummy1.columns[4:]].values]
+#     dummy1['combined'].replace(
+#     to_replace=['nan'],
+#     value=' ',
+#     inplace=True
+# )
+    data = pd.concat([dummy1[dummy1.columns[0:3]],dummy1["combined"]],axis=1)
+    data.rename(columns={0: 'isurf', 1: 'type', 2: 'material',
+                         'combined': 'description'}, inplace=True)
+    # data =data.fillna(' ', inplace=True)
+    # data = data.replace(np.nan, '', regex=True)
+    # data = data.fillna('')
+    # data.dropna(axis=1, how='all', inplace=True)
+
+    return data
 
 
 
@@ -216,7 +257,7 @@ def create_database_4_dda(dda, pulse1, pulse2=None):
      a list of sequences, a list of dates and a list containing the number of sequences written
     """
     maxpulse = pdmsht()
-    logger.debug('max pulse is {}'.format(str(maxpulse)))
+    logger.debug('max pulse is {} \n'.format(str(maxpulse)))
     ier = ppfgo()
     ppfsetdevice("JET")
 
@@ -313,8 +354,8 @@ def show_database_4_dda(pulseSpec, userlist, numofseqlist, seqlist, datelist):
 
         # s = 0
         for k, user in enumerate(userlist[0]):
-            logger.info('\n')
-            logger.info('user: {} has written {} ppf for shot {}'.format(user,
+            
+            logger.info(' user: {} has written {} ppf for shot {} \n'.format(user,
                                                                    numofseqlist[
                                                                        k],
                                                                    pulse))
@@ -326,7 +367,7 @@ def show_database_4_dda(pulseSpec, userlist, numofseqlist, seqlist, datelist):
                 # date = '00-00-00'
 
             for numseq in range(0, numofseqlist[k]):
-                logger.info('shot: {} user: {} date: {} seq:{} by: {}'.format(
+                logger.info('shot: {} user: {} date: {} seq:{} by: {} \n'.format(
                     str(pulse),
                     user,
                     str(datelist[k][numseq]),
@@ -337,8 +378,8 @@ def show_database_4_dda(pulseSpec, userlist, numofseqlist, seqlist, datelist):
         for i, pulse in enumerate(pulseSpec):
             # s = 0
             for k, user in enumerate(userlist[i]):
-                logger.info('\n')
-                logger.info('user {} has written {} ppf for shot {}'.format(user,
+                
+                logger.info('user {} has written {} ppf for shot {} \n'.format(user,
                                                                        numofseqlist[
                                                                            i][
                                                                            k],
@@ -351,7 +392,7 @@ def show_database_4_dda(pulseSpec, userlist, numofseqlist, seqlist, datelist):
                     # date = '00-00-00'
 
                 for numseq in range(0, numofseqlist[i][k]):
-                    logger.info('shot: {} user: {} date: {} seq:{} by: {}'.format(
+                    logger.info('shot: {} user: {} date: {} seq:{} by: {} \n'.format(
                         str(pulse),
                         user,
                         str(datelist[k][numseq]),
@@ -706,11 +747,11 @@ def check_pulse_in_database(pulse, dataframe):
     checkinlist = shots_database.isin([pulse])
     inlist = [i for i, x in enumerate(checkinlist) if x]
     if not inlist:
-        logger.info('{} is not in {} database!'.format(str(pulse),dataframe))
+        logger.info('{} is not in {} database!\n'.format(str(pulse),dataframe))
     else:
         for i in inlist:
             logger.info(
-                '{} ppf created on {} by {} seq {} for pulse {} is in {}'.format(
+                '{} ppf created on {} by {} seq {} for pulse {} is in {}\n'.format(
                     dataframe['user'][i],
                     dataframe['date'][i],
                     dataframe['by'][i],
@@ -730,11 +771,11 @@ def _check_pulse_in_database_list(pulse, dataframelist):
     :param dataframe:
     :return:
     """
-    logger.info('start looking for ppf written for pulse {}'.format(str(pulse)))
+    logger.info(' start looking for ppf written for pulse {}\n'.format(str(pulse)))
     for index1 in range(0, len(dataframelist)):
         name = dataframelist[index1]
-        logger.info('\n')
-        logger.info('looking in database {}'.format(name))
+        
+        logger.info('looking in database {}\n'.format(name))
         dataframe = create_database(name)
         shots_database = pd.Series(list(dataframe['shot']))
         pulse = str(pulse)
@@ -742,15 +783,15 @@ def _check_pulse_in_database_list(pulse, dataframelist):
         inlist = [i for i, x in enumerate(checkinlist) if x]
 
         if any(inlist) is True:
-            logger.info(' pulse {} found in database {}: \n'.format(pulse,
+            logger.info('pulse {} found in database {}: \n'.format(pulse,
                                                               dataframe.name))
             for i in inlist:
-                logger.info('\t \t \t    modified on {} by {} stored as {} ppf seq {}'.format(
+                logger.info(' \t \t \t    modified on {} by {} stored as {} ppf seq {} \n'.format(
                         dataframe['date'][i], dataframe['by'][i],
                         dataframe['user'][i],
                         dataframe['seq'][i]))
         else:
-            logger.info('pulse {} not found'.format(str(pulse)))
+            logger.info(' pulse {} not found \n'.format(str(pulse)))
 
 
 def check_pulse_in_database_list(pulse, dataframelist):
@@ -763,11 +804,11 @@ def check_pulse_in_database_list(pulse, dataframelist):
     checks if the pulse is in any of those databases
     i.e. if a KG1 related ppf has been written by the user
     """
-    logger.info('start looking for ppf written for pulse {}'.format(str(pulse)))
+    logger.info(' start looking for ppf written for pulse {} \n'.format(str(pulse)))
     for index1 in range(0, len(dataframelist)):
         name = dataframelist[index1]
-        logger.info('\n')
-        logger.info('looking in database {}'.format(name))
+        logger.info(' \n')
+        logger.info(' looking in database {} \n'.format(name))
         dataframe = create_database(name,sort=True)
         index = dataframe.index
 
@@ -784,23 +825,23 @@ def check_pulse_in_database_list(pulse, dataframelist):
 
         if any(inlist) is True:
             in_list=index[inlist]
-            logger.info(' pulse {} found in database {}: \n'.format(pulse,
+            logger.info('  pulse {} found in database {}: \n'.format(pulse,
                                                               dataframe.name))
 
             for j,i in enumerate(in_list):
                 if is_number_tryexcept(dataframe['seq'][i]):
-                    logger.info('\t \t \t    new sequence written on {} by {} stored as {} ppf seq {}'.format(
+                    logger.info(' \t \t \t    new sequence written on {} by {} stored as {} ppf seq {} \n'.format(
                         dataframe['date'][i], dataframe['by'][i],
                         dataframe['user'][i],
                         dataframe['seq'][i]))
                 else:
                     logger.info(
-                        '\t \t \t    modified on {} by {} stored as {} ppf seq {}'.format(
+                        '\t \t \t    modified on {} by {} stored as {} ppf seq {} \n'.format(
                             dataframe['date'][i], dataframe['by'][i],
                             dataframe['user'][i],
                             dataframe['seq'][i]))
         else:
-            logger.info('pulse {} not found'.format(str(pulse)))
+            logger.info(' pulse {} not found \n'.format(str(pulse)))
 
 
 def validated_pulses(days, dataframelist):
@@ -834,11 +875,11 @@ def validated_pulses(days, dataframelist):
     pulse_to_reprocess = []
     num_pulse_to_reprocess =0
     logger.info(
-        'looking for ppf written in the last {} days (from {})'.format(str(days),str(starttime)))
+        'looking for ppf written in the last {} days (from {}) \n'.format(str(days),str(starttime)))
     for index1 in range(0, len(dataframelist)):
         name = dataframelist[index1]
-        logger.info('\n')
-        logger.info('looking in database {}'.format(name))
+        logger.info(' \n')
+        logger.info(' looking in database {} \n'.format(name))
         dataframe = create_database(name, sort=True)
 
         #remove from data frame elements
@@ -857,7 +898,7 @@ def validated_pulses(days, dataframelist):
         #control loop
         if any(data_database) is True:
             if any(str(s).isdigit() for s in list(data['seq'])) is True:
-                logger.info(' found pulses that need reprocess \n')
+                logger.info('  found pulses that need reprocess \n')
                 validated_FJ_correction=[]
                 validated_SF_correction=[]
 
@@ -878,11 +919,11 @@ def validated_pulses(days, dataframelist):
                 for i in range(0,df_validated_FJ.__len__()):
                     pulse_to_reprocess.append(int(df_validated_FJ['shot'][i]))
                     logger.info(
-                        '\t \t \t    pulse {} by {} stored as {} ppf seq {} date {}  need reprocessing'.format(
+                        '\t \t \t    pulse {} by {} stored as {} ppf seq {} date {}  need reprocessing \n'.format(
                             df_validated_FJ['shot'][i], df_validated_FJ['by'][i], df_validated_FJ['user'][i],
                             df_validated_FJ['seq'][i],df_validated_FJ['date'][i]))
 
-                logger.info('\n')
+
 
 
                 for i in range(0, df_validated_SF.__len__()):
@@ -893,11 +934,11 @@ def validated_pulses(days, dataframelist):
                     #         df_validated_SF['seq'][i],df_validated_SF['date'][i]))
 
             else:
-                logger.info('\n')
-                logger.info(' No pulses in the last {} days (from {}) need reprocess \n'.format(str(days),str(starttime)))
+
+                logger.info('  No pulses in the last {} days (from {}) need reprocess \n'.format(str(days),str(starttime)))
         else:
-            logger.info('\n')
-            logger.info(' No pulses in the last {} days (from {}) need reprocess \n'.format(str(days),str(starttime)))
+
+            logger.info('  No pulses in the last {} days (from {}) need reprocess \n'.format(str(days),str(starttime)))
         myset = set(pulse_to_reprocess)
         pulse_to_reprocess = list(myset)
 
@@ -996,7 +1037,7 @@ def is_single_item_list(list_to_check):
     return False
 
 
-def plot_time_traces(diag_json,pulselist,save=False):
+def plot_time_traces(diag_json,pulselist,save=False,smooth=False):
     """
     this routines plots time traces of JET diagnostics
 
@@ -1009,14 +1050,14 @@ def plot_time_traces(diag_json,pulselist,save=False):
     :param pulselist: list of pulses (and colors)
     :return:
     """
-    logger.info('using standard set {}'.format(diag_json))
+    logger.info(' using standard set {} \n'.format(diag_json))
 
-    logger.info('pulselist {}'.format(pulselist))
+    logger.info(' pulselist {} \n'.format(pulselist))
 
 
     default = True
     fold = './standard_set/'
-    logger.debug('opening {}'.format(fold+diag_json))
+    logger.debug('opening {} \n'.format(fold+diag_json))
     with open(fold+diag_json, mode='r', encoding='utf-8') as f:
         # Remove comments from input json
         with open(fold+"temp.json", 'w') as wf:
@@ -1038,7 +1079,7 @@ def plot_time_traces(diag_json,pulselist,save=False):
     except:
         jpflen = 0
     totsignal = (ppflen + jpflen)
-    logger.info('reading {} signals'.format(str(totsignal)))
+    logger.info(' reading {} signals \n'.format(str(totsignal)))
     try:
         iColumn = int(input_dict['icolumn'])
         iRow = int(input_dict['irow'])
@@ -1051,7 +1092,7 @@ def plot_time_traces(diag_json,pulselist,save=False):
         linewidth = 0.5
         markersize =  1
 
-    logger.debug('subplot {} x {}'.format(str(iRow),str(iColumn)))
+    logger.debug('subplot {} x {} \n'.format(str(iRow),str(iColumn)))
 
 
 
@@ -1076,8 +1117,8 @@ def plot_time_traces(diag_json,pulselist,save=False):
         pulse = int(pulselist[index][0])
         pulse_list.append(pulse)
         # color = (pulselist[index][1])
-        logger.info('\n')
-        logger.info('reading data for pulse %s ', pulse)
+        logger.info(' \n')
+        logger.info(' reading data for pulse %s \n', pulse)
         # indexSubPlot = 0
         indexSubPlot = 0
         # plt.figure()
@@ -1108,9 +1149,9 @@ def plot_time_traces(diag_json,pulselist,save=False):
                         ppfdata(pulse, dda, dtype, seq=0, uid=user,
                                 device="JET", fix0=0, reshape=0, no_x=0, no_t=0)
                     if ier == 0 :
-                        logger.info('read data %s ', key + '_' + dda + '_' + dtype + 'seq {}'.format(str(seq)))
+                        logger.info(' read data %s ', key + '_' + dda + '_' + dtype + 'seq {} \n'.format(str(seq)))
                     else:
-                        logger.info('no data')
+                        logger.info(' no data \n')
 
 
                     if default == True:
@@ -1133,10 +1174,17 @@ def plot_time_traces(diag_json,pulselist,save=False):
                         ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
                     else:
                         vars()[ax_name] = plt.subplot(iRow, iColumn,indexSubPlot,sharex=ax_1)
+                    if smooth is True:
+                        plt.plot(vars()[time_name], savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                     label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
+                    else:
+                        plt.plot(vars()[time_name],
+                                 vars()[data_name],
+                                 label=str(pulse) + ' ' + node, marker=marker,
+                                 linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
 
-                    plt.plot(vars()[time_name], vars()[data_name],
-                                 label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
-                             markersize=markersize)
                     plt.legend(loc='best', prop={'size': 6})
                     plt.xlabel('time[s]')
                     plt.ylabel(vars()[
@@ -1153,9 +1201,9 @@ def plot_time_traces(diag_json,pulselist,save=False):
                     vars()[data_name], vars()[time_name], IplSigLen, IplSigTitle, vars()[
                         unit_name], ier = getdat.getdat(value,pulse)
                     if ier == 0 :
-                        logger.info('read data  ' + key + '_' + value )
+                        logger.info(' read data  ' + key + '_' + value )
                     else:
-                        logger.info('no data')
+                        logger.info(' no data \n')
 
 
 
@@ -1166,7 +1214,7 @@ def plot_time_traces(diag_json,pulselist,save=False):
                         ax_name = 'ax_' + str(indexSubPlot)
                         marker = 'x'
                         linestyle = ':'
-                        logger.debug('using default options for ppf')
+                        logger.debug('using default options for ppf \n')
 
                     else:
                         indexSubPlot = int(input_dict[system][value][0])
@@ -1184,9 +1232,16 @@ def plot_time_traces(diag_json,pulselist,save=False):
                     else:
                         vars()[ax_name] = plt.subplot(iRow, iColumn,
                                                            indexSubPlot,sharex=ax_1)
-                    plt.plot(vars()[time_name], vars()[data_name],
-                                 label=str(pulse) + ' ' + value, marker = marker, linestyle=linestyle, linewidth=linewidth,
-                             markersize=markersize)
+                    if smooth is True:
+                        plt.plot(vars()[time_name], savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                     label=str(pulse) + ' ' + node, marker = marker, linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
+                    else:
+                        plt.plot(vars()[time_name],
+                                 vars()[data_name],
+                                 label=str(pulse) + ' ' + node, marker=marker,
+                                 linestyle=linestyle, linewidth=linewidth,
+                                 markersize=markersize)
 
                     plt.legend(loc='best', prop={'size': 6})
                     # plt.ylabel(IplSigTitle)
@@ -1203,8 +1258,8 @@ def plot_time_traces(diag_json,pulselist,save=False):
                     # for l, ms in zip(ax_name.lines, itertools.cycle('>^+*')):
                     #     l.set_marker(ms)
                     #     l.set_color('black')
-
-    logger.info('plot DONE')
+    mplcursors.cursor(hover=True)
+    logger.info(' plot DONE! \n')
     if save is True:
         cwd = os.getcwd()
 
@@ -1218,7 +1273,7 @@ def plot_time_traces(diag_json,pulselist,save=False):
         # plt.savefig('./figures/' + fname+'.png', dpi=50)
         plt.savefig(cwd+os.sep+'figures/'+fname+'.png', dpi=300)
 
-        logger.info('picture saved to {}'.format(cwd+os.sep+'figures/'+fname))
+        logger.info(' picture saved to {} \n'.format(cwd+os.sep+'figures/'+fname))
     t = Toggle(fig)
     fig.canvas.mpl_connect("button_press_event", t.toggle)
     # fig.canvas.mpl_connect("key_press_event", t.toggle)
@@ -1327,7 +1382,7 @@ def compare_three_cases():
     # targetfilename = 'unseeded'
     # targetfilename = 'm18-20'
 
-    # logger.info('plotting HRTS TE')
+    # logger.info(' plotting HRTS TE')
     shift = -1.58
     fname = '84600_Te_omp'
     fnorm = 1
@@ -1371,7 +1426,7 @@ def compare_three_cases():
     plt.savefig('./figures/' + fname, dpi=300)  #
     # %%
 
-    # logger.info('plotting HRTS NE')
+    # logger.info(' plotting HRTS NE')
     # %%
     fname = '84600_ne_omp'
     fnorm = 1
@@ -1411,7 +1466,7 @@ def compare_three_cases():
     # plt.savefig('./figures/' + fname, format='eps', dpi=300)
     # plt.savefig('./figures/' + fname, dpi=300)  #
 
-    # logger.info('plotting HRTS NE')
+    # logger.info(' plotting HRTS NE')
     # %%
     fname = '84600_soun_omp'
     fnorm = 1
@@ -2579,6 +2634,34 @@ def initread(shot,userid,seq):
   ppfuid(userid,'r')
   ier=ppfgo(int(shot),int(seq))
 #@staticmethod
+
+def getdata(shot,dda,dtype,uid=None,seq=None):
+    if seq is None:
+        ier = ppfgo(shot, seq=0)
+    else:
+        ier = ppfgo(shot, seq=seq)
+    if uid is None:
+        ppfuid('jetppf', rw="R")
+    else:
+        ppfuid(uid, rw="R")
+    ihdata, iwdata, data, x, time, ier = ppfget(shot, dda, dtype)
+    pulse, seq, iwdat, comment, numdda, ddalist, ier = ppfinf(comlen=50,
+                                                              numdda=50)
+
+    name=dict()
+    name['ihdata']=ihdata
+    name['iwdata']=iwdata
+    name['data']=data
+    name['x']=x
+    name['time']=time
+    name['ier']=ier
+    name['seq']=seq
+    name['pulse']=pulse
+    name['dda']=dda
+    name['dtype']=dtype
+    return name,seq
+
+
 def Getdata(pulse, dda,dtype,sequence,user):
 
     '''
@@ -2958,7 +3041,7 @@ if __name__== "__main__":
 
     #
     #
-    # logging.info('\n')
+    # logging.info('')
     # logging.info('checking status FLAGS ')
     #
     # ppfuid('jetppf', "r")

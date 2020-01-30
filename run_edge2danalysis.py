@@ -65,7 +65,7 @@ def run_edge2danalysis(input_dict_str1,input_dict_str2=None):
         except:
             logging.error('failed to compare')
 
-
+    plt.show()
 
 # ----------------------------
 # Custom formatter

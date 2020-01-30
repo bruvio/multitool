@@ -1,0 +1,51 @@
+//symbols 
+//================    ===============================
+//character           description
+//================    ===============================
+//   -                solid line style
+//   --               dashed line style
+//   -.               dash-dot line style
+//   :                dotted line style
+//   .                point marker
+//   ,                pixel marker
+//   o                circle marker
+//   v                triangle_down marker
+//   ^                triangle_up marker
+//   <                triangle_left marker
+//   >                triangle_right marker
+//   1                tri_down marker
+//   2                tri_up marker
+//   3                tri_left marker
+//   4                tri_right marker
+//   s                square marker
+//   p                pentagon marker
+//   *                star marker
+//   h                hexagon1 marker
+//   H                hexagon2 marker
+//   +                plus marker
+//   x                x marker
+//   D                diamond marker
+//   d                thin_diamond marker
+//   |                vline marker
+//   _                hline marker
+//================    ===============================
+//linestyles ['-', '--', '-.', ':']
+{
+   "ppf":{
+
+      "jetppf/KG1V/LID3":["1","+",":"],
+      "jetppf/MAGN/IPLA":["2","+","--"],
+      "jetppf/EFIT/BVAC":["3",".","--"],
+      "jetppf/MAGN/BVAC":["3","+",":"],
+      "jetppf/KS3/ZEFV": ["4","+","-"],
+      "jetppf/KS3/ZEFH": ["5","+","-"]
+},
+  "icolumn":"1",
+  "irow":"5",
+  "linewidth":"0.8",
+  "markersize":"1"
+
+
+}
+
+

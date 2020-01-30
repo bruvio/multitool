@@ -37,6 +37,8 @@ from class_sim import initread
 from class_sim import find_indices
 import eproc as ep
 from ppf import *
+import pdb
+
 
 def e2d_variables(file):
     with open(file) as f:
@@ -143,8 +145,8 @@ if __name__ == "__main__":
 
 
 
-    EDGE2dfold='/work/bviola/Python/EDGE2D/e2d_data'
-    workfold='work/Python/EDGE2D'
+    EDGE2dfold='/work/bviola/Python/bruvio_tool/e2d_data'
+    workfold='work/Python/bruvio_tool'
     #
 
     del sys.modules['class_sim']
@@ -308,7 +310,7 @@ if __name__ == "__main__":
     #sim.write_pump_cur2file(sim_list, EDGE2dfold, targetfilename)
     ## raise SystemExit
     ## omp = simu1.read_profiles('OMP')
-    #sim.write_edge2d_profiles(sim_list,targetfilename)
+    # sim.write_edge2d_profiles1(sim_list,targetfilename)
     ## print(omp)
     ## result=simu1.read_print_file_edge2d()
     ## print(result.values())
@@ -522,7 +524,7 @@ if __name__ == "__main__":
 
 
     EDGE2dfold='./e2d_data'
-    workfold='work/Python/EDGE2D'
+    workfold='work/Python/bruvio_tool'
     #
     #import sys
     #del sys.modules['class_sim']
@@ -536,7 +538,17 @@ if __name__ == "__main__":
     # sim_hfe = sim('92123', 'aug1717', '2', workfold)
     
     
-    sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
+    # sim_hfe_Nrad0 = sim('92123', 'oct1917', '1', workfold)
+    sim_hfe_Nrad0 = sim('84600', 'oct1618', '1', workfold)
+    sim_hfe_Nrad0 = sim('84599X', 'oct1618', '1', workfold)
+    sim_hfe_Nrad0 = sim('84598X', 'oct1618', '1', workfold)
+    simlist = []
+    simlist.append([sim_hfe_Nrad0, 'first'])
+
+    sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
+
+
+    pdb.set_trace()
     # sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
     #
     # sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)
@@ -628,30 +640,35 @@ if __name__ == "__main__":
 
     sim_alexc = sim('84727', 'nov1015', '1', workfold,'alexc')
     sim_david = sim('81472', 'jan2215', '1', workfold,'dmoulton')
-    sim_bruvio_sd = sim('84599X', 'nov2818', '1', workfold)
+    # sim_bruvio_sd = sim('84599X', 'nov2818', '1', workfold)
+    sim_bruvio_sd = sim('84599X', 'apr0519', '1', workfold)
     sim_bruvio = sim('92123', 'oct1917', '1', workfold)
 
     # simu = sim_bruvio
+    # simu = sim_david
     # simu = sim_alexc
-    simu = sim_alexc
+    simu = sim_bruvio_sd
 
 
 
-    simu.read_eirene(simu.fullpath[:-4])
+    # simu.read_eirene(simu.fullpath[:-4])
+    simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
+    # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')
+
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-    # simu.data.eirene.plot_eirene()
+    simu.data.eirene.plot_eirene_vol_data()
    #
    #
-    # simu.data.eirene.plot_eirene(data='MOL')
-    # simu.data.eirene.plot_eirene(data='ATM')
+    # simu.data.eirene.plot_eirene_vol_data(data='MOL')
+    # simu.data.eirene.plot_eirene_vol_data(data='ATM')
 
 
 
 
     #  #
-   #  simu.data.eirene.plot_subdivertor(simu.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
-   #
-   #  simu.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
+    # simu.data.eirene.plot_subdivertor(simu.fullpath,'/work/bviola/matlab/subdivertor/E2DMATLAB/Substruc_VH_84599.txt')
+
+    # simu.data.eirene.plot_eirene_grid('/work/bviola/Python/bruvio_tool/EIRENE_FILES_ALEX/puff.dat')
    #
    #  #
    #
@@ -662,32 +679,32 @@ if __name__ == "__main__":
    #
    #
    #  #test to plot EIRENE PRESSURE AND TEMPERATURE
-    triangnum = simu.data.eirene.geom.trimap.shape[0]
-
-
-    mD2 = 2*2.01410178*1.660538921E-27; # kg
-    vxD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[2]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
-    vyD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[3]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
-    vzD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[4]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
-    vxD2[np.isnan(vxD2)] = 0;
-    vyD2[np.isnan(vyD2)] = 0;
-    vzD2[np.isnan(vzD2)] = 0;
-
-    pD2 = np.asarray(2/3*(simu.data.eirene.MOL.vol_avg_data[5]*1.6022E-19*1E6 -
-               0.5*mD2*simu.data.eirene.MOL.vol_avg_data[1]*1E6*(vxD2**2+vyD2**2+vzD2**2)));
-    # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
-    TD2 = np.asarray(pD2/simu.data.eirene.MOL.vol_avg_data[1]/1E6/1.3806488E-23);
-    TD2[np.isnan(TD2)] = 0;
-    pD2[np.isnan(pD2)] = 0;
-    #
-    #
-    # xv=linspace(2.003,2.547,100)';
-    # yv=-2.3*ones(100,1);
-    #
-    #
+   #  triangnum = simu.data.eirene.geom.trimap.shape[0]
    #
-    # simu.data.eirene.plot_eirene(data=pD2)
-    # simu.data.eirene.plot_eirene(data=TD2)
+   #
+   #  mD2 = 2*2.01410178*1.660538921E-27; # kg
+   #  vxD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[2]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
+   #  vyD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[3]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
+   #  vzD2 = np.asarray(simu.data.eirene.MOL.vol_avg_data[4]/1000/mD2/simu.data.eirene.MOL.vol_avg_data[1]/100); # m/s
+   #  vxD2[np.isnan(vxD2)] = 0;
+   #  vyD2[np.isnan(vyD2)] = 0;
+   #  vzD2[np.isnan(vzD2)] = 0;
+   #
+   #  pD2 = np.asarray(2/3*(simu.data.eirene.MOL.vol_avg_data[5]*1.6022E-19*1E6 -
+   #             0.5*mD2*simu.data.eirene.MOL.vol_avg_data[1]*1E6*(vxD2**2+vyD2**2+vzD2**2)));
+   #  # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
+   #  TD2 = np.asarray(pD2/simu.data.eirene.MOL.vol_avg_data[1]/1E6/1.3806488E-23);
+   #  TD2[np.isnan(TD2)] = 0;
+   #  pD2[np.isnan(pD2)] = 0;
+   #  #
+   #  #
+   #  # xv=linspace(2.003,2.547,100)';
+   #  # yv=-2.3*ones(100,1);
+   #  #
+   #  #
+   # #
+   #  simu.data.eirene.plot_eirene_vol_data(data=pD2)
+   #  simu.data.eirene.plot_eirene_vol_data(data=TD2)
 
     # simu.data.eirene.PLS.names
     # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
@@ -701,18 +718,29 @@ if __name__ == "__main__":
 
 
     # I want Be1+
-    species =1
-    data = simu.data.eirene.PLS.vol_avg_data
-    label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
-
-    # I want D
-    species = 0
-    species_name = simu.data.eirene.ATM.names[species]
-    data = simu.data.eirene.ATM.vol_avg_data
-    label = simu.data.eirene.ATM.names[species] + \
-            simu.data.eirene.ATM.dataName[species]
-
-    simu.data.eirene.plot_eirene(data=data,species=species,label=label)
+    # species =1
+    # data = simu.data.eirene.PLS.vol_avg_data
+    # label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.VoldataName[26]
+    # simu.data.eirene.plot_eirene_vol_data(data=data,species=species,label=label)
+    #
+    # # I want D
+    # species = 0
+    # var=0
+    # species_name = simu.data.eirene.ATM.names[species]
+    # data = simu.data.eirene.ATM.vol_avg_data
+    # label = simu.data.eirene.ATM.names[var] + \
+    #         simu.data.eirene.ATM.VoldataName[var]
+    #
+    # simu.data.eirene.plot_eirene_vol_data(data=data,species=species,label=label)
+    # #
+    # species = 0
+    # var = 1
+    # species_name = simu.data.eirene.ATM.names[species]
+    # data = simu.data.eirene.ATM.vol_avg_data
+    # label = simu.data.eirene.ATM.names[var] + \
+    #         simu.data.eirene.ATM.VoldataName[var]
+    #
+    # simu.data.eirene.plot_eirene_vol_data(data=data,species=species,var=var,label=label)
 
 
 

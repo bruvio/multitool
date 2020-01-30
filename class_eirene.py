@@ -40,11 +40,38 @@ class Eirene():
         #folder containing eirene files (can be the catalog folder or run folder)
         self.runfolder = folder
 
-        self.NPLSdataname = 27 # number of columns of PLS data
-        self.NMOLdataname = 11 # number of columns of MOL data
-        self.NATMdataName = 15# number of columns of ATM data
-        self.NIONdataname = 7# number of columns of ION data
+        # Set         necessary        version         number
+        self.chemFluxDepFileVersion_withSAREA = 1.2
+
+        self.transferFileVersion_withSurfaceResolution = 1.1
+
+        # following are not used (yet)
+        # #########
+
+        self.NPLS_vol_dataname = 27 # number of columns of PLS data
+        self.NMOL_vol_dataname = 11 # number of columns of MOL data
+        self.NATM_vol_VoldataName = 15# number of columns of ATM data
+        self.NION_vol_dataname = 7# number of columns of ION data
         self.NMISCdataname = 11 # number of columns of MISC data
+
+        self.NPLS_surf_dataname = 4
+        self.NATM_surf_dataname = 4
+        self.NMOL_surf_dataname = 14
+        self.NION_surf_dataname = 14
+        # #########
+
+        #puff information
+        self.npuff = 0
+        self.nz1puff = 0
+        self.nz2puff = 0
+
+
+        self.nD2puff = 0
+        self.nDpuff = 0
+        self.nImp1Puff = 0
+        self.nImp2Puff = 0
+
+
 
         #defining storage classes and initialising them
         self.ATM = SimpleNamespace()
@@ -63,207 +90,394 @@ class Eirene():
         self.geom.pump = []
         self.geom.puff = []
 
+        self.ESRF_TYPE_NAMES = []
 
-        self.ATM.dataName = []
-        self.ATM.unitName = []
+
+        self.ATM.VoldataName = []
+        self.ATM.VolunitName = []
+        self.ATM.SurfdataName = []
+        self.ATM.SurfunitName = []
         self.ATM.names = {}
         self.ATM.vol_avg_data = []
         self.ATM.surf_avg_data = []
 
-        self.MOL.dataName = []
-        self.MOL.unitName =  []
+        self.MOL.VoldataName = []
+        self.MOL.VolunitName =  []
+        self.MOL.SurfdataName = []
+        self.MOL.SurfunitName = []
         self.MOL.names ={}
         self.MOL.vol_avg_data = []
         self.MOL.surf_avg_data = []
 
-        self.ION.dataName = []
-        self.ION.unitName= []
+        self.ION.VoldataName = []
+        self.ION.VolunitName= []
+        self.ION.SurfdataName = []
+        self.ION.SurfunitName = []
         self.ION.names ={}
         self.ION.vol_avg_data = []
         self.ION.surf_avg_data = []
 
-        self.PHOT.dataName = []
-        self.PHOT.unitName= []
+        self.PHOT.VoldataName = []
+        self.PHOT.VolunitName= []
+        self.PHOT.SurfdataName = []
+        self.PHOT.SurfunitName = []
         self.PHOT.names ={}
         self.PHOT.vol_avg_data = []
         self.PHOT.surf_avg_data = []
 
-        self.PLS.dataName = []
-        self.PLS.unitName= []
+        self.PLS.VoldataName = []
+        self.PLS.VolunitName= []
+        self.PLS.SurfdataName = []
+        self.PLS.SurfunitName = []
         self.PLS.names ={}
         self.PLS.vol_avg_data = []
         self.PLS.surf_avg_data = []
 
 
-        self.MISC.dataName= []
-        self.MISC.unitName= []
+        self.MISC.VoldataName= []
+        self.MISC.VolunitName= []
+        self.MISC.SurfunitName = []
+        self.MISC.SurfunitName = []
         self.MISC.names = {}
         self.MISC.vol_avg_data = []
         self.MISC.surf_avg_data = []
 
-
-        #initialising names - check with Gerard/Derek
-
-        self.PLS.dataName.append('papl - part.source atm coll.')
-        self.PLS.dataName.append('pmpl - part.source mol coll.')
-        self.PLS.dataName.append('pipl - part.source ion coll.')
-        self.PLS.dataName.append('pphpl - part.source phot coll.')
-        self.PLS.dataName.append('papl+pmpl+pipl - part.source')
-        self.PLS.dataName.append('mapl - mom.source atm coll.')
-        self.PLS.dataName.append('mmpl - mom.source mol coll.')
-        self.PLS.dataName.append('mipl - mom.source ion coll.')
-        self.PLS.dataName.append('mphpl - mom.source phot coll.')
-        self.PLS.dataName.append('mapl+mmpl+mipl - mom.source')
-        self.PLS.dataName.append('diin - plasma density bulk plasma')
-        self.PLS.dataName.append('vxin - plasma drift velocity (x)')
-        self.PLS.dataName.append('vyin - plasma drift velocity (y)')
-        self.PLS.dataName.append('vzin - plasma drift velocity (z)')
-        self.PLS.dataName.append('bvin - ')
-        self.PLS.dataName.append('tiin - plasma temperature bulk plasma')
-        self.PLS.dataName.append('edrift - kinetic energy in drift motion bulk plasma')
-        self.PLS.dataName.append('eapl - eng.source atm coll.')
-        self.PLS.dataName.append('empl - eng.source mol coll.')
-        self.PLS.dataName.append('eipl - eng.source ion coll.')
-        self.PLS.dataName.append('ephpl - eng.source phot coll.')
-        self.PLS.dataName.append('eapl+empl+eipl - eng.source')
-        self.PLS.dataName.append('eael - eng.source electrons atm coll.')
-        self.PLS.dataName.append('emel - eng.source electrons mol coll.')
-        self.PLS.dataName.append('eiel - eng.source electrons ion coll.')
-        self.PLS.dataName.append('ephel - eng.source electrons phot coll.')
-        self.PLS.dataName.append('eael+emel+eiel - eng.source electrons')
+        #
+        #initialising names for volumetric data- check with Gerard/Derek
+        #
+        self.PLS.VoldataName.append('papl - part.source atm coll.')
+        self.PLS.VoldataName.append('pmpl - part.source mol coll.')
+        self.PLS.VoldataName.append('pipl - part.source ion coll.')
+        self.PLS.VoldataName.append('pphpl - part.source phot coll.')
+        self.PLS.VoldataName.append('papl+pmpl+pipl - part.source')
+        self.PLS.VoldataName.append('mapl - mom.source atm coll.')
+        self.PLS.VoldataName.append('mmpl - mom.source mol coll.')
+        self.PLS.VoldataName.append('mipl - mom.source ion coll.')
+        self.PLS.VoldataName.append('mphpl - mom.source phot coll.')
+        self.PLS.VoldataName.append('mapl+mmpl+mipl - mom.source')
+        self.PLS.VoldataName.append('diin - plasma density bulk plasma')
+        self.PLS.VoldataName.append('vxin - plasma drift velocity (x)')
+        self.PLS.VoldataName.append('vyin - plasma drift velocity (y)')
+        self.PLS.VoldataName.append('vzin - plasma drift velocity (z)')
+        self.PLS.VoldataName.append('bvin - ')
+        self.PLS.VoldataName.append('tiin - plasma temperature bulk plasma')
+        self.PLS.VoldataName.append('edrift - kinetic energy in drift motion bulk plasma')
+        self.PLS.VoldataName.append('eapl - eng.source atm coll.')
+        self.PLS.VoldataName.append('empl - eng.source mol coll.')
+        self.PLS.VoldataName.append('eipl - eng.source ion coll.')
+        self.PLS.VoldataName.append('ephpl - eng.source phot coll.')
+        self.PLS.VoldataName.append('eapl+empl+eipl - eng.source')
+        self.PLS.VoldataName.append('eael - eng.source electrons atm coll.')
+        self.PLS.VoldataName.append('emel - eng.source electrons mol coll.')
+        self.PLS.VoldataName.append('eiel - eng.source electrons ion coll.')
+        self.PLS.VoldataName.append('ephel - eng.source electrons phot coll.')
+        self.PLS.VoldataName.append('eael+emel+eiel - eng.source electrons')
 
 
         # set unit names for bulk plasma ions
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp/cm^3')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append('amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append( 'amp*g*cm/(s*cm^3)')
-        self.PLS.unitName.append( '1/cm^3')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( 'cm/s')
-        self.PLS.unitName.append( '?')
-        self.PLS.unitName.append( 'eV')
-        self.PLS.unitName.append( 'eV')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
-        self.PLS.unitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp/cm^3')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append('amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append( 'amp*g*cm/(s*cm^3)')
+        self.PLS.VolunitName.append( '1/cm^3')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( 'cm/s')
+        self.PLS.VolunitName.append( '?')
+        self.PLS.VolunitName.append( 'eV')
+        self.PLS.VolunitName.append( 'eV')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
+        self.PLS.VolunitName.append( 'watt/cm^3')
 
-
-
-
-
-        self.ATM.dataName.append('pdena - atom density')
-        self.ATM.dataName.append('vxdena - atom momentum density (x)')
-        self.ATM.dataName.append('vydena - atom momentum density (y)')
-        self.ATM.dataName.append('vzdena - atom momentum density (z)')
-        self.ATM.dataName.append('vdenpara - atom momentum density (B)')
-        self.ATM.dataName.append('edena - atom energy density')
-        self.ATM.dataName.append('edena/pdena - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('sigma - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('not used - ')
-        self.ATM.dataName.append('paat - part.source atm coll.')
-        self.ATM.dataName.append('pmat - part.source mol coll.')
-        self.ATM.dataName.append('piat - part.source ion coll.')
-        self.ATM.dataName.append('paat+pmat+piat - part.source')
+        self.ATM.VoldataName.append('pdena - atom density')
+        self.ATM.VoldataName.append('vxdena - atom momentum density (x)')
+        self.ATM.VoldataName.append('vydena - atom momentum density (y)')
+        self.ATM.VoldataName.append('vzdena - atom momentum density (z)')
+        self.ATM.VoldataName.append('vdenpara - atom momentum density (B)')
+        self.ATM.VoldataName.append('edena - atom energy density')
+        self.ATM.VoldataName.append('edena/pdena - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('sigma - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('not used - ')
+        self.ATM.VoldataName.append('paat - part.source atm coll.')
+        self.ATM.VoldataName.append('pmat - part.source mol coll.')
+        self.ATM.VoldataName.append('piat - part.source ion coll.')
+        self.ATM.VoldataName.append('paat+pmat+piat - part.source')
 
         # set unit names for neutral atoms
 
-        self.ATM.unitName.append('1/cm^3')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('g*cm/(s*cm^3)')
-        self.ATM.unitName.append('eV/cm^3')
-        self.ATM.unitName.append('eV*s/(g*cm)')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append('?')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append(' ')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
-        self.ATM.unitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('1/cm^3')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('g*cm/(s*cm^3)')
+        self.ATM.VolunitName.append('eV/cm^3')
+        self.ATM.VolunitName.append('eV*s/(g*cm)')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append('?')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append(' ')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
+        self.ATM.VolunitName.append('amp/cm^3')
 
         # set data names for neutral molecules
 
-        self.MOL.dataName.append('pdenm - molecule density')
-        self.MOL.dataName.append('vxdenm - molecule momentum density (x)')
-        self.MOL.dataName.append('vydenm - molecule momentum density (y)')
-        self.MOL.dataName.append('vzdenm - molecule momentum density (z)')
-        self.MOL.dataName.append('vdenpara - molecule momentum density (B)')
-        self.MOL.dataName.append('edenm - molecule energy density')
-        self.MOL.dataName.append('edenm/pdenm - ')
+        self.MOL.VoldataName.append('pdenm - molecule density')
+        self.MOL.VoldataName.append('vxdenm - molecule momentum density (x)')
+        self.MOL.VoldataName.append('vydenm - molecule momentum density (y)')
+        self.MOL.VoldataName.append('vzdenm - molecule momentum density (z)')
+        self.MOL.VoldataName.append('vdenpara - molecule momentum density (B)')
+        self.MOL.VoldataName.append('edenm - molecule energy density')
+        self.MOL.VoldataName.append('edenm/pdenm - ')
 
         # set unit names for neutral molecules
-        self.MOL.unitName.append('1/cm^3')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('g*cm/(s*cm^3)')
-        self.MOL.unitName.append('eV/cm^3')
-        self.MOL.unitName.append('eV*s/(g*cm)')
+        self.MOL.VolunitName.append('1/cm^3')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('g*cm/(s*cm^3)')
+        self.MOL.VolunitName.append('eV/cm^3')
+        self.MOL.VolunitName.append('eV*s/(g*cm)')
 
         # set data names for test ions
 
-        self.ION.dataName.append('pdeni - test ion density')
-        self.ION.dataName.append('vxdeni - test ion momentum density (x)')
-        self.ION.dataName.append('vydeni - test ion momentum density (y)')
-        self.ION.dataName.append('vzdeni - test ion momentum density (z)')
-        self.ION.dataName.append('vdenpara - test ion momentum density (B)')
-        self.ION.dataName.append('edeni - test ion energy density')
-        self.ION.dataName.append('edeni/pdeni - ')
+        self.ION.VoldataName.append('pdeni - test ion density')
+        self.ION.VoldataName.append('vxdeni - test ion momentum density (x)')
+        self.ION.VoldataName.append('vydeni - test ion momentum density (y)')
+        self.ION.VoldataName.append('vzdeni - test ion momentum density (z)')
+        self.ION.VoldataName.append('vdenpara - test ion momentum density (B)')
+        self.ION.VoldataName.append('edeni - test ion energy density')
+        self.ION.VoldataName.append('edeni/pdeni - ')
 
         # set unit names for test ions
-        self.ION.unitName.append('1/cm^3')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('g*cm/(s*cm^3)')
-        self.ION.unitName.append('eV/cm^3')
-        self.ION.unitName.append('eV*s/(g*cm)')
+        self.ION.VolunitName.append('1/cm^3')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('g*cm/(s*cm^3)')
+        self.ION.VolunitName.append('eV/cm^3')
+        self.ION.VolunitName.append('eV*s/(g*cm)')
         #
         # set data names for misc data
 
-        self.MISC.dataName.append('ncltal - ')
-        self.MISC.dataName.append('not used - 1')
-        self.MISC.dataName.append('not used - 2')
-        self.MISC.dataName.append('vol - zone volume')
-        self.MISC.dataName.append('voltal - ')
-        self.MISC.dataName.append('dein - plasma density electrons')
-        self.MISC.dataName.append('tein - plasma temperature electrons')
-        self.MISC.dataName.append('bxin - B unit vector (x)')
-        self.MISC.dataName.append('byin - B unit vector (y)')
-        self.MISC.dataName.append('bzin - B unit vector (z)')
-        self.MISC.dataName.append('bfin - B strength')
+        self.MISC.VoldataName.append('ncltal - ')
+        self.MISC.VoldataName.append('not used - 1')
+        self.MISC.VoldataName.append('not used - 2')
+        self.MISC.VoldataName.append('vol - zone volume')
+        self.MISC.VoldataName.append('voltal - ')
+        self.MISC.VoldataName.append('dein - plasma density electrons')
+        self.MISC.VoldataName.append('tein - plasma temperature electrons')
+        self.MISC.VoldataName.append('bxin - B unit vector (x)')
+        self.MISC.VoldataName.append('byin - B unit vector (y)')
+        self.MISC.VoldataName.append('bzin - B unit vector (z)')
+        self.MISC.VoldataName.append('bfin - B strength')
         #
         # set unit names for misc data
-        self.MISC.unitName.append('?')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append('cm^3')
-        self.MISC.unitName.append('?')
-        self.MISC.unitName.append('1/cm^3')
-        self.MISC.unitName.append('eV')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append(' ')
-        self.MISC.unitName.append('tesla')
+        self.MISC.VolunitName.append('?')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append('cm^3')
+        self.MISC.VolunitName.append('?')
+        self.MISC.VolunitName.append('1/cm^3')
+        self.MISC.VolunitName.append('eV')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append(' ')
+        self.MISC.VolunitName.append('tesla')
+
+
+        #
+        #initialising names for surface data- check with Gerard/Derek
+        #
+
+        # ; set data names for bulk plasma ions
+
+        self.PLS.SurfdataName.append("potpl - Incident part. flux bulk ions")
+        self.PLS.SurfdataName.append("eotpl - Incident enrg. flux bulk ions")
+        self.PLS.SurfdataName.append(
+            "sptpl - Sputtered flux by incident bulk ions")
+        self.PLS.SurfdataName.append("spump - Pumped flux by bulk ions")
+
+        # ; set unit names for bulk plasma ions
+
+        self.PLS.SurfunitName.append("amp")
+        self.PLS.SurfunitName.append("watt")
+        self.PLS.SurfunitName.append("amp")
+        self.PLS.SurfunitName.append("amp")
+
+        # ; set data names for neutral atoms
+
+        self.ATM.SurfdataName.append("potat - Incident part. flux atoms")
+        self.ATM.SurfdataName.append("prfaat - Emitted part. flux atm => atm")
+        self.ATM.SurfdataName.append("prfmat - Emitted part. flux mol => atm")
+        self.ATM.SurfdataName.append(
+            "prfiat - Emitted part. flux test ion => atm")
+        self.ATM.SurfdataName.append(
+            "prfphat - Emitted part. flux photon => atm")
+        self.ATM.SurfdataName.append(
+            "prfpat - Emitted part. flux bulk ion => atm")
+        self.ATM.SurfdataName.append("eotat - Incident enrg. flux atoms")
+        self.ATM.SurfdataName.append("erfaat - Emitted enrg. flux atm => atm")
+        self.ATM.SurfdataName.append("erfmat - Emitted enrg. flux mol => atm")
+        self.ATM.SurfdataName.append(
+            "erfiat - Emitted enrg. flux test ion => atm")
+        self.ATM.SurfdataName.append(
+            "erfphat - Emitted enrg. flux photon => atm")
+        self.ATM.SurfdataName.append(
+            "erfpat - Emitted enrg. flux bulk ion => atm")
+        self.ATM.SurfdataName.append("sptat - Sputtered flux by incident atoms")
+        self.ATM.SurfdataName.append("spump - Pumped flux by atoms")
+
+        # ; set unit names for neutral atoms
+
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('watt')
+        self.ATM.SurfunitName.append('amp')
+        self.ATM.SurfunitName.append('amp')
+
+        # ; set data names for neutral molecules
+
+        self.MOL.SurfdataName.append("potml - Incident part. flux molecules")
+        self.MOL.SurfdataName.append("prfaml - Emitted part. flux atm => mol")
+        self.MOL.SurfdataName.append("prfmml - Emitted part. flux mol => mol")
+        self.MOL.SurfdataName.append(
+            "prfiml - Emitted part. flux test ion => mol")
+        self.MOL.SurfdataName.append(
+            "prfphml - Emitted part. flux photon => mol")
+        self.MOL.SurfdataName.append(
+            "prfpml - Emitted part. flux bulk ion => mol")
+        self.MOL.SurfdataName.append("eotml - Incident enrg. flux molecules")
+        self.MOL.SurfdataName.append("erfaml - Emitted enrg. flux atm => mol")
+        self.MOL.SurfdataName.append("erfmml - Emitted enrg. flux mol => mol")
+        self.MOL.SurfdataName.append(
+            "erfiml - Emitted enrg. flux test ion => mol")
+        self.MOL.SurfdataName.append(
+            "erfphml - Emitted enrg. flux photon => mol")
+        self.MOL.SurfdataName.append(
+            "erfpml - Emitted enrg. flux bulk ion => mol")
+        self.MOL.SurfdataName.append(
+            "sptml - Sputtered flux by incident molecules")
+        self.MOL.SurfdataName.append("spump - Pumped flux by molecules")
+
+        # ; set unit names for neutral molecules
+
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('watt')
+        self.MOL.SurfunitName.append('amp')
+        self.MOL.SurfunitName.append('amp')
+
+        # ; set data names for test ions
+
+        self.ION.SurfdataName.append("potio - Incident part. flux test ions")
+        self.ION.SurfdataName.append("prfaio - Emitted part. flux atm => t.i.")
+        self.ION.SurfdataName.append("prfmio - Emitted part. flux mol => t.i.")
+        self.ION.SurfdataName.append(
+            "prfiio - Emitted part. flux test ion => t.i.")
+        self.ION.SurfdataName.append(
+            "prfphio - Emitted part. flux photon => t.i.")
+        self.ION.SurfdataName.append(
+            "prfpio - Emitted part. flux bulk ion => t.i.")
+        self.ION.SurfdataName.append("eotio - Incident enrg. flux test ions")
+        self.ION.SurfdataName.append("erfaio - Emitted enrg. flux atm => t.i.")
+        self.ION.SurfdataName.append("erfmio - Emitted enrg. flux mol => t.i.")
+        self.ION.SurfdataName.append(
+            "erfiio - Emitted enrg. flux test ion => t.i.")
+        self.ION.SurfdataName.append(
+            "erfphio - Emitted enrg. flux photon => t.i.")
+        self.ION.SurfdataName.append(
+            "erfpio - Emitted enrg. flux bulk ion => t.i.")
+        self.ION.SurfdataName.append(
+            "sptio - Sputtered flux by incident test ions")
+        self.ION.SurfdataName.append("spump - Pumped flux by test ions")
+
+        # ; set unit names for test ions
+
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('watt')
+        self.ION.SurfunitName.append('amp')
+        self.ION.SurfunitName.append('amp')
+
+
+
+        # ; init eirene surface type names
+
+        self.ESRF_TYPE_NAMES.append("time surface")
+        self.ESRF_TYPE_NAMES.append("puffing surface")
+        self.ESRF_TYPE_NAMES.append("pumping surface")
+        self.ESRF_TYPE_NAMES.append("inner core boundary")
+        self.ESRF_TYPE_NAMES.append("target")
+        self.ESRF_TYPE_NAMES.append("radial SOL/private boundary")
+        self.ESRF_TYPE_NAMES.append("vessel surface")
+        self.ESRF_TYPE_NAMES.append("diagnostic surfaces")
+        self.ESRF_TYPE_NAMES.append("semi transparent surfaces")
+
+        self.npump = 0
+        self.npuff = 0
+        self.npuf2 = 0
+        self.nzpuff = 0
+        self.poly = []
+
+        self.nImp1puff = 0
+        self.nImp2puff = 0
+
+
+
+        self.D2puff_sfnum = []
+        self.Dpuff_sfnum = []
+        self.Imp1puff_sfnum = []
+        self.Imp2puff_sfnum = []
+
+
+
+
+
 
         super(Eirene, self).__init__()
 
@@ -276,7 +490,7 @@ class Eirene():
         :return:
         """
         #read triangles coordinates
-        logger.info('reading eirene.npco_char file \n')
+        logger.info(' reading eirene.npco_char file \n')
         self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
         #reads triangles map and vertices
         logger.info( 'reading eirene.elemente file \n')
@@ -289,93 +503,389 @@ class Eirene():
         logger.info( 'reading puff file \n')
         self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
+###################################
         #start reading informations
         logger.info( 'collecting information from eirene.input file \n')
         with open(self.runfolder + 'eirene.input') as f:
             lines = f.readlines()
+
+            text_block3 = '** 3b'
+
             text_atoms_spec = '** 4a NEUTRAL ATOMS SPECIES CARDS:'
             text_mole_spec = '** 4b NEUTRAL MOLECULES SPECIES CARDS'
             text_ion_spec = '**4c TEST ION SPECIES CARDS:'
             text_bulk_spec = '*** 5. DATA FOR PLASMA-BACKGROUND'
             text_phot      = '** 4d photons'
-            info1 = False
-            info2 = False
-            info3 = False
-            info4 = False
-            info_phot = False
+            text_block7 = '*** 7.'
+
+            text_molecular = "*       D2 molecular puff"
+            text_molecular_bis = "molecular fuel puff (wall puff)"
+            text_atomic = "*        D atom puff (CX "
+            text_atomic_bis="atom fuel puff (CX"
+            text_imp1="*   IMP 01 atom puff"
+            text_imp1_bis= "IMP. 1 puff "
+            text_imp2 = "*   IMP 02 atom puff"
+            text_imp2_bis = "IMP. 2 puff "
+            info_text_phot = False
+            info_text_molecular = False
+            info_text_mole_spec = False
+            info_text_phot = False
+            info_text_block7 = False
+            info_text_atoms_spec = False
+            info_text_atomic = False
+            info_text_imp1 = False
+            info_text_imp2 = False
+            info_text_bulk_spec = False
+            info_text_ion_spec = False
 
             for index, line in enumerate(lines):
 
-                if text_atoms_spec in str(line):
-                    index = index +1
+                if text_block3 in str(line):
+                    index =index+1
                     dummy = lines[index].split()
-                    self.natm = int(dummy[0])
-
-                    for i in range(0,self.natm):
+                    self.ntot = int(dummy[0])
+                    index = index + 1
+                    for i in range(0,self.ntot):
+                        if lines[index].startswith('* puff (wall)'):
+                            self.npuff=self.npuff+1
+                            poly=1.0
+                        if lines[index].startswith('* core puff (atomic)'):
+                            self.npuf2 = self.npuf2+1
+                            poly=2.0
+                        if lines[index].startswith('* pump'):
+                            self.npump= self.npump +1
+                            poly=3.0
+                        if lines[index].startswith('* semi'):
+                            self.npump= self.npump+1
+                            poly=3.0
+                        if lines[index].startswith('* zpuff'):
+                            self.nzpuff = self.nzpuff
+                            poly=4.0
+                        index = index + 3
+                        dummy = lines[index].split()
+                        r1 = float(dummy[0])
+                        z1 = float(dummy[1])
+                        phi1 = float(dummy[2])
+                        r2 = float(dummy[3])
+                        z2 = float(dummy[4])
+                        phi2 = float(dummy[5])
+                        self.poly.append([poly,r1,z1,r2,z2])
+                        logger.log(5,"{}".format([poly,r1,z1,r2,z2]))
                         index = index + 1
-                        dummy=lines[index].split()
-                        self.ATM.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2*nreac
-                    info1=True
+                        if not lines[index].startswith('SURFMOD'):
+                            index = index + 3
+                        else:
+                            break
+
+
+
+
+                if text_atoms_spec in str(line):
+                    if info_text_atoms_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.natm = int(dummy[0])
+
+                        for i in range(0,self.natm):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.ATM.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2*nreac
+                        info_text_atoms_spec=True
 
 
                 if text_mole_spec in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nmol = int(dummy[0])
+                    if info_text_mole_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nmol = int(dummy[0])
 
-                    for i in range(0,self.nmol):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.MOL.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info2 = True
+                        for i in range(0,self.nmol):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.MOL.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                        info_text_mole_spec = True
 
                 if text_ion_spec in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nion = int(dummy[0])
+                    if info_text_ion_spec:
+                        pass
+                    else:
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nion = int(dummy[0])
 
-                    for i in range(0,self.nion):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.ION.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info3=True
+                        for i in range(0,self.nion):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.ION.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                            info_text_ion_spec=True
 
                 if text_phot in str(line):
-                    index = index +1
-                    dummy = lines[index].split()
-                    self.nphot = int(dummy[0])
+                    if info_text_phot:
+                        pass
+                    else:
 
-                    for i in range(0,self.nphot):
-                        index = index + 1
-                        dummy=lines[index].split()
-                        self.PHOT.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info_phot=True
+                        index = index +1
+                        dummy = lines[index].split()
+                        self.nphot = int(dummy[0])
+
+                        for i in range(0,self.nphot):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.PHOT.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                        info_text_phot=True
 
                 if text_bulk_spec in str(line):
-                    index = index +2
-                    dummy = lines[index].split()
-                    self.npls = int(dummy[0])
+                    if info_text_bulk_spec:
+                        pass
+                    else:
+                        index = index +2
+                        dummy = lines[index].split()
+                        self.npls = int(dummy[0])
 
-                    for i in range(0,self.npls):
+                        for i in range(0,self.npls):
+                            index = index + 1
+                            dummy=lines[index].split()
+                            self.PLS.names[i] = dummy[1]
+                            nreac = int(dummy[9])
+                            index = index + 2 * nreac
+                            info_text_bulk_spec=True
+
+
+                if text_block7 in str(line):
+                    if info_text_block7:
+                        pass
+                    else:
+                        index =index +1
+                        dummy = lines[index].split()
+                        self.nstrata = int(dummy[0])
+                        info_text_block7 = True
+
+
+
+                if text_molecular in str(line):
+                    if info_text_molecular:
+                        pass
+                    else:
+
+                        index =index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nD2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D molecular puff with{} segments in EIRENE input block 7".format(
+                                       self.nD2puff))
+                        index =index +1
+                        for i in range(0, self.nD2puff):
+                            dummy = lines[index].split()
+                            self.D2puff_sfnum.append(int(dummy[2]))
+                            index = index + 2
+                        info_text_molecular = True
+
+                if text_molecular_bis in str(line):
+                    if info_text_molecular:
+                        pass
+                    else:
+                        index =index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nD2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D molecular puff with {} segments in EIRENE input block 7".format(
+                                       self.nD2puff))
+
+                        for i in range(0, self.nD2puff):
+                            index = index + 1
+                            dummy = lines[index].split()
+                            self.D2puff_sfnum.append(int(dummy[2]))
+                            index = index + 3
+                        info_text_molecular = True
+
+                if text_atomic in str(line):
+                    if info_text_atomic:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nDpuff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nDpuff))
                         index = index + 1
-                        dummy=lines[index].split()
-                        self.PLS.names[i] = dummy[1]
-                        nreac = int(dummy[9])
-                        index = index + 2 * nreac
-                    info4=True
-                if info1 & info2 & info3 & info4 & info_phot is True:
-                    break
+                        for i in range(0, self.nDpuff):
+                            dummy = lines[index].split()
+                            self.Dpuff_sfnum.append(int(dummy[2]))
+                            index = index + 2
+                        info_text_atomic = True
+
+                if text_imp1 in str(line):
+                    if info_text_imp1:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp1puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 01 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp1puff))
+                        index = index + 1
+                        for i in range(0, self.nImp1puff):
+                            dummy = lines[index].split()
+                            self.Imp1puff_sfnum.append(int(dummy[2]))
+                            index = index + 4
+                            info_text_imp1 = True
+
+                if text_imp2 in str(line):
+                    if info_text_imp2:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 02 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp2puff))
+                        index = index + 1
+                        for i in range(0, self.nImp2puff):
+                            dummy = lines[index].split()
+                            self.Imp2puff_sfnum.append(int(dummy[2]))
+                            index = index + 4
+                        info_text_imp2 = True
+
+                if text_atomic_bis in str(line):
+                    if info_text_atomic:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nDpuff = int(dummy[0])
+                        logger.log(5,
+                                   "Found D atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nDpuff))
+                        index = index + 1
+                        for i in range(0, self.nDpuff):
+                            dummy = lines[index].split()
+                            self.Dpuff_sfnum.append(int(dummy[2]))
+                            index = index + 4
+                        info_text_atomic= True
+
+                if text_imp1_bis in str(line):
+                    if info_text_imp1:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp1puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 01 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp1puff))
+                        index = index + 1
+                        for i in range(0, self.nImp1puff):
+                            dummy = lines[index].split()
+                            self.Imp1puff_sfnum.append(int(dummy[2]))
+                            index = index + 4
+                        info_text_imp1 = True
+
+                if text_imp2_bis in str(line):
+                    if info_text_imp2:
+                        pass
+                    else:
+                        index = index + 7
+
+                        dummy = lines[index].split()
+
+                        self.nImp2puff = int(dummy[0])
+                        logger.log(5,
+                                   "Found IMP 02 atomic puff with {} segments in EIRENE input block 7".format(
+                                       self.nImp2puff))
+                        index = index + 1
+                        for i in range(0, self.nImp2puff):
+                            dummy = lines[index].split()
+                            self.Imp2puff_sfnum.append(int(dummy[2]))
+                            index = index + 4
+                        info_text_imp2 = True
+
+                # if info_text_imp2 & info_text_imp1 & info_text_atomic & info_text_phot & info_text_atoms_spec & info_text_block7 & info_text_mole_spec  & info_text_molecular  is True:
+                #     break
             f.close()
 
+        logger.info("Found {} D2 wall puffs".format(self.npuff))
+        logger.info("Found {} D core puffs".format(self.nDpuff))
+        logger.info("Found {} impurity 01 puffs".format(self.nImp1puff))
+        logger.info("Found {} impurity 02 puffs".format(self.nImp2puff))
+        logger.info("Found {} pumps".format(self.npump))
 
+        self.puff_polygon  = []
+        self.puf2_polygon  = []
+        self.pump_polygon  = []
+        self.zpuff2_polygon  = []
+        self.zpuff1_polygon  = []
+
+
+        for i in range(0, self.npuff):
+            if (self.poly[i][0] == 3.0):
+                newlist=self.poly[i][1:4]
+                newlist = [x / 100 for x in newlist]
+                # self.pump_polygon.append(self.poly[i][1:4] )
+                self.pump_polygon.append(newlist )
+        # self.pump_polygon = [x / 100 for x in self.pump_polygon]
+
+        for i in range(0,self.nD2puff):
+            newlist = self.poly[self.D2puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.puff_polygon.append(self.D2puff_sfnum[i][1:4])
+            # self.puff_polygon.append(self.poly[self.D2puff_sfnum[i]][1:4])
+            self.puff_polygon.append(newlist)
+        # self.puff_polygon = [x / 100 for x in self.puff_polygon]
+
+        for i in range(0,self.nDpuff):
+            newlist = self.poly[self.Dpuff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.puf2_polygon.append(self.Dpuff_sfnum[i][1:4])
+            self.puf2_polygon.append(newlist)
+            # self.puf2_polygon.append(self.poly[self.Dpuff_sfnum[i]][1:4])
+        # self.puf2_polygon = [x / 100 for x in self.puf2_polygon]
+
+        for i in range(0,self.nImp1puff):
+            newlist = self.poly[self.Imp1puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.zpuff2_polygon.append(self.Imp1puff_sfnum[i][1:4])
+            self.zpuff2_polygon.append(newlist)
+            # self.zpuff2_polygon.append(self.poly[self.Imp1puff_sfnum[i]][1:4])
+        # self.zpuff2_polygon = [x / 100 for x in self.zpuff2_polygon]
+
+        for i in range(0,self.nImp2puff):
+            newlist = self.poly[self.Imp2puff_sfnum[i]][1:4]
+            newlist = [x / 100 for x in newlist]
+            # self.zpuff1_polygon.append(self.Imp2puff_sfnum[i][1:4])
+            self.zpuff1_polygon.append(newlist)
+            # self.zpuff1_polygon.append(self.poly[self.Imp2puff_sfnum[i]][1:4])
+        # self.zpuff1_polygon = [x / 100 for x in self.zpuff1_polygon]
+
+###################################
 
         # read transfer file and store data as pandas dataframe (first column is always a pandas index!)
         logger.info( 'reading eirene.transfer file \n')
@@ -390,6 +900,20 @@ class Eirene():
 
         
         lines = f.readlines()
+        text_version = '* Neutral transfer file version:'
+        row_to_skip = 0
+        for index, line in enumerate(lines):
+            if text_version in str(line):
+                dummy = lines[index].split()
+                transfer_version = float(dummy[-1])
+
+                if transfer_version < self.transferFileVersion_withSurfaceResolution:
+                    logger.warning(
+                'Need at least eirene.transfer file version {} to allow surface plotting of EIRENE data'.format(
+                    self.transferFileVersion_withSurfaceResolution))
+            break
+
+
         text = '* nlimps'
         for index, line in enumerate(lines):
             if text in str(line):
@@ -398,28 +922,50 @@ class Eirene():
                 self.nlimps = int(dummy[0])
                 self.nlim = int(dummy[1])
                 self.nsts = int(dummy[2])
-                break
-        row_to_skip=index+3
+                if transfer_version>= self.transferFileVersion_withSurfaceResolution:
+                    self.nlmps= int(dummy[3])
+                    row_to_skip = index + 3
+                    surface_points = self.nlmps
+                    break
+                else:
+                    surface_points=self.nlimps
+                    row_to_skip = index + 2
+                    break
+
         logger.log(5, row_to_skip)
                 # 5          27        6086
-        logger.log(5,' reading bulk plasma data')
+        logger.info(' reading bulk plasma data')
         for i in range(0, self.npls):
             #READING DATA AS A BLOCK
-            dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             #dummy1 contains all volumetric average data for a species (has NPLSdataname column +1, the index)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1#
             logger.log(5, row_to_skip)
             #dummy2 contains surface average data for the same specie
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip +self.nlimps+ 2
+            row_to_skip = row_to_skip +surface_points+ 2
             logger.log(5, row_to_skip)
 
             #as I loop through species I append this block, creating a big block matrix
@@ -439,21 +985,35 @@ class Eirene():
 
         # row_to_skip = 30648
         #row to skip should be 30647
-        logger.log(5, ' reading neutral atom data')
+        logger.info(' reading neutral atom data')
         for i in range(0,self.natm):
-            dummy1= pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
-            # 36730
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
+                # 36730
             dummy1.fillna(0, inplace=True)  # converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip +self.nlimps+ 1
+            row_to_skip = row_to_skip +surface_points+ 1
             logger.log(5, row_to_skip)
             self.ATM.vol_avg_data.append(dummy1)
             self.ATM.surf_avg_data.append(dummy2)
@@ -467,20 +1027,34 @@ class Eirene():
 
         row_to_skip = row_to_skip + 1
         logger.log(5,row_to_skip)
-        logger.log(5, ' reading neutral molecules data')
+        logger.info(' reading neutral molecules data')
         for i in range(0,self.nmol):
-            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip', skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip + self.nlimps + 2
+            row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.MOL.vol_avg_data.append(dummy1)
             self.MOL.surf_avg_data.append(dummy2)
@@ -495,22 +1069,34 @@ class Eirene():
         # row_to_skip = row_to_skip + 1
         # logger.log(5, row_to_skip)
 
-
-
-        logger.log(5, ' reading test ions data')
+        logger.info('  reading test ions data')
         for i in range(0,self.nion):
-            dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            try:
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            except:
+                dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                     nrows=self.geom.trimap.shape[0],
+                                     delim_whitespace=True, header=None,
+                                     index_col=False, error_bad_lines=False,
+                                     warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
-            dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
+            try:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
-                                 nrows=self.nlimps,
+                                 nrows=surface_points,
+                                 delim_whitespace=True, header=None,
+                                 index_col=False, error_bad_lines=False,
+                                 warn_bad_lines=False)
+            except:
+                dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
+                                 nrows=surface_points,
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip + self.nlimps + 2
+            row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.ION.vol_avg_data.append(dummy1)
             self.ION.surf_avg_data.append(dummy2)
@@ -522,20 +1108,345 @@ class Eirene():
                                            axis=0)  # concatenates as row
         self.ION.surf_avg_data.reset_index(drop=True, inplace=True)
 
-
-        logger.log(5, ' reading miscellaneous data')
-        self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        logger.info('  reading miscellaneous data')
+        try:
+            self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+        except:
+            self.MISC.vol_avg_data = pd.read_csv(
+                self.runfolder + 'eirene.transfer',
+                skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],
+                delim_whitespace=True, header=None, index_col=False,
+                error_bad_lines=False, warn_bad_lines=False)
         self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
 
+        logger.debug(" stratum data is not read YET!")
 
-        logger.log(5, "stratum data is not read YET!")
+###################################
+        logger.info(' reading EIRENE ChemFluxDep \n')
 
-        logger.log(5, 'done \n')
+        exists = os.path.isfile(self.runfolder + 'eirene.chemFluxDep')
+
+        if exists:
+
+            f = open(self.runfolder + 'eirene.chemFluxDep', 'rb')
+            lines = f.readlines()
+            text='*  NLIM'
+            text_version = '* Neutral flux file version:'
+            # if
+            row_to_skip =0
+            for index, line in enumerate(lines):
+                if text_version in str(line):
+                    dummy = lines[index].split()
+                    version= float(dummy[-1])
+                    break
+            if version < self.chemFluxDepFileVersion_withSAREA:
+                logger.warning(
+                    'Need at least eirene.chemFluxDep file version {} to allow surface plotting of EIRENE data'.format(
+                        self.chemFluxDepFileVersion_withSAREA))
+                return
+            else:
+                for index, line in enumerate(lines):
+
+                        if text in str(line):
+                            index = index + 1
+                            dummy = lines[index].split()
+                            self.NLIM_tmp = int(dummy[0])
+                            self.NSTS_tmp = int(dummy[1])
+                            self.NGITT = int(dummy[2])
+                            self.NGSTAL = int(dummy[3])
+                            # self.NATM = int(dummy[4])
+                            # self.NMOL = int(dummy[5])
+                            self.NLMPGS  = int(dummy[6])
+                            self.NTRII = int(dummy[7])
+
+
+                            if self.nlim != self.NLIM_tmp:
+                                logger.error('NLIM from eirene.chemFluxDep not equal to eirene.transfer! STOPPING')
+                            # return
+                            else:
+                                row_to_skip = index + 3
+                                logger.log(5, row_to_skip)
+                                # 5          27        6086
+                                logger.info('  reading bulk plasma data')
+                                # for i in range(0, self.NLIM_tmp):
+                                    # READING DATA AS A BLOCK
+                                dummy1 = pd.read_csv(self.runfolder + 'eirene.chemFluxDep',
+                                                         skiprows=row_to_skip,
+                                                         nrows=self.NLMPGS,
+                                                         delim_whitespace=True, header=None,
+                                                         index_col=False, error_bad_lines=False,
+                                                         warn_bad_lines=False)
+
+                                    # readf,1,idum1,rdum1,rdum2,idum2,idum3,idum4
+                                self.ESRF_SAREA_atom = np.asarray(dummy1[dummy1.columns[2]])
+                                self.ESRF_ITRIA_atom = np.asarray(dummy1[dummy1.columns[3]])
+                                self.ESRF_ISIDE_atom = np.asarray(dummy1[dummy1.columns[4]])
+                                self.ESRF_ISURF_atom = np.asarray(dummy1[dummy1.columns[5]])
+
+                                row_to_skip = row_to_skip + self.NLMPGS +2
+
+                                dummy1 = pd.read_csv(
+                                    self.runfolder + 'eirene.chemFluxDep',
+                                    skiprows=row_to_skip,
+                                    nrows=self.NLMPGS,
+                                    delim_whitespace=True, header=None,
+                                    index_col=False, error_bad_lines=False,
+                                    warn_bad_lines=False)
+
+                                # readf,1,idum1,rdum1,rdum2,idum2,idum3,idum4
+                                self.ESRF_SAREA_mol = np.asarray(
+                                    dummy1[dummy1.columns[2]])
+                                self.ESRF_ITRIA_mol = np.asarray(
+                                    dummy1[dummy1.columns[3]])
+                                self.ESRF_ISIDE_mol = np.asarray(
+                                    dummy1[dummy1.columns[4]])
+                                self.ESRF_ISURF_mol = np.asarray(
+                                    dummy1[dummy1.columns[5]])
+
+
+
+
+        else:
+            logger.warning('eirene.ChemFluxDep file was NOT found')
+###################################
+        logger.info(' reading EIRENE surfaces \n')
+
+        exists = os.path.isfile(self.runfolder + 'eirene.surfaces')
+
+        if exists:
+            data = read_surfaces_file(self.runfolder + 'eirene.surfaces')
+            
+            self.ESRF_TYPES = np.asarray(data[data.columns[1]])
+            self.ESRF_NAMES = np.asarray(data[data.columns[3]])
+
+        else:
+            logger.warning('eirene.surfaces file was NOT found')
+
+
+
+###################################
+        logger.info(' reading geometrical info \n')
+        sh = ep.data(self.runfolder + 'tran', 'SH').data
+        self.sh = np.trim_zeros(sh, 'b')
+        hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
+        self.hrho = np.trim_zeros(hrho, 'b')
+        rmesh = ep.data(self.runfolder + 'tran', 'RMESH').data
+        self.rmesh = np.trim_zeros(rmesh, 'b')
+
+###################################
+
         logger.info( 'reading eirene data done! \n')
-                        
+
+        self.create_connected_eirene_surface(1)
+
+    def create_connected_eirene_surface(self, iselect,atmmol=None):
+
+        if iselect >9:
+            logger.error('Surface number must be <9')
+            return
+
+        if atmmol =='atm':
+            ESRF_SAREA = self.ESRF_SAREA_atom
+            ESRF_ITRIA = self.ESRF_ITRIA_atom
+            ESRF_ISIDE = self.ESRF_ISIDE_atom
+            ESRF_ISURF = self.ESRF_ISURF_atom
+        elif atmmol =='mol':
+            ESRF_SAREA = self.ESRF_SAREA_mol
+            ESRF_ITRIA = self.ESRF_ITRIA_mol
+            ESRF_ISIDE = self.ESRF_ISIDE_mol
+            ESRF_ISURF = self.ESRF_ISURF_mol
+        else:
+            ESRF_SAREA = self.ESRF_SAREA_mol
+            ESRF_ITRIA = self.ESRF_ITRIA_mol
+            ESRF_ISIDE = self.ESRF_ISIDE_mol
+            ESRF_ISURF = self.ESRF_ISURF_mol
 
 
-    def plot_eirene(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
+        isrf = self.nlim + iselect
+        surface_number = isrf + 1
+        logger.log(5,
+                   "creating connected polygon groups for surface {}, EIRENE surface number= {}".format(
+                       self.ESRF_NAMES[isrf], surface_number))
+        surface_name = self.ESRF_NAMES[isrf]
+
+        # poly = lonarr(NLMPGS,2)
+
+        poly_sfidx = np.zeros(self.NLMPGS,dtype=int)
+        npoly = 0
+        x = []
+        y = []
+        for i in range(0, self.NLMPGS):
+            if ESRF_ISURF[i] == isrf+1:
+                itria = ESRF_ITRIA[i] - 1
+                iside = ESRF_ISIDE[i] - 1
+                ip1 = iside
+                ip2 = ip1 + 1
+                if ip2 > 2: ip2=ip2-3
+
+                x.append(self.geom.trimap[itria, ip1])
+                y.append(self.geom.trimap[itria, ip2])
+
+                poly_sfidx[npoly] = i
+                npoly = npoly+1
+
+        poly=np.stack([x,y])
+        npoly_size = poly.shape[1]
+
+        logger.log(5, "Found {} polygons for this surface".format(npoly))
+        #
+        # # Check connectivity
+        poly_added = np.zeros(npoly,dtype=bool)
+
+        poly_idx = np.zeros(npoly,dtype=int)
+
+        #
+        npoly_group = 0
+        poly_group_x = np.zeros(npoly,dtype=int)
+        poly_group_y = np.zeros(npoly,dtype=int)
+        #
+        tip = 0
+        tail = 0
+
+        poly_idx[tail] =0
+        poly_added[0]=True
+        #
+        piece_left = True  # true
+        piece_added = False  # false
+        #
+        # self.plot_eirene_grid()
+        # plt.plot(poly[0],poly[1],'b')
+        # plt.show()
+        while piece_left:
+            # logger.log(5,"Current tip: {} {} {} {}".format(tip,poly_idx[tip], poly[0][poly_idx[tip]], poly[1][poly_idx[tip]]))
+            # logger.log(5,"Current tail: {} {} {} {}".format(tail,poly_idx[tail], poly[0][poly_idx[tail]], poly[1][poly_idx[tail]]))
+
+            piece_added = False  # false
+            for i in range(0, npoly):
+                # logger.log(5," i= {}".format(i))
+                if not poly_added[i]:
+                    # ;          found poly piece which is not yet added
+                    logger.log(5,"Checking poly {} {} {}: ".format(i,poly[0][i],poly[1][i]))
+                    if (poly[1][poly_idx[tail]] == poly[0][i]):
+        #
+
+                        # poly_idx = np.append(poly_idx, 1)
+                        poly_idx[tail] = i
+                        tail = tail + 1
+                        poly_added[i]=True  # mark poly piece to be already added
+
+                        piece_added = True  # remember that a piece was added
+                    elif poly[1][poly_idx[tail]] == poly[1][i]:
+        # #             switch order of points in poly
+                        idummy = poly[0][i]
+                        poly[0][i] = poly[1][i]
+                        poly[1][i] = idummy
+
+        # #             add poly piece to tail
+
+                        poly_idx[tail] = i
+                        tail = tail + 1
+                        poly_added[i] = True  # mark poly piece to be already added
+
+                        piece_added = True  # remember that a piece was added
+                    elif poly[0][poly_idx[tail]] == poly[1][i]:
+        # #             shift polygon upwards
+                        for j in range(tail, tip):
+                            poly_idx[j + 1] = poly_idx[j]
+
+        # #             add poly piece to tip
+                        tail = tail + 1
+
+                        poly_idx[tip] = i
+
+                        poly_added[i] = True   # mark poly piece to be already added
+                        piece_added = True  # remember that a piece was added
+                    elif poly[0][poly_idx[tail]] == poly[0][i]:
+        # #             switch order of points in poly
+                        idummy = poly[0][i]
+                        poly[0][i] = poly[1][i]
+                        poly[1][i] = idummy
+                    #             shift polygon upwards
+                        for j in range(tail, tip):
+                            poly_idx[j + 1] = poly_idx[j]
+
+            # #             add poly piece to tip
+                        tail = tail + 1
+
+                        poly_idx[tip] = i
+                        poly_added[i] = True   # mark poly piece to be already added
+                        piece_added = True  # remember that a piece was added
+            if not piece_added:
+        # #       No piece was added so the poly group is finished
+        # #       add new poly group
+                poly_group_x[npoly_group] = tip
+                poly_group_y[npoly_group] = tail
+                npoly_group = npoly_group + 1
+                logger.log(5,"Polygon indices in group {}".format(npoly_group))
+
+            # #       get next group start piece
+                piece_left = False  # false
+                for j in range(0,npoly):
+                    # logger.log(5, " j= {}".format(j))
+                    if not poly_added[j]:
+                        piece_left = True
+                        tip = tail + 1
+
+                        poly_idx[tail] = j
+                        tail = tail + 1
+                        poly_added[i] = True   # mark poly piece to be already added
+                        break
+
+        poly_group = np.stack([poly_group_x, poly_group_y])
+        self.surface_npoly_group = npoly_group
+        # surface_poly_group = lonarr(npoly_group, 2)
+        self.surface_poly_group = [poly_group[0][0:npoly_group],poly_group[1][0:npoly_group]]
+        self.surface_npoly = npoly
+        # surface_poly = lonarr(npoly, 2)
+        self.surface_poly = [poly[0][0:npoly],poly[1][0:npoly]]
+        # surface_poly_idx = lonarr(npoly)
+        self.surface_poly_idx = poly_idx[0:npoly]
+        # surface_poly_sfidx = lonarr(npoly)
+        self.surface_poly_sfidx = poly_sfidx[0:npoly]
+
+        logger.log(5, "Found {} polygon groups in this surface".format(self.surface_npoly_group))
+        for i in range(0,self.surface_npoly_group):
+            n = self.surface_poly_group[1][i] - self.surface_poly_group[0][i] + 1
+            logger.log(5,"Group {} has {} polygons".format(i+1,n))
+            # for j in range(self.surface_poly_group[0][i] ,  self.surface_poly_group[1][i] ):
+            #     logger.log(5,"{} {} {} {}".format( j, self.surface_poly_idx[j], poly[0][poly_idx[j]], poly[1][poly_idx[j]]))
+
+        print('surface_npoly_group',self.surface_npoly_group)
+        print('surface_poly_group',self.surface_poly_group)
+        print('surface_npoly',self.surface_npoly)
+        print('surface_poly',self.surface_poly)
+        print('surface_poly_idx',self.surface_poly_idx)
+        print('surface_poly_sfidx',self.surface_poly_sfidx)
+
+    def assemble_eirene_surfaces(self,group,iselect):
+
+        isrf = self.nlim + iselect
+        surface_number = isrf + 1
+
+        logger.info("assembling surface group {} for surface {}".format(group+1),self.ESRF_NAMES[isrf])
+
+        npolygon = self.surface_poly_group[1][group] - self.surface_poly_group[0][group] + 1
+        logger.log(5, "Surface group has {} polygons".format(npolygon))
+        # surface_polygon = dblarr(npolygon,4)
+        self.surface_polygon_sfidx = np.zeros(npolygon)
+
+        for i in range(0,npolygon):
+            idx = surface_poly_group[0][group]+i
+            surface_polygon_x1.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[0][idx]]])
+            surface_polygon_y1.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[0][idx]]])
+            surface_polygon_x2.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[1][idx]]])
+            surface_polygon_y2.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[1][idx]]])
+
+            self.surface_polygon_sfidx[i]=surface_poly_sfidx[self.surface_poly_idx[idx]]
+
+        self.surface_polygon= np.stack([surface_polygon_x1,surface_polygon_y1,surface_polygon_x2,surface_polygon_y2])
+
+
+    def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
         :param data input data (dataframe, string or empty)
@@ -545,7 +1456,7 @@ class Eirene():
         :param var:
         column number indentifying variables
         :param label: simu.data.eirene.ATM.names[species] + \
-            simu.data.eirene.ATM.dataName[species]
+            simu.data.eirene.ATM.VoldataName[species]
         :param lowerbound minimum value to be used to normalise data
         :param upperbound minimum value to be used to normalise data
 
@@ -556,14 +1467,14 @@ class Eirene():
             # I want Be1+
             species =1
             data = simu.data.eirene.PLS.vol_avg_data
-            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.dataName[26]
+            label = simu.data.eirene.PLS.names[species-1] + simu.data.eirene.PLS.VoldataName[26]
 
             # I want D
             species = 0
             species_name = simu.data.eirene.ATM.names[species]
             data = simu.data.eirene.ATM.vol_avg_data
             label = simu.data.eirene.ATM.names[species] + \
-            simu.data.eirene.ATM.dataName[species]
+            simu.data.eirene.ATM.VoldataName[species]
 
             simu.data.eirene.plot_eirene(data=data,species=species,label=label)
 
@@ -583,15 +1494,15 @@ class Eirene():
             #accessing data inside the block matrix
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
         elif data is "MOL":
-            data = self.MOL.vol_avg_data[triangnum*(species):(species)*triangnum]
+            data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.unitName[0]
+            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
         elif data is "ATM":
             data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.ATM.names[0] +' - '+ self.ATM.unitName[0]
+            label = self.ATM.names[0] +' - '+ self.ATM.VolunitName[0]
         elif isinstance(data,np.ndarray):
             data = data[triangnum*(species):(species+1)*triangnum]
             label = label
@@ -697,7 +1608,7 @@ class Eirene():
         :param subdivertor_file: location of subdivertor structure file
         :return:
         """
-        logger.info('plotting subdivertor structure \n')
+        logger.info(' plotting subdivertor structure \n')
         #reading edge2d mesh
         rvert = ep.data(path, 'RVERTP').data
         rvert = np.trim_zeros(rvert, 'b')
@@ -846,7 +1757,7 @@ class Eirene():
         :param pufffile: if using a catalogued puff file is not saved, so user can provide it
         :return:
         """
-        logger.info('plotting eirene grid \n')
+        logger.info(' plotting eirene grid \n')
 
         logger.log(5," reading puff file")
         if pufffile is None:#

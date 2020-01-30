@@ -3,7 +3,7 @@
 
 # ----------------------------
 __author__ = "Bruno Viola"
-__Name__ = "KG1 RO tool GUI" 
+__Name__ = "bruvio tool GUI"
 __version__ = "0"
 __release__ = "2"
 __maintainer__ = "Bruno Viola"
@@ -23,7 +23,11 @@ from ppf import *
 import bruvio_tools
 from MAGTool import *  # Magnetics Tool
 
-from PyQt4 import Qt, QtCore,QtGui
+# from PyQt4 import Qt, QtCore,QtGui
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from magSurfGA_SL import Ui_magsurf_window
 from edge2d_window import Ui_edge2d_window
 from eqdsk_window import Ui_eqdsk_window
@@ -55,7 +59,7 @@ myself = lambda: inspect.stack()[1][3]
 logger = logging.getLogger(__name__)
 
 
-class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
+class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
     """
     Class for running the GUI and handling events.
 
@@ -78,8 +82,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.home = cwd
         parent= Path(self.home)
         # print(parent.parent)
-
-        self.edge2dfold = str(parent.parent)+'/EDGE2D'
+        # print(parent)
+        # raise SystemExit
+        # self.edge2dfold = str(parent.parent)+'/EDGE2D'
+        self.edge2dfold = str(parent)
         if "USR" in os.environ:
             logger.debug('USR in env')
             #self.owner = os.getenv('USR')
@@ -89,17 +95,20 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             import getpass
             self.owner = getpass.getuser()
 
-        logger.debug('this is your username {}'.format(self.owner))
+        logger.info('this is your username {}'.format(self.owner))
         self.homefold = os.path.join(os.sep, 'u', self.owner)
-        logger.debug('this is your homefold {}'.format(self.homefold))
-        logger.debug('this is edge2d fold {}'.format(self.edge2dfold))
+        logger.info('this is your homefold {}'.format(self.homefold))
+        logger.info('this is edge2d fold {}'.format(self.edge2dfold))
         home = str(Path.home())
 
 
-        logger.debug('we are in %s', cwd)
+        logger.info('we are in %s', cwd)
 
 
         pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
+        pathlib.Path(cwd + os.sep + 'e2d_data').mkdir(parents=True,exist_ok=True)
+        pathlib.Path(cwd + os.sep + 'exp_data').mkdir(parents=True,exist_ok=True)
+
         pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
 
         self.readdata_button.clicked.connect(self.handle_readdata_button)
@@ -128,7 +137,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('\n')
         logger.info('plotting tool')
 
-        self.window_plotdata = QtGui.QMainWindow()
+        self.window_plotdata = QMainWindow()
         self.ui_plotdata = Ui_plotdata_window()
         self.ui_plotdata.setupUi(self.window_plotdata)
         self.window_plotdata.show()
@@ -143,6 +152,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
         self.ui_plotdata.savefigure_checkBox.setChecked(False)
+        self.ui_plotdata.smooth_checkBox.setChecked(False)
         self.ui_plotdata.checkBox.setChecked(False)
         self.ui_plotdata.checkBox.toggled.connect(
             lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
@@ -159,7 +169,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('\n')
         logger.info('eqdsk tool')
 
-        self.window_eqdsk = QtGui.QMainWindow()
+        self.window_eqdsk = QMainWindow()
         self.ui_eqdsk = Ui_eqdsk_window()
         self.ui_eqdsk.setupUi(self.window_eqdsk)
         self.window_eqdsk.show()
@@ -206,7 +216,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ExtraInput = 0
         self.PathCatalog = '/home'
 
-        self.edge2d_window = QtGui.QMainWindow()
+        self.edge2d_window = QMainWindow()
         self.ui_edge2d = Ui_edge2d_window()
         self.ui_edge2d.setupUi(self.edge2d_window)
         self.edge2d_window.show()
@@ -225,12 +235,12 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
 
 
-        self.ui_edge2d.lineEdit_1st.setText('input_dict_84600.json')
-        self.JSONSS1 = 'input_dict_84600.json'
-        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600.json')
-        self.JSONSS2 = 'compare_dict_84600.json'
+        self.ui_edge2d.lineEdit_1st.setText('compare_dict_84600.json')
+        self.JSONSS1 = 'compare_dict_84600.json'
+        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600_tuningVassili.json')
+        self.JSONSS2 = 'compare_dict_84600_tuningVassili.json'
 
-        fsm = Qt.QFileSystemModel()
+        fsm = QFileSystemModel()
         index = fsm.setRootPath(self.PathCatalog)
         # self.comboBox = Qt.QComboBox()
         self.ui_edge2d.comboBox_Name.setModel(fsm)
@@ -316,7 +326,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # os.chdir(self.home)
 
     def handle_magsurf_button(self):
-        self.magsurf_window = QtGui.QMainWindow()
+        self.magsurf_window = QMainWindow()
         self.ui_magsurf = Ui_magsurf_window()
         self.ui_magsurf.setupUi(self.magsurf_window)
         plt.close()
@@ -456,7 +466,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         inputfilefortran = '/work/bviola/Fortran/tokmagnmap_mac/tokinfo.txt'
         logger.info('opening input file to Fortran code')
         # os.system('kate {}'.format(inputfilefortran))
-        subprocess.Popen('kate {}'.format(inputfilefortran), shell=True)
+        subprocess.Popen('atom {}'.format(inputfilefortran), shell=True)
 
 
 
@@ -1622,7 +1632,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         # filter = "JSON(*.json)"
         # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
         os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
-        self.JSONSS = QtGui.QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+        self.JSONSS = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
 
         self.JSONSSname = os.path.basename(self.JSONSS)
         logger.debug('you have chosen {}'.format(self.JSONSSname))
@@ -1640,6 +1650,10 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         else:
             save = False
 
+        if self.ui_plotdata.smooth_checkBox.isChecked():
+            smooth = True
+        else:
+            smooth = False
         # pulselist = pulselist.rstrip()
 
         pulselist = [int(i) for i in pulselist]
@@ -1658,7 +1672,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
         if self.owner =='bviola':
             os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
 
-        plot_time_traces(self.JSONSSname, inputlist,save=save)
+        plot_time_traces(self.JSONSSname, inputlist,save=save,smooth=smooth)
         #plt.show(block=True)
         if self.owner == 'bviola':
             os.chdir(self.home)
@@ -1774,12 +1788,12 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             if button.text() == "edit JSON1":
 
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
-                subprocess.Popen('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1), shell=True)
+                subprocess.Popen('atom {}'.format(self.edge2dfold+'/'+self.JSONSS1), shell=True)
 
                 self.ui_edge2d.edit_JSON1.setChecked(False)
             if button.text() == "edit JSON2":
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
-                subprocess.Popen('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2), shell=True)
+                subprocess.Popen('atom {}'.format(self.edge2dfold+'/'+self.JSONSS2), shell=True)
                 self.ui_edge2d.edit_JSON2.setChecked(False)
 
             if button.isChecked() == True:
@@ -1787,7 +1801,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                     # os.system(
                     #     'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
 
-                    subprocess.Popen('kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSSname), shell=True)
+                    subprocess.Popen('atom {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSSname), shell=True)
                     self.ui_plotdata.checkBox.setChecked(False)
 
 
@@ -1821,22 +1835,22 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
                 logger.error('choose a simulation first')
             else:
 
-                names = ep.names(self.PathTranfile, 1, 0, 0, 0, 1)
+                names = ep.names(self.PathTranfile, 1, 0, 0, 0)
         if self.ui_edge2d.checkBox_time.isChecked() == True:
             if self.PathTranfile is None:
                 logger.error('choose a simulation first')
             else:
-                names = ep.names(self.PathTranfile, 0, 1, 0, 0, 1)
+                names = ep.names(self.PathTranfile, 0, 1, 0, 0)
         if self.ui_edge2d.checkBox_flux.isChecked() == True:
             if self.PathTranfile is None:
                 logger.error('choose a simulation first')
             else:
-                names = ep.names(self.PathTranfile, 0, 0, 1, 0, 1)
+                names = ep.names(self.PathTranfile, 0, 0, 1, 0)
         if self.ui_edge2d.checkBox_geom.isChecked() == True:
             if self.PathTranfile is None:
                 logger.error('choose a simulation first')
             else:
-                names = ep.names(self.PathTranfile, 0, 0, 0, 1, 1)
+                names = ep.names(self.PathTranfile, 0, 0, 0, 1)
 
         if (self.ui_edge2d.checkBox_profile.isChecked() == False &
             self.ui_edge2d.checkBox_time.isChecked() == False &
@@ -1845,7 +1859,7 @@ class bruvio_tool(QtGui.QMainWindow, bruvio_tools.Ui_MainWindow):
             if self.PathTranfile is None:
                 logging.error('choose a simulation first')
             else:
-                names = ep.names(self.PathTranfile, 1, 1, 1, 1, 1)
+                names = ep.names(self.PathTranfile, 1, 1, 1, 1)
 
 
 
@@ -1947,11 +1961,11 @@ def main():
     """
     logger.info("Running bruvio tool.")
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     MainWindow = bruvio_tool()
     MainWindow.show()
     app.exec_()
-    
+
 
 
 if __name__ == '__main__':
@@ -1960,7 +1974,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
                              " 3: Error, 4: Debug Plus; \n default level is INFO",
-                        default=4)
+                        default=0)
     # parser.add_argument("-d", "--debug", type=int,
     #                     help="Debug level. 0: Info, 1: Warning, 2: Debug,"
     #                         " 3: Error; \n default level is INFO", default=2)
