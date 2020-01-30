@@ -1631,8 +1631,8 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         # path = "/"
         # filter = "JSON(*.json)"
         # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
-        os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
-        self.JSONSS = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+        # os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
+        self.JSONSS,ddd = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
 
         self.JSONSSname = os.path.basename(self.JSONSS)
         logger.debug('you have chosen {}'.format(self.JSONSSname))
@@ -1908,7 +1908,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             #     self.seq =self.seq.split('#')[1]
             self.Name8 =  self.Name7 +"/"+self.seq
             if self.ui_edge2d.comboBox_Seq.itemText(i) != "/":
-                self.PathTranfile = self.Name8
+                self.PathTranfile = self.Name8+'/tran'
             # print(self.seq)
 
 
