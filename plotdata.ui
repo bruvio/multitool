@@ -10,57 +10,145 @@
     <height>328</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>417</width>
+    <height>328</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>417</width>
+    <height>328</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>plot time traces</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pulse list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTextEdit" name="textEdit_pulselist"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="selectfile">
-      <property name="text">
-       <string>select dataset</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>edit_JSON</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QPushButton" name="plotbutton">
-      <property name="text">
-       <string>plot time traces</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QCheckBox" name="smooth_checkBox">
-      <property name="text">
-       <string>smooth</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QCheckBox" name="savefigure_checkBox">
-      <property name="text">
-       <string>save Figure</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>67</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Pulse list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_pulselist">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>30</y>
+      <width>196</width>
+      <height>161</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="calcmean_checkBox">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>30</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>calc. mean</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="smooth_checkBox">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>197</y>
+      <width>73</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>smooth</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="selectfile">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>223</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>select dataset</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>225</y>
+      <width>87</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>edit_JSON</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="plotbutton">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>254</y>
+      <width>112</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>plot time traces</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="savefigure_checkBox">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>256</y>
+      <width>96</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>save Figure</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="search_window">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>56</y>
+      <width>197</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>1</width>
+      <height>0</height>
+     </size>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

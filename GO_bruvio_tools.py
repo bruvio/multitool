@@ -153,14 +153,17 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
         self.ui_plotdata.savefigure_checkBox.setChecked(False)
         self.ui_plotdata.smooth_checkBox.setChecked(False)
+        self.ui_plotdata.calcmean_checkBox.setChecked(False)
         self.ui_plotdata.checkBox.setChecked(False)
         self.ui_plotdata.checkBox.toggled.connect(
             lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
 
-        self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
-        self.JSONSSname = os.path.basename(self.JSONSS)
+        # self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
+        # self.JSONSSname = os.path.basename(self.JSONSS)
 
-        logger.debug('default set is {}'.format(self.JSONSSname))
+        self.JSONSS = "PLASMA_main_parameters_new.json"
+
+        logger.debug('default set is {}'.format(self.JSONSS))
         logger.info('select a standard set')
         logger.info('\n')
         logger.info('type in a list of pulses')
@@ -1632,10 +1635,18 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         # filter = "JSON(*.json)"
         # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
         # os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
-        self.JSONSS,ddd = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+        # self.JSONSS,ddd = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
+        #
+        # self.JSONSSname = os.path.basename(self.JSONSS)
+        # logger.debug('you have chosen {}'.format(self.JSONSSname))
 
-        self.JSONSSname = os.path.basename(self.JSONSS)
-        logger.debug('you have chosen {}'.format(self.JSONSSname))
+
+        self.JSONSS, ddd = QFileDialog.getOpenFileName(
+            None, "Select Standard set", "./standard_set", "JSON Files(*.json)"
+        )
+
+        self.JSONSS = os.path.basename(self.JSONSS)
+
         os.chdir(self.home)
         return self.JSONSS
 
@@ -1645,6 +1656,25 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
     def plotdata(self):
         pulselist = self.ui_plotdata.textEdit_pulselist.toPlainText()
         pulselist = pulselist.split(',')
+
+        search_window = self.ui_plotdata.search_window.toPlainText()
+        search_window = search_window.split(",")
+
+
+        if isBlank(search_window[0]):
+            start_value = None
+            stop_value = None
+        else:
+
+            start_value = float(search_window[0])
+
+        if len(search_window) > 1:
+            try:
+                stop_value = float(search_window[1])
+            except:
+                stop_value = None
+
+
         if self.ui_plotdata.savefigure_checkBox.isChecked():
             save = True
         else:
@@ -1654,6 +1684,10 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             smooth = True
         else:
             smooth = False
+        if self.ui_plotdata.calcmean_checkBox.isChecked():
+            calc_mean = True
+        else:
+            calc_mean = False
         # pulselist = pulselist.rstrip()
 
         pulselist = [int(i) for i in pulselist]
@@ -1672,7 +1706,10 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         if self.owner =='bviola':
             os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
 
-        plot_time_traces(self.JSONSSname, inputlist,save=save,smooth=smooth)
+        plot_time_traces(self.JSONSS, inputlist, save=save, smooth=smooth,
+                         calc_mean=calc_mean, start_value=start_value,
+                         stop_value=stop_value)
+
         #plt.show(block=True)
         if self.owner == 'bviola':
             os.chdir(self.home)
