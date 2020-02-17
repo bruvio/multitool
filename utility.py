@@ -1329,9 +1329,13 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                         if indexSubPlot == 1:
                             ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
                         else:
-                            vars()[ax_name] = plt.subplot(
-                                iRow, iColumn, indexSubPlot, sharex=ax_1
-                            )
+                            try:
+                                vars()[ax_name] = plt.subplot(
+                                    iRow, iColumn, indexSubPlot, sharex=ax_1
+                                )
+                            except:
+                                ax_1 = plt.subplot(
+                                    iRow, iColumn, indexSubPlot)
                         if smooth is True:
                             plt.plot(
                                 vars()[time_name],
@@ -1456,9 +1460,13 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                             ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
 
                         else:
-                            vars()[ax_name] = plt.subplot(
-                                iRow, iColumn, indexSubPlot, sharex=ax_1
-                            )
+                            try:
+                                vars()[ax_name] = plt.subplot(
+                                    iRow, iColumn, indexSubPlot, sharex=ax_1
+                                )
+                            except:
+                                ax_1 = plt.subplot(
+                                    iRow, iColumn, indexSubPlot)
                         if smooth is True:
                             plt.plot(
                                 vars()[time_name],
