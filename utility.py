@@ -1049,15 +1049,6 @@ def find_ip_times(pulse):
     :return: False if there is no IP
             True otherwise
 
-
-def find_ip_times(pulse):
-    """
-    Find the start and end time of
-    the ip and the flat-top.
-
-    :return: False if there is no IP
-            True otherwise
-
     """
     start_ip = 0
     end_ip = 0
@@ -1172,7 +1163,6 @@ def find_ip_times(pulse):
     logger.info(dmsg)
 
     return start_ip,        end_ip,        start_flattop,        end_flattop,        start_ip1MA,        end_ip1MA
-
 
 
 def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = False,start_value=None,stop_value=None):
@@ -1363,44 +1353,16 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                         if start_value is None:
                                             start_value,idx_start = find_nearest(
                                                 vars()[time_name], start_flattop)
-                                    # data2average = vars()[data_name][idx_start:idx_stop]
-
-
-                                    sampling_time = np.mean(
-                                        np.diff(vars()[time_name]))
-
-                                    rolling_mean = int(
-                                        round(rolling_average_window / sampling_time))
-
-
-                                    rolling_mean_data = pd.Series(
-                                        savitzky_golay(
-                                            (np.asarray(np.absolute(vars()[data_name]))),
-                                            33, 1)).rolling(
-                                        rolling_mean).apply(lambda x: np.mean(
-                                        sorted(x, reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[
-                                        np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info(
-                                        'biggest {}s interval rolling mean value for {} is {:.2E}'.format(rolling_average_window,
-                                            data_name,
-                                            mean_value))
-
-
                                         else:
                                             start_value, idx_start = find_nearest(
                                                 vars()[time_name], start_value)
                                         if stop_value is None:
-                                            stop_value, idx_stop =  find_nearest(vars()[time_name], end_flattop)
+                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
                                         else:
                                             stop_value, idx_stop = find_nearest(
                                                 vars()[time_name], stop_value)
                                     except:
                                         logger.error('given search window could not be used')
-                            if calc_mean is True:
-                                if start_flattop != 0:
 
                                         start_value, idx_start = find_nearest(
                                             vars()[time_name], start_flattop)
@@ -1409,10 +1371,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
 
                                     data2average = vars()[data_name][idx_start:idx_stop]
 
-                                    sampling_time = np.mean(np.diff(vars()[time_name]))
 
-                                    rolling_mean = int(
-                                        round(rolling_average_window/sampling_time ))
 
                                     sampling_time = np.mean(
                                         np.diff(vars()[time_name]))
@@ -1460,7 +1419,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                             start_value, idx_start = find_nearest(
                                                 vars()[time_name], start_value)
                                         if stop_value is None:
-                                            stop_value, idx_stop =  find_nearest(vars()[time_name], end_flattop)
+                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
                                         else:
                                             stop_value, idx_stop = find_nearest(
                                                 vars()[time_name], stop_value)
@@ -1476,11 +1435,6 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                                    idx_start:idx_stop]
 
                                     sampling_time = np.mean(np.diff(vars()[time_name]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean mean  value for {} is {:.2E}'.format(rolling_average_window,data_name,
-                                                                          mean_value))
 
                                     rolling_mean = int(
                                         round(rolling_average_window/sampling_time ))
@@ -1575,33 +1529,11 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                         if start_value is None:
                                             start_value,idx_start = find_nearest(
                                                 vars()[time_name], start_flattop)
-
-                                    # data2average = vars()[data_name][idx_start:idx_stop]
-
-                                    sampling_time = np.mean(np.diff(vars()[time_name]))
-
-                                    rolling_mean = int(
-                                        round(rolling_average_window/sampling_time ))
-
-                                    # data2average = (
-                                    #     pd.Series(vars()[data_name]).rolling(
-                                    #         window=rolling_mean).mean()
-                                    # )
-                                    rolling_mean_data = pd.Series( savitzky_golay((np.asarray(np.absolute(vars()[data_name]))),
-                                                   33, 1)).rolling(rolling_mean).apply(lambda x: np.mean(sorted(x,reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean value for {} is {:.2E}'.format(rolling_average_window,data_name,
-                                                                          mean_value))
-
-
-
                                         else:
                                             start_value, idx_start = find_nearest(
                                                 vars()[time_name], start_value)
                                         if stop_value is None:
-                                            stop_value, idx_stop =  find_nearest(vars()[time_name], end_flattop)
+                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
                                         else:
                                             stop_value, idx_stop = find_nearest(
                                                 vars()[time_name], stop_value)
@@ -1662,7 +1594,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                             start_value, idx_start = find_nearest(
                                                 vars()[time_name], start_value)
                                         if stop_value is None:
-                                            stop_value, idx_stop =  find_nearest(vars()[time_name], end_flattop)
+                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
                                         else:
                                             stop_value, idx_stop = find_nearest(
                                                 vars()[time_name], stop_value)
@@ -1737,6 +1669,9 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
     # fig.tight_layout()
 
     # leave plt.show() outside
+
+
+
 
 def isBlank(myString):
         return not (myString and myString.strip())

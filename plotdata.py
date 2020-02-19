@@ -28,7 +28,6 @@ class Ui_plotdata_window(object):
         self.smooth_checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.smooth_checkBox.setGeometry(QtCore.QRect(211, 197, 73, 20))
         self.smooth_checkBox.setObjectName("smooth_checkBox")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.smooth_checkBox)
         self.selectfile = QtWidgets.QPushButton(self.centralwidget)
         self.selectfile.setGeometry(QtCore.QRect(9, 223, 101, 25))
         self.selectfile.setObjectName("selectfile")
