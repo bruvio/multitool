@@ -61,6 +61,7 @@ from scipy import stats
 from ppf import *
 import numpy as np
 from matplotlib import path
+from bisect import bisect_left
 
 logger = logging.getLogger(__name__)
 class Toggle():
@@ -1672,6 +1673,25 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
 
 
 
+
+def take_closest(myList, myNumber):
+    """
+    Assumes myList is sorted. Returns closest value to myNumber.
+
+    If two numbers are equally close, return the smallest number.
+    """
+    pos = bisect_left(myList, myNumber)
+    if pos == 0:
+        return myList[0]
+    if pos == len(myList):
+        return myList[-1]
+    before = myList[pos - 1]
+    after = myList[pos]
+    return before
+    # if after - myNumber < myNumber - before:
+    #    return after
+    # else:
+   # return before
 
 def isBlank(myString):
         return not (myString and myString.strip())
