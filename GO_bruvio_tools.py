@@ -19,7 +19,17 @@ import logging
 from logging import handlers
 import pathlib
 import numpy as np
-from ppf import *
+import sys
+from importlib import import_module
+libnames = ['ppf']
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(exc)
+    else:
+        globals()[libname] = lib
 import bruvio_tools
 from MAGTool import *  # Magnetics Tool
 
@@ -142,7 +152,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_plotdata.setupUi(self.window_plotdata)
         self.window_plotdata.show()
 
-        initpulse = pdmsht()
+        initpulse = ppf.pdmsht()
         initpulse2 = initpulse -1
 
         self.ui_plotdata.textEdit_pulselist.setText(str(initpulse))
@@ -339,7 +349,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.magsurf_window.addToolBar(toolBar)
 
         #
-        initpulse = pdmsht()
+        initpulse = ppf.pdmsht()
         self.ui_magsurf.JPNedit.setText(str(initpulse))
         self.ui_magsurf.timeEdit.setText('50')  # s
         self.ui_magsurf.stepPsiEdit.setText('0.1') # V/s
