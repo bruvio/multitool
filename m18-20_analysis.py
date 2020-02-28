@@ -991,13 +991,13 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
         sim_6 = sim('84600', 'nov1519', '1', workfold, 'vparail')
         sim_7 = sim('84600', 'dec0519', '1', workfold, 'vparail')
 
-        tran_index5 = -1
+        force_index5 = -1
 
         res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_1,1569)
         res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_2,1575)
         res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_3,1577)
         res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_4,1573)
-        res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_5,1579,force_tran=tran_index5)
+        res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_5,1579,force_tran=force_index5)
         res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_6,1576)
         res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_7,1585)
 
@@ -1122,10 +1122,10 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
     sim_6 = sim('84600', 'dec0419', '1', workfold, 'vparail')
     sim_7 = sim('84600', 'dec0519', '2', workfold, 'vparail')
 
-    tran_index4 =- 1
-    tran_index5 =- 1
-    tran_index6 =- 1
-    tran_index7 =- 1
+    force_index4 = -1
+    force_index5 = -1
+    force_index6 = -1
+    force_index7 = -1
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, 1570)
@@ -1134,13 +1134,13 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
     res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_3, 1574)
     res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_4, 1580,force_tran=tran_index4)
+        shot, owner, dda, sim_4, 1580,force_tran=force_index4)
     res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_5, 1581,force_tran=tran_index5)
+        shot, owner, dda, sim_5, 1581,force_tran=force_index5)
     res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_6, 1584,force_tran=tran_index6)
+        shot, owner, dda, sim_6, 1584,force_tran=force_index6)
     res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_7, 1586,force_tran=tran_index7)
+        shot, owner, dda, sim_7, 1586,force_tran=force_index7)
 
     sleep(1)
 
