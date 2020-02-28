@@ -16,10 +16,52 @@ __status__ = "Testing"
 
 
 
-import eproc
+import sys
 import numpy as np
 import os
 import pathlib
+import logging
+import sys
+import os
+from importlib import import_module
+libnames = ['eproc']
+
+relative_imports = []
+
+logger = logging.getLogger(__name__)
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
+
+
+
 
 def set_folder(folder, owner=None):
     if owner is None:

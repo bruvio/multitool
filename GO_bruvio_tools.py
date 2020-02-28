@@ -12,7 +12,7 @@ __email__ = "bruno.viola@ukaea.uk"
 __status__ = "Production"
 __credits__ = ["gioart"]
 
-import eproc as ep
+
 import argparse
 from pathlib import Path
 import logging
@@ -20,16 +20,36 @@ from logging import handlers
 import pathlib
 import numpy as np
 import sys
+import os
 from importlib import import_module
-libnames = ['ppf']
+libnames = ['ppf','eproc']
+
+relative_imports = []
+
+
 for libname in libnames:
     try:
         lib = import_module(libname)
     except:
         exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
         print(exc)
     else:
         globals()[libname] = lib
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr)
+        # lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libr] = lib
 import bruvio_tools
 from MAGTool import *  # Magnetics Tool
 
@@ -61,10 +81,19 @@ import subprocess
 from class_sim import sim
 from EDGE2DAnalyze import shot
 from utility import *
-
-
 import matplotlib.pyplot as plt
 plt.rcParams["savefig.directory"] = os.chdir(os.getcwd())
+
+
+
+
+
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
+
 myself = lambda: inspect.stack()[1][3]
 logger = logging.getLogger(__name__)
 

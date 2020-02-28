@@ -5,6 +5,40 @@ Created on Wed Jul 26 21:08:45 2017
 
 @author: bruvio
 """
+import logging
+logger = logging.getLogger(__name__)
+import sys
+import os
+from importlib import import_module
+
+libnames = ['ppf']
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr)
+        # lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libr] = lib
+
 import numpy as np
 import sys
 import pdb
@@ -12,24 +46,23 @@ from time import sleep
 from scipy.signal import find_peaks
 import math
 import csv
-import logging
 import pandas as pd
 from class_sim import *
 from class_sim import Getdata
 from class_sim import initread
 from class_sim import find_indices
 import matplotlib.pyplot as plt
-from ppf import *
 from matplotlib.patches import Polygon
-import _eproc
-import eproc as ep
 from utility import *
-import os
 from matplotlib.pylab import yticks,xticks,ylabel,xlabel
 from EDGE2DAnalyze import shot
 from ppf_write import *
-logger = logging.getLogger(__name__)
 
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
 
 
 
@@ -1141,6 +1174,8 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
         shot, owner, dda, sim_6, 1584,force_tran=force_index6)
     res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_7, 1586,force_tran=force_index7)
+
+
 
     sleep(1)
 

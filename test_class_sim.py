@@ -15,6 +15,42 @@ __status__ = "Testing"
 # -*- coding: utf-8 -*-
 # from importlib import reload
 import logging
+import logging
+logger = logging.getLogger(__name__)
+import sys
+import os
+from importlib import import_module
+
+
+
+
+libnames = ['ppf']
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
 import argparse
 import platform
 from logging.handlers import RotatingFileHandler
@@ -26,19 +62,20 @@ from matplotlib.ticker import ScalarFormatter
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 import numpy as np
-import sys
 import math
 import csv
 import pathlib
-import os
 from class_sim import sim
 from class_sim import Getdata
 from class_sim import initread
 from class_sim import find_indices
-import eproc as ep
-from ppf import *
-import pdb
 
+import pdb
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
 
 def e2d_variables(file):
     with open(file) as f:

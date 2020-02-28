@@ -7,6 +7,42 @@ Created on 2017
 modified by tmp
 final version
 """
+
+import sys
+import os
+import logging
+logger = logging.getLogger(__name__)
+from importlib import import_module
+libnames = ['eproc']
+
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+
 import warnings
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -23,8 +59,6 @@ import logging
 import json
 import argparse
 import sys
-import eproc as ep
-# import pylab
 from utility import *
 #sys.path.append('/Users/bruvio/Work/Python/fit_langmu/lib_langmu/')
 #from langmu_routines import myplot, myfigure,savitzky_golay
@@ -32,8 +66,12 @@ from matplotlib import rcParams
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from matplotlib.ticker import AutoMinorLocator
 import pdb
-logger = logging.getLogger(__name__)
 
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
 #import plot_e2d
 #%%
 plt.ion()

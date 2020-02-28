@@ -1,19 +1,54 @@
 #!/usr/bin/env python
 __author__ = "bruvio"
 __version__ = "0.1"
+
 import logging
+logger = logging.getLogger(__name__)
+import sys
+import os
+from importlib import import_module
+
+
+libnames = ['ppf']
+relative_imports = ['getdat.getdat','getdat.getsca']
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr)
+        # lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libr] = lib
+
+
 import datetime
 from time import strptime
 import pandas as pd
 import os.path
-from ppf import *
+
 from numpy import arange,asscalar,nan
 import matplotlib.pyplot as plt
 import sys
 # sys.path.append('../')
 # from status_flags.status_flag import GetSF
 from time import gmtime, strftime
-import getdat
+
 from collections import OrderedDict
 from matplotlib.gridspec import GridSpec
 import pathlib
@@ -22,14 +57,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.gridspec import GridSpec
 import mplcursors
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 import pandas as pd
-import numpy as np
 from matplotlib.pylab import yticks, xticks, ylabel, xlabel
 import sys
 import logging
@@ -58,12 +90,12 @@ import math
 
 from scipy.integrate import simps
 from scipy import stats
-from ppf import *
-import numpy as np
 from matplotlib import path
 from bisect import bisect_left
+import matplotlib.cbook
+warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 
-logger = logging.getLogger(__name__)
+
 class Toggle():
     def __init__(self,fig):
         self.all_visible = True
@@ -259,8 +291,8 @@ def create_database_4_dda(dda, pulse1, pulse2=None):
     """
     maxpulse = pdmsht()
     logger.debug('max pulse is {} \n'.format(str(maxpulse)))
-    ier = ppfgo()
-    ppfsetdevice("JET")
+    ier = ppf.ppfgo()
+    ppf.ppfsetdevice("JET")
 
     userlist = []
     numofseqlist = []
@@ -278,15 +310,15 @@ def create_database_4_dda(dda, pulse1, pulse2=None):
         userlist.append(users)
         for u, user in enumerate(users):
             the_date=[]
-            ppfuid(user, "r")
+            ppf.ppfuid(user, "r")
             # time, date, ier = pdstd(pulse)
 
 
-            iseq, nseq, ier = ppfdda(pulse, dda, mseq=1024)
+            iseq, nseq, ier = ppf.ppfdda(pulse, dda, mseq=1024)
             numofseqlist.append(nseq)
             seqlist.append(iseq)
             for s, seq in enumerate(iseq):
-                info, cnfo, ndda, ddal, istl, pcom, pdsn, ier = pdinfo2(pulse,
+                info, cnfo, ndda, ddal, istl, pcom, pdsn, ier = ppf.pdinfo2(pulse,
                                                                         seq)
 
                 the_date.append(info[6])
@@ -319,12 +351,12 @@ def create_database_4_dda(dda, pulse1, pulse2=None):
             dummy_seq = []
             for u, user in enumerate(users):
                 the_date = []
-                ppfuid(user, "r")
-                iseq, nseq, ier = ppfdda(pulse, dda, mseq=1024)
+                ppf.ppfuid(user, "r")
+                iseq, nseq, ier = ppf.ppfdda(pulse, dda, mseq=1024)
                 dummy_iseq.append(iseq)
                 dummy_seq.append(nseq)
                 for s, seq in enumerate(iseq):
-                    info, cnfo, ndda, ddal, istl, pcom, pdsn, ier = pdinfo2(
+                    info, cnfo, ndda, ddal, istl, pcom, pdsn, ier = ppf.pdinfo2(
                         pulse,
                         seq)
 
@@ -1087,7 +1119,7 @@ def find_ip_times(pulse):
         comm,
         seq,
         ier,
-    ) = ppfdata(
+    ) = ppf.ppfdata(
         pulse,
         dda,
         dtype,
@@ -1363,7 +1395,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
 
                     if system == "ppf":
                         user = node.split("/")[0]
-                        ppfuid(user, "r")
+                        ppf.ppfuid(user, "r")
                         dda = node.split("/")[1]
                         dtype = node.split("/")[2]
 
@@ -1387,7 +1419,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                             comm,
                             seq,
                             ier,
-                        ) = ppfdata(
+                        ) = ppf.ppfdata(
                             pulse,
                             dda,
                             dtype,
@@ -1685,10 +1717,10 @@ def initread(shot, userid, seq):
         initread(shot,userid,seq)
 
         """
-    ppfsetdevice('JET')
+    ppf.ppfsetdevice('JET')
     # print('ok')
-    ppfuid(userid, 'r')
-    ier = ppfgo(int(shot), int(seq))
+    ppf.ppfuid(userid, 'r')
+    ier = ppf.ppfgo(int(shot), int(seq))
     # @staticmethod
 
 
@@ -1885,7 +1917,7 @@ function that reads a ppf file
     '''
     # initialize pulse an sequence
     initread(int(pulse), user, int(sequence))
-    data, x, t, nd, nx, nt, dunits, xunits, tunits, desc, comm, seq, ier = ppfdata(
+    data, x, t, nd, nx, nt, dunits, xunits, tunits, desc, comm, seq, ier = ppf.ppfdata(
         int(pulse), dda, dtype, seq=int(sequence), uid=user, device="JET",
         fix0=0, reshape=0, no_x=0, no_t=0)
     # ihdat,iwdat,data,x,t,ier=ppfget(int(pulse),dda,dtype)
@@ -3016,23 +3048,23 @@ def initread(shot,userid,seq):
   initread(shot,userid,seq)
 
   """
-  ppfsetdevice('JET')
+  ppf.ppfsetdevice('JET')
   #print('ok')
-  ppfuid(userid,'r')
-  ier=ppfgo(int(shot),int(seq))
+  ppf.ppfuid(userid,'r')
+  ier=ppf.ppfgo(int(shot),int(seq))
 #@staticmethod
 
 def getdata(shot,dda,dtype,uid=None,seq=None):
     if seq is None:
-        ier = ppfgo(shot, seq=0)
+        ier = ppf.ppfgo(shot, seq=0)
     else:
-        ier = ppfgo(shot, seq=seq)
+        ier = ppf.ppfgo(shot, seq=seq)
     if uid is None:
-        ppfuid('jetppf', rw="R")
+        ppf.ppfuid('jetppf', rw="R")
     else:
-        ppfuid(uid, rw="R")
-    ihdata, iwdata, data, x, time, ier = ppfget(shot, dda, dtype)
-    pulse, seq, iwdat, comment, numdda, ddalist, ier = ppfinf(comlen=50,
+        ppf.ppfuid(uid, rw="R")
+    ihdata, iwdata, data, x, time, ier = ppf.ppfget(shot, dda, dtype)
+    pulse, seq, iwdat, comment, numdda, ddalist, ier = ppf.ppfinf(comlen=50,
                                                               numdda=50)
 
     name=dict()
@@ -3063,7 +3095,7 @@ def Getdata(pulse, dda,dtype,sequence,user):
     '''
     #initialize pulse an sequence
     initread(int(pulse),user,int(sequence))
-    data,x,t,nd,nx,nt,dunits,xunits,tunits,desc,comm,seq,ier=ppfdata(int(pulse),dda,dtype,seq=int(sequence),uid=user,device="JET",fix0=0,reshape=0,no_x=0,no_t=0)
+    data,x,t,nd,nx,nt,dunits,xunits,tunits,desc,comm,seq,ier = ppf.ppfdata(int(pulse),dda,dtype,seq=int(sequence),uid=user,device="JET",fix0=0,reshape=0,no_x=0,no_t=0)
     #ihdat,iwdat,data,x,t,ier=ppfget(int(pulse),dda,dtype)
     #pulse,seq,iwdat,comment,numdda,ddalist,ier=ppfinf(comlen=50,numdda=50)
     # info,cnfo,ddal,istl,pcom,pdsn,ier=pdinfo(pulse,seq)
@@ -3094,7 +3126,7 @@ def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
     else:
         tmax=tmax
 
-    ppfuid("jetppf", "r")
+    ppf.ppfuid("jetppf", "r")
 
     with open(diag_json, mode='r', encoding='utf-8') as f:
     # Remove comments from input json
@@ -3108,7 +3140,7 @@ def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
         input_dict = json.load(f, object_pairs_hook=OrderedDict)
 
     ihdat, iwdat, lid3, x_data, lid3_time, \
-        ier = ppfget(pulse, 'kg1v', 'lid3')
+        ier = ppf.ppfget(pulse, 'kg1v', 'lid3')
     units = []
     names = []
     dataname = []
@@ -3130,7 +3162,7 @@ def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
             unit_name =   'units_'+key+ '_'+value
 
             vars()[data_name],x,vars()[time_name],nd,nx,nt,vars()[unit_name],xunits,tunits,desc,comm,seq,ier = \
-                ppfdata(pulse,dda,dtype,seq=0,uid="jetppf",device="JET",fix0=0,reshape=0,no_x=0,no_t=0)
+                ppf.ppfdata(pulse,dda,dtype,seq=0,uid="jetppf",device="JET",fix0=0,reshape=0,no_x=0,no_t=0)
     #
             if ((dda == 'KG1V') & (dtype == 'LID3')):
                 #

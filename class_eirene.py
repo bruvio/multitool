@@ -14,8 +14,44 @@ import xarray as xr
 from types import SimpleNamespace
 from utility import *
 from class_geom import geom
-import eproc as ep
 
+import sys
+import os
+from importlib import import_module
+libnames = ['eproc']
+
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
 
 # ----------------------------
 __author__ = "Bruno Viola"
@@ -1495,11 +1531,11 @@ class Eirene():
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
-        elif data is "MOL":
+        elif data == "MOL":
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
             label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
-        elif data is "ATM":
+        elif data == "ATM":
             data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
             label = self.ATM.names[0] +' - '+ self.ATM.VolunitName[0]
