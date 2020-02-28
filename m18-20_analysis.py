@@ -979,6 +979,9 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
 
         dda = 'JSP'
         # EXTEND feb2319/2/1386 with discrete ELM model , ALL RUNS WITH 7MW NBI , 5 levels of GAS, same ALPH_crit=1.5
+        sim_number =7
+
+
         sim_1 = sim('84600', 'nov1219', '1', workfold, 'vparail')
         sim_2 = sim('84600', 'nov1419', '2', workfold, 'vparail')
         sim_3 = sim('84600', 'nov1519', '2', workfold, 'vparail')
@@ -996,6 +999,10 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
         res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_7,1585)
 
         sleep(1)
+
+        tran_index5 -= 1
+
+
         logging.info('time used for simu {} is {}'.format(sim_1.date+'/'+sim_1.seq+'/'+str(1569),time_used1))
         logging.info('time used for simu {} is {}'.format(sim_2.date+'/'+sim_2.seq+'/'+str(1575),time_used2))
         logging.info('time used for simu {} is {}'.format(sim_3.date+'/'+sim_3.seq+'/'+str(1577),time_used3))
@@ -1128,6 +1135,12 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
         shot, owner, dda, sim_7, 1586)
 
     sleep(1)
+
+    tran_index4 -= 1
+    tran_index5 -= 1
+    tran_index6 -= 1
+    tran_index7 -= 1
+
     logging.info(
         'time used for simu {} is {}'.format(sim_1.date + '/' + sim_1.seq+ '/' +str(1570),
                                              time_used1))
@@ -1239,8 +1252,8 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
 
 
 def main():
-    allow_write_ppf = False
-    allow_plot = True
+    allow_write_ppf = True
+    allow_plot = False
     runFebsimulations7MW(allow_write_ppf, allow_plot)
     runFebsimulations11MW(allow_write_ppf, allow_plot)
 
