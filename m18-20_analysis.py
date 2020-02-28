@@ -607,7 +607,7 @@ def read_jetto_sequence(shot,sequence,dda,owner,dtypelist):
         vars()[dict_name][dtype] = vars()[dtype]
     return  vars()[dict_name]
 
-def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence):
+def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence, force_tran=None):
     dda_time = 'JST'
     wth = read_jetto_data(shot, sequence, 'WTH', dda_time, owner)
     data = read_jetto_sequence(shot, sequence, dda, owner,
@@ -619,7 +619,8 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
     value_closest = take_closest(timesteps, wth['t'][last_peak_index])
 
     tran_index = timesteps.index(value_closest)
-
+    if force_tran:
+        tran_index=tran_index+force_tran
     res = simu.read_profiles('omp', tran=tran_index)
 
     return res, tran_index, data,value_closest
@@ -990,17 +991,19 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
         sim_6 = sim('84600', 'nov1519', '1', workfold, 'vparail')
         sim_7 = sim('84600', 'dec0519', '1', workfold, 'vparail')
 
+        tran_index5 = -1
+
         res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_1,1569)
         res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_2,1575)
         res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_3,1577)
         res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_4,1573)
-        res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_5,1579)
+        res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_5,1579,force_tran=tran_index5)
         res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_6,1576)
         res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_7,1585)
 
         sleep(1)
 
-        tran_index5 -= 1
+
 
 
         logging.info('time used for simu {} is {}'.format(sim_1.date+'/'+sim_1.seq+'/'+str(1569),time_used1))
@@ -1119,6 +1122,11 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
     sim_6 = sim('84600', 'dec0419', '1', workfold, 'vparail')
     sim_7 = sim('84600', 'dec0519', '2', workfold, 'vparail')
 
+    tran_index4 =- 1
+    tran_index5 =- 1
+    tran_index6 =- 1
+    tran_index7 =- 1
+
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, 1570)
     res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(
@@ -1126,20 +1134,17 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
     res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_3, 1574)
     res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_4, 1580)
+        shot, owner, dda, sim_4, 1580,force_tran=tran_index4)
     res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_5, 1581)
+        shot, owner, dda, sim_5, 1581,force_tran=tran_index5)
     res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_6, 1584)
+        shot, owner, dda, sim_6, 1584,force_tran=tran_index6)
     res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(
-        shot, owner, dda, sim_7, 1586)
+        shot, owner, dda, sim_7, 1586,force_tran=tran_index7)
 
     sleep(1)
 
-    tran_index4 -= 1
-    tran_index5 -= 1
-    tran_index6 -= 1
-    tran_index7 -= 1
+
 
     logging.info(
         'time used for simu {} is {}'.format(sim_1.date + '/' + sim_1.seq+ '/' +str(1570),
