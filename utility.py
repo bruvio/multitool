@@ -1042,6 +1042,7 @@ def movingaverage(interval, window_size):
     return np.convolve(interval, window, "same")
 
 
+
 def find_ip_times(pulse):
     """
     Find the start and end time of
@@ -1098,73 +1099,170 @@ def find_ip_times(pulse):
         no_x=0,
         no_t=0,
     )
+    try:
+        data_name = np.absolute(data_name) / 1e6
+        logger.debug(
+            "Max ip : {}, Min ip allowed: {}".format(np.max(data_name), MIN_IP)
+        )
 
-    data_name = np.absolute(data_name) / 1e6
-    logger.debug(
-        "Max ip : {}, Min ip allowed: {}".format(np.max(data_name), MIN_IP)
-    )
+        # First, find if there was an ip above MIN_IP.
+        ind_first_ip = np.argmax(data_name > MIN_IP)
+        ip_reversed = data_name[::-1]
+        ind_last_ip = len(ip_reversed) - np.argmax(ip_reversed > MIN_IP) - 1
 
-    # First, find if there was an ip above MIN_IP.
-    ind_first_ip = np.argmax(data_name > MIN_IP)
-    ip_reversed = data_name[::-1]
-    ind_last_ip = len(ip_reversed) - np.argmax(ip_reversed > MIN_IP) - 1
-
-    # Next, find the flat top
-    ind_first_flat = np.argmax(
-        data_name > PER_IP_FLAT * np.max(data_name)
-    )
-    ind_last_flat = (
-            len(ip_reversed)
-            - np.argmax(ip_reversed > PER_IP_FLAT * np.max(data_name))
-            - 1
-    )
-
-    # find where ip above 1MA
-    ind_first_ip1MA = np.argmax(data_name >= 1.0)
-    ind_last_ip1MA = len(ip_reversed) - np.argmax(ip_reversed >= 1.0) - 1
-
-    # Check for cases where there was barely any Ip.
-    if ind_first_ip == 0 and ind_last_ip == len(time_name) - 1:
-        return 0,0,0,0,0,0
-
-    if ind_first_ip == 0 and (ind_last_ip - ind_first_ip) >= 100:
-        ind_last_ip = len(data_name) - 1
-
-        # If there was no ip above min_ip, and there was current for > 0.1 s
-        max_ip = data_name[ind_first_flat - 100]
-        ind_first_flat = np.argmax(data_name > PER_IP_FLAT * max_ip)
+        # Next, find the flat top
+        ind_first_flat = np.argmax(
+            data_name > PER_IP_FLAT * np.max(data_name)
+        )
         ind_last_flat = (
                 len(ip_reversed)
-                - np.argmax(ip_reversed > PER_IP_FLAT * max_ip)
+                - np.argmax(ip_reversed > PER_IP_FLAT * np.max(data_name))
                 - 1
         )
 
-    elif ind_first_ip == 0:
-        return 0,0,0,0,0,0
+        # find where ip above 1MA
+        ind_first_ip1MA = np.argmax(data_name >= 1.0)
+        ind_last_ip1MA = len(ip_reversed) - np.argmax(ip_reversed >= 1.0) - 1
 
-    # Set times of start and end ip (just before and after ind_first_ip and ind_end_ip)
-    start_ip = time_name[ind_first_ip] - 1e-4
-    end_ip = time_name[ind_last_ip] + 1e-4
-    # Set times of start and end ip > 1 MA (just before and after ind_first_ip1MA and ind_end_ip1MA)
-    start_ip1MA = time_name[ind_first_ip1MA] - 1e-4
-    end_ip1MA = time_name[ind_last_ip1MA] + 1e-4
+        # Check for cases where there was barely any Ip.
+        if ind_first_ip == 0 and ind_last_ip == len(time_name) - 1:
+            return 0,0,0,0,0,0,False
 
-    # Set times of start and end of the flat top
-    start_flattop = time_name[ind_first_flat]
-    end_flattop = time_name[ind_last_flat]
+        if ind_first_ip == 0 and (ind_last_ip - ind_first_ip) >= 100:
+            ind_last_ip = len(data_name) - 1
 
-    dmsg = "\n\nStart of Ip : {}, end of Ip : {}, start of flat-top {}, end of flat-top {}, |Ip| < 1MA {} - {}, Ip\n\n".format(
-        start_ip,
-        end_ip,
-        start_flattop,
-        end_flattop,
-        start_ip1MA,
-        end_ip1MA,
-    )
-    logger.info(dmsg)
+            # If there was no ip above min_ip, and there was current for > 0.1 s
+            max_ip = data_name[ind_first_flat - 100]
+            ind_first_flat = np.argmax(data_name > PER_IP_FLAT * max_ip)
+            ind_last_flat = (
+                    len(ip_reversed)
+                    - np.argmax(ip_reversed > PER_IP_FLAT * max_ip)
+                    - 1
+            )
 
-    return start_ip,        end_ip,        start_flattop,        end_flattop,        start_ip1MA,        end_ip1MA
+        elif ind_first_ip == 0:
+            return 0,0,0,0,0,0,False
 
+        # Set times of start and end ip (just before and after ind_first_ip and ind_end_ip)
+        start_ip = time_name[ind_first_ip] - 1e-4
+        end_ip = time_name[ind_last_ip] + 1e-4
+        # Set times of start and end ip > 1 MA (just before and after ind_first_ip1MA and ind_end_ip1MA)
+        start_ip1MA = time_name[ind_first_ip1MA] - 1e-4
+        end_ip1MA = time_name[ind_last_ip1MA] + 1e-4
+
+        # Set times of start and end of the flat top
+        start_flattop = time_name[ind_first_flat]
+        end_flattop = time_name[ind_last_flat]
+
+        dmsg = "\n\nStart of Ip : {}, end of Ip : {}, start of flat-top {}, end of flat-top {}, |Ip| < 1MA {} - {}, Ip\n\n".format(
+            start_ip,
+            end_ip,
+            start_flattop,
+            end_flattop,
+            start_ip1MA,
+            end_ip1MA,
+        )
+        logger.info(dmsg)
+
+        return start_ip,        end_ip,        start_flattop,        end_flattop,        start_ip1MA,        end_ip1MA,True
+    except:
+        logger.error('error reading plasma current, check pulse data')
+        return 0, 0, 0, 0, 0, 0,False
+
+
+
+def calc_rolling_mean(*kwargs):
+    """
+
+    :param kwargs:
+    :return: compute rolling mean of a window of rolling_average_window seconds
+    """
+
+    data_name, time, data, idx_start, idx_stop, start_value, stop_value, rolling_average_window, smooth = kwargs
+
+    data2average = data[
+                   idx_start:idx_stop]
+    if smooth:
+        data = savitzky_golay((np.asarray(np.absolute(data2average))),
+                              33, 1)
+
+    timeofaverage = time[
+                    idx_start:idx_stop]
+
+    sampling_time = np.mean(np.diff(time))
+
+    rolling_mean = int(
+        round(rolling_average_window / sampling_time))
+
+    # get the mean value of the top rolling mean sorted values in a list of rolling mean
+    # rolling_mean_data = pd.Series(np.absolute(data2average)).rolling(rolling_mean).apply(lambda x: np.mean(sorted(x,reverse=True)[:rolling_mean]))
+    # get the mean value in a window of rolling mean elements
+    # the result of the two rolling mean data options is the same. the former changes the order of the arrays and so I miss the corrispondence with the time data
+    rolling_mean_data = pd.Series(np.absolute(data2average)).rolling(
+        rolling_mean).apply(lambda x: np.mean(x[:rolling_mean]))
+
+    rolling_mean_data.fillna(0, inplace=True)
+    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
+    # mean_value = scipy.mean(data2average)
+    logging.info(
+        'biggest {}s interval rolling mean value within [{},{}] for {} is {:.2E}'.format(
+            rolling_average_window, start_value, stop_value, data_name,
+            mean_value))
+
+    average_interval = timeofaverage[
+                       np.argmax(
+                           rolling_mean_data) - rolling_mean + 1:
+                       np.argmax(
+                           rolling_mean_data) + 1]
+    if len(average_interval) != 0:
+        logging.info(
+            'max rolling mean time interval is [{},{}]'.format(
+                average_interval[0],
+                average_interval[-1]))
+
+    logging.info(
+        'max value within [{},{}] for {} is {:.2E}'.format(start_value, stop_value,
+                                                           data_name,
+                                                           np.max(data2average)))
+    logging.info(
+        'ave. value within [{},{}] for {} is {:.2E}'.format(
+            start_value, stop_value, data_name, np.mean(data2average)))
+
+
+def get_research_window(start_value,stop_value,time,start_flattop,end_flattop):
+    """
+
+    :param start_value: research window start value
+    :param stop_value: research window stop value
+    :param time:
+    :param start_flattop: start of the flat top of the current
+    :param end_flattop: end of flattop of the current
+    :return: values and indexes of begin and end of windows of interest inside input signal
+    """
+    try:
+        if start_value is None:
+            idx_start, start_value = find_nearest(
+                time,
+                start_flattop)
+        else:
+            idx_start, start_value = find_nearest(
+                time, start_value)
+        if stop_value is None:
+            idx_stop, stop_value = find_nearest(
+                time, end_flattop)
+        else:
+            idx_stop, stop_value = find_nearest(
+                time, stop_value)
+        return idx_start, start_value,idx_stop, stop_value
+    except:
+        logger.error(
+            'given search window could not be used')
+
+        idx_start, start_value = find_nearest(
+            time, start_flattop)
+        idx_stop, stop_value = find_nearest(
+            time, end_flattop)
+        return idx_start, start_value, idx_stop, stop_value
 
 def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = False,start_value=None,stop_value=None):
     """
@@ -1253,424 +1351,278 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
         logger.info(" reading data for pulse %s \n", pulse)
         # indexSubPlot = 0
         indexSubPlot = 0
-        start_ip, end_ip, start_flattop, end_flattop, start_ip1MA, end_ip1MA = find_ip_times(pulse)
+        start_ip, end_ip, start_flattop, end_flattop, start_ip1MA, end_ip1MA,error = find_ip_times(pulse)
+        if error:
+            # plt.figure()
+            for key, value in input_dict.items():
+                for value in input_dict[key]:
 
-        # plt.figure()
-        for key, value in input_dict.items():
-            for value in input_dict[key]:
+                    system = key
+                    node = value
+                    # print(value)
 
-                system = key
-                node = value
-                # print(value)
+                    if system == "ppf":
+                        user = node.split("/")[0]
+                        ppfuid(user, "r")
+                        dda = node.split("/")[1]
+                        dtype = node.split("/")[2]
 
-                if system == "ppf":
-                    user = node.split("/")[0]
-                    ppfuid(user, "r")
-                    dda = node.split("/")[1]
-                    dtype = node.split("/")[2]
+                        # logger.debug('reading data %s ', key + '_' + dda + '_' + dtype)
 
-                    # logger.debug('reading data %s ', key + '_' + dda + '_' + dtype)
+                        data_name = "data_" + key + "_" + dda + "_" + dtype
+                        time_name = "t_data_" + key + "_" + dda + "_" + dtype
+                        unit_name = "units_" + "_" + dda + "_" + dtype
 
-                    data_name = "data_" + key + "_" + dda + "_" + dtype
-                    time_name = "t_data_" + key + "_" + dda + "_" + dtype
-                    unit_name = "units_" + "_" + dda + "_" + dtype
-
-                    (
-                        vars()[data_name],
-                        x,
-                        vars()[time_name],
-                        nd,
-                        nx,
-                        nt,
-                        vars()[unit_name],
-                        xunits,
-                        tunits,
-                        desc,
-                        comm,
-                        seq,
-                        ier,
-                    ) = ppfdata(
-                        pulse,
-                        dda,
-                        dtype,
-                        seq=0,
-                        uid=user,
-                        device="JET",
-                        fix0=0,
-                        reshape=0,
-                        no_x=0,
-                        no_t=0,
-                    )
-                    if ier == 0:
-                        logger.info(
-                            "\n read data %s ",
-                            key
-                            + "_"
-                            + dda
-                            + "_"
-                            + dtype
-                            + " seq {} ".format(str(seq)),
+                        (
+                            vars()[data_name],
+                            x,
+                            vars()[time_name],
+                            nd,
+                            nx,
+                            nt,
+                            vars()[unit_name],
+                            xunits,
+                            tunits,
+                            desc,
+                            comm,
+                            seq,
+                            ier,
+                        ) = ppfdata(
+                            pulse,
+                            dda,
+                            dtype,
+                            seq=0,
+                            uid=user,
+                            device="JET",
+                            fix0=0,
+                            reshape=0,
+                            no_x=0,
+                            no_t=0,
                         )
+                        if ier == 0:
+                            logger.info(
+                                "\n read data %s ",
+                                key
+                                + "_"
+                                + dda
+                                + "_"
+                                + dtype
+                                + " seq {} ".format(str(seq)),
+                            )
 
-                        if default == True:
-                            indexSubPlot = indexSubPlot + 1
-                            ax_name = "ax_" + str(indexSubPlot)
-                            marker = "x"
-                            linestyle = ":"
-                            logger.debug("using default options for ppf")
+                            if default == True:
+                                indexSubPlot = indexSubPlot + 1
+                                ax_name = "ax_" + str(indexSubPlot)
+                                marker = "x"
+                                linestyle = ":"
+                                logger.debug("using default options for ppf")
 
-                        else:
-                            indexSubPlot = int(input_dict[system][value][0])
-                            ax_name = "ax_" + str(input_dict[system][value][0])
-                            marker = input_dict[system][value][1]
-                            linestyle = input_dict[system][value][2]
-                            logger.debug("using JSON options for ppf")
+                            else:
+                                indexSubPlot = int(input_dict[system][value][0])
+                                ax_name = "ax_" + str(input_dict[system][value][0])
+                                marker = input_dict[system][value][1]
+                                linestyle = input_dict[system][value][2]
+                                logger.debug("using JSON options for ppf")
 
-                        # vars()[indexSubPlot] = fig.add_subplot(iRow, iColumn, indexSubPlot)
-                        if indexSubPlot == 1:
-                            ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
-                        else:
-                            try:
-                                vars()[ax_name] = plt.subplot(
-                                    iRow, iColumn, indexSubPlot, sharex=ax_1
+                            # vars()[indexSubPlot] = fig.add_subplot(iRow, iColumn, indexSubPlot)
+                            if indexSubPlot == 1:
+                                ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
+                            else:
+                                try:
+                                    vars()[ax_name] = plt.subplot(
+                                        iRow, iColumn, indexSubPlot, sharex=ax_1
+                                    )
+                                except:
+                                    ax_1 = plt.subplot(
+                                        iRow, iColumn, indexSubPlot)
+
+                            if smooth is True:
+                                plt.plot(
+                                    vars()[time_name],
+                                    savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                    label=str(pulse) + " " + node,
+                                    marker=marker,
+                                    linestyle=linestyle,
+                                    linewidth=linewidth,
+                                    markersize=markersize,
                                 )
-                            except:
-                                ax_1 = plt.subplot(
-                                    iRow, iColumn, indexSubPlot)
-
-                        if smooth is True:
-                            plt.plot(
-                                vars()[time_name],
-                                savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
-                                label=str(pulse) + " " + node,
-                                marker=marker,
-                                linestyle=linestyle,
-                                linewidth=linewidth,
-                                markersize=markersize,
-                            )
-                            if calc_mean is True:
-                                if start_flattop !=0:
-                                    try:
-                                        if start_value is None:
-                                            start_value,idx_start = find_nearest(
-                                                vars()[time_name], start_flattop)
-                                        else:
-                                            start_value, idx_start = find_nearest(
-                                                vars()[time_name], start_value)
-                                        if stop_value is None:
-                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
-                                        else:
-                                            stop_value, idx_stop = find_nearest(
-                                                vars()[time_name], stop_value)
-                                    except:
-                                        logger.error('given search window could not be used')
-
-                                        start_value, idx_start = find_nearest(
-                                            vars()[time_name], start_flattop)
-                                        stop_value, idx_stop = find_nearest(
-                                            vars()[time_name], end_flattop)
-
-                                    data2average = vars()[data_name][idx_start:idx_stop]
+                                if calc_mean is True:
+                                    if start_flattop !=0:
+                                        idx_start, start_value, idx_stop, stop_value  = get_research_window(start_value,
+                                                            stop_value, vars()[time_name],
+                                                            start_flattop,
+                                                            end_flattop)
 
 
 
-                                    sampling_time = np.mean(
-                                        np.diff(vars()[time_name]))
+                                        calc_rolling_mean(data_name,vars()[time_name],vars()[data_name],idx_start, idx_stop,start_value,stop_value, rolling_average_window,
+                        smooth)
 
-                                    rolling_mean = int(
-                                        round(rolling_average_window / sampling_time))
+                            else:
+                                plt.plot(
+                                    vars()[time_name],
+                                    vars()[data_name],
+                                    label=str(pulse) + " " + node,
+                                    marker=marker,
+                                    linestyle=linestyle,
+                                    linewidth=linewidth,
+                                    markersize=markersize,
+                                )
+                                if calc_mean is True:
+                                    if start_flattop != 0:
+                                        idx_start, start_value, idx_stop, stop_value = get_research_window(
+                                            start_value,
+                                            stop_value, vars()[time_name],
+                                            start_flattop,
+                                            end_flattop)
 
+                                        calc_rolling_mean(data_name,vars()[time_name],
+                                                          vars()[data_name],idx_start, idx_stop,start_value,stop_value,rolling_average_window,
+                                                          smooth)
 
-                                    rolling_mean_data = pd.Series(
-                                        savitzky_golay(
-                                            (np.asarray(np.absolute(data2average))),
-                                            33, 1)).rolling(
-                                        rolling_mean).apply(lambda x: np.mean(
-                                        sorted(x, reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[
-                                        np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean value within [{},{}] for {} is {:.2E}'.format(rolling_average_window,start_value,stop_value,data_name,
-                                                                          mean_value))
-                                    logging.info('max value within [{},{}] for {} is {:.2E}'.format(start_value,stop_value,data_name,
-                                                                          np.max(data2average)))
-                                    logging.info(
-                                        'ave. value within [{},{}] for {} is {:.2E}'.format(
-                                            start_value, stop_value, data_name,
-                                            np.mean(data2average)))
-
+                            plt.legend(loc="best", prop={"size": 6})
+                            plt.xlabel("time[s]")
+                            plt.ylabel(vars()[unit_name])
+                            # plt.hold(True)
                         else:
-                            plt.plot(
-                                vars()[time_name],
-                                vars()[data_name],
-                                label=str(pulse) + " " + node,
-                                marker=marker,
-                                linestyle=linestyle,
-                                linewidth=linewidth,
-                                markersize=markersize,
+                            logger.info(
+                                " no data  %s ",
+                                key
+                                + "_"
+                                + dda
+                                + "_"
+                                + dtype
+                                + " seq {} \n".format(str(seq)),
                             )
-                            if calc_mean is True:
-                                if start_flattop != 0:
-                                    try:
-                                        if start_value is None:
-                                            start_value,idx_start = find_nearest(
-                                                vars()[time_name], start_flattop)
-                                        else:
-                                            start_value, idx_start = find_nearest(
-                                                vars()[time_name], start_value)
-                                        if stop_value is None:
-                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
-                                        else:
-                                            stop_value, idx_stop = find_nearest(
-                                                vars()[time_name], stop_value)
-                                    except:
-                                        logger.error('given search window could not be used')
 
-                                        start_value, idx_start = find_nearest(
-                                            vars()[time_name], start_flattop)
-                                        stop_value, idx_stop = find_nearest(
-                                            vars()[time_name], end_flattop)
+                    if system == "jpf":
+                        data_name = "data_" + key + "_" + value
+                        time_name = "t_data_" + key + "_" + value
+                        unit_name = "units_" + key + "_" + value
 
-                                    data2average = vars()[data_name][
-                                                   idx_start:idx_stop]
+                        (
+                            vars()[data_name],
+                            vars()[time_name],
+                            IplSigLen,
+                            IplSigTitle,
+                            vars()[unit_name],
+                            ier,
+                        ) = getdat.getdat(value, pulse)
+                        if ier == 0:
+                            logger.info("\n read data  " + key + "_" + value)
 
-                                    sampling_time = np.mean(np.diff(vars()[time_name]))
+                            if default == True:
+                                indexSubPlot = indexSubPlot + 1
+                                ax_name = "ax_" + str(indexSubPlot)
+                                marker = "x"
+                                linestyle = ":"
+                                logger.debug("using default options for ppf \n")
 
-                                    rolling_mean = int(
-                                        round(rolling_average_window/sampling_time ))
+                            else:
+                                indexSubPlot = int(input_dict[system][value][0])
+                                ax_name = "ax_" + str(input_dict[system][value][0])
+                                marker = input_dict[system][value][1]
+                                linestyle = input_dict[system][value][2]
+                                logger.debug("used JSON options for jpf")
 
-                                    # data2average = (
-                                    #     pd.Series(vars()[data_name]).rolling(
-                                    #         window=rolling_mean).mean()
-                                    # )
-                                    rolling_mean_data = pd.Series(np.absolute(data2average)).rolling(rolling_mean).apply(lambda x: np.mean(sorted(x,reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean value within [{},{}] for {} is {:.2E}'.format(rolling_average_window,start_value,stop_value,data_name,
-                                                                          mean_value))
-                                    logging.info('max value within [{},{}] for {} is {:.2E}'.format(start_value,stop_value,data_name,
-                                                                          np.max(data2average)))
-                                    logging.info(
-                                        'ave. value within [{},{}] for {} is {:.2E}'.format(
-                                            start_value, stop_value, data_name,
-                                            np.mean(data2average)))
+                            if indexSubPlot == 1:
+                                ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
 
-                        plt.legend(loc="best", prop={"size": 6})
-                        plt.xlabel("time[s]")
-                        plt.ylabel(vars()[unit_name])
+                            else:
+                                try:
+                                    vars()[ax_name] = plt.subplot(
+                                        iRow, iColumn, indexSubPlot, sharex=ax_1
+                                    )
+                                except:
+                                    ax_1 = plt.subplot(
+                                        iRow, iColumn, indexSubPlot)
+                            if smooth is True:
+                                plt.plot(
+                                    vars()[time_name],
+                                    savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
+                                    label=str(pulse) + " " + node,
+                                    marker=marker,
+                                    linestyle=linestyle,
+                                    linewidth=linewidth,
+                                    markersize=markersize,
+                                )
+
+                                if calc_mean is True:
+                                    if start_flattop !=0:
+                                        idx_start, start_value, idx_stop, stop_value = get_research_window(
+                                            start_value,
+                                            stop_value, vars()[time_name],
+                                            start_flattop,
+                                            end_flattop)
+
+                                        calc_rolling_mean(data_name,vars()[time_name],
+                                                          vars()[data_name],idx_start, idx_stop,start_value,stop_value,rolling_average_window,
+                                                          smooth)
+
+
+
+                            else:
+                                plt.plot(
+                                    vars()[time_name],
+                                    vars()[data_name],
+                                    label=str(pulse) + " " + node,
+                                    marker=marker,
+                                    linestyle=linestyle,
+                                    linewidth=linewidth,
+                                    markersize=markersize,
+                                )
+                                if calc_mean is True:
+                                    if start_flattop != 0:
+                                        idx_start, start_value, idx_stop, stop_value = get_research_window(
+                                            start_value,
+                                            stop_value, vars()[time_name],
+                                            start_flattop,
+                                            end_flattop)
+
+                                        calc_rolling_mean(data_name,vars()[time_name],
+                                                          vars()[data_name],idx_start, idx_stop,start_value,stop_value,rolling_average_window,
+                                                          smooth)
+
+                            plt.legend(loc="best", prop={"size": 6})
+                            # plt.ylabel(IplSigTitle)
+                            plt.ylabel(vars()[unit_name])
+                            plt.xlabel("time[s]")
+                        else:
+                            logger.info(" no data " + key + "_" + value + " \n")
                         # plt.hold(True)
-                    else:
-                        logger.info(
-                            " no data  %s ",
-                            key
-                            + "_"
-                            + dda
-                            + "_"
-                            + dtype
-                            + " seq {} \n".format(str(seq)),
-                        )
+                        # import itertools
+                        # for l, ms in zip(ax_1.lines, itertools.cycle('>^+*')):
+                        #     l.set_marker(ms)
+                        #     l.set_color('black')
+                        # #
+                        # for l, ms in zip(ax_name.lines, itertools.cycle('>^+*')):
+                        #     l.set_marker(ms)
+                        #     l.set_color('black')
+            mplcursors.cursor(hover=True)
+            logger.info("\n plot DONE! \n")
+            if save is True:
+                cwd = os.getcwd()
 
-                if system == "jpf":
-                    data_name = "data_" + key + "_" + value
-                    time_name = "t_data_" + key + "_" + value
-                    unit_name = "units_" + key + "_" + value
+                pulses = "-".join(str(n) for n in pulse_list)
+                # pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,
+                #                                               exist_ok=True)
 
-                    (
-                        vars()[data_name],
-                        vars()[time_name],
-                        IplSigLen,
-                        IplSigTitle,
-                        vars()[unit_name],
-                        ier,
-                    ) = getdat.getdat(value, pulse)
-                    if ier == 0:
-                        logger.info("\n read data  " + key + "_" + value)
+                fname = diag_json[:-5] + "_" + pulses
+                # plt.savefig('./figures/' + fname+'.eps', format='eps', dpi=50)
+                # plt.savefig('./figures/' + fname+'.pdf', dpi=50)
+                # plt.savefig('./figures/' + fname+'.png', dpi=50)
+                plt.savefig(cwd + os.sep + "figures/" + fname + ".png", dpi=300)
 
-                        if default == True:
-                            indexSubPlot = indexSubPlot + 1
-                            ax_name = "ax_" + str(indexSubPlot)
-                            marker = "x"
-                            linestyle = ":"
-                            logger.debug("using default options for ppf \n")
-
-                        else:
-                            indexSubPlot = int(input_dict[system][value][0])
-                            ax_name = "ax_" + str(input_dict[system][value][0])
-                            marker = input_dict[system][value][1]
-                            linestyle = input_dict[system][value][2]
-                            logger.debug("used JSON options for jpf")
-
-                        if indexSubPlot == 1:
-                            ax_1 = plt.subplot(iRow, iColumn, indexSubPlot)
-
-                        else:
-                            try:
-                                vars()[ax_name] = plt.subplot(
-                                    iRow, iColumn, indexSubPlot, sharex=ax_1
-                                )
-                            except:
-                                ax_1 = plt.subplot(
-                                    iRow, iColumn, indexSubPlot)
-                        if smooth is True:
-                            plt.plot(
-                                vars()[time_name],
-                                savitzky_golay((np.asarray(vars()[data_name])), 33, 1),
-                                label=str(pulse) + " " + node,
-                                marker=marker,
-                                linestyle=linestyle,
-                                linewidth=linewidth,
-                                markersize=markersize,
-                            )
-
-                            if calc_mean is True:
-                                if start_flattop !=0:
-                                    try:
-                                        if start_value is None:
-                                            start_value,idx_start = find_nearest(
-                                                vars()[time_name], start_flattop)
-                                        else:
-                                            start_value, idx_start = find_nearest(
-                                                vars()[time_name], start_value)
-                                        if stop_value is None:
-                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
-                                        else:
-                                            stop_value, idx_stop = find_nearest(
-                                                vars()[time_name], stop_value)
-                                    except:
-                                        logger.error('given search window could not be used')
-
-                                        start_value, idx_start = find_nearest(
-                                            vars()[time_name], start_flattop)
-                                        stop_value, idx_stop = find_nearest(
-                                            vars()[time_name], end_flattop)
-
-
-                                    data2average = vars()[data_name][
-                                                   idx_start:idx_stop]
-
-                                    sampling_time = np.mean(np.diff(vars()[time_name]))
-
-                                    rolling_mean = int(
-                                        round(rolling_average_window/sampling_time ))
-
-                                    # data2average = (
-                                    #     pd.Series(vars()[data_name]).rolling(
-                                    #         window=rolling_mean).mean()
-                                    # )
-                                    rolling_mean_data = pd.Series( savitzky_golay((np.asarray(np.absolute(data2average))),
-                                                   33, 1)).rolling(rolling_mean).apply(lambda x: np.mean(sorted(x,reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean value within [{},{}] for {} is {:.2E}'.format(rolling_average_window,start_value,stop_value,data_name,
-                                                                          mean_value))
-                                    logging.info('max value within [{},{}] for {} is {:.2E}'.format(start_value,stop_value,data_name,
-                                                                          np.max(data2average)))
-                                    logging.info(
-                                        'ave. value within [{},{}] for {} is {:.2E}'.format(
-                                            start_value, stop_value, data_name,
-                                            np.mean(data2average)))
-
-
-
-                        else:
-                            plt.plot(
-                                vars()[time_name],
-                                vars()[data_name],
-                                label=str(pulse) + " " + node,
-                                marker=marker,
-                                linestyle=linestyle,
-                                linewidth=linewidth,
-                                markersize=markersize,
-                            )
-                            if calc_mean is True:
-                                if start_flattop != 0:
-                                    try:
-                                        if start_value is None:
-                                            start_value,idx_start = find_nearest(
-                                                vars()[time_name], start_flattop)
-                                        else:
-                                            start_value, idx_start = find_nearest(
-                                                vars()[time_name], start_value)
-                                        if stop_value is None:
-                                            stop_value,idx_stop =  find_nearest(vars()[time_name], end_flattop)
-                                        else:
-                                            stop_value, idx_stop = find_nearest(
-                                                vars()[time_name], stop_value)
-                                    except:
-                                        logger.error('given search window could not be used')
-
-                                        start_value, idx_start = find_nearest(
-                                            vars()[time_name], start_flattop)
-                                        stop_value, idx_stop = find_nearest(
-                                            vars()[time_name], end_flattop)
-
-                                    data2average = vars()[data_name][
-                                                   idx_start:idx_stop]
-
-                                    sampling_time = np.mean(np.diff(vars()[time_name]))
-
-                                    rolling_mean = int(
-                                        round(rolling_average_window/sampling_time ))
-
-                                    # data2average = (
-                                    #     pd.Series(vars()[data_name]).rolling(
-                                    #         window=rolling_mean).mean()
-                                    # )
-                                    rolling_mean_data = pd.Series(np.absolute(data2average)).rolling(rolling_mean).apply(lambda x: np.mean(sorted(x,reverse=True)[:rolling_mean]))
-                                    rolling_mean_data.fillna(0, inplace=True)
-                                    mean_value = rolling_mean_data[np.argmax(rolling_mean_data)]
-                                    # mean_value = scipy.mean(data2average)
-                                    logging.info('biggest {}s interval rolling mean value within [{},{}] for {} is {:.2E}'.format(rolling_average_window,start_value,stop_value,data_name,
-                                                                          mean_value))
-                                    logging.info('max value within [{},{}] for {} is {:.2E}'.format(start_value,stop_value,data_name,
-                                                                          np.max(data2average)))
-                                    logging.info(
-                                        'ave. value within [{},{}] for {} is {:.2E}'.format(
-                                            start_value, stop_value, data_name,
-                                            np.mean(data2average)))
-
-                        plt.legend(loc="best", prop={"size": 6})
-                        # plt.ylabel(IplSigTitle)
-                        plt.ylabel(vars()[unit_name])
-                        plt.xlabel("time[s]")
-                    else:
-                        logger.info(" no data " + key + "_" + value + " \n")
-                    # plt.hold(True)
-                    # import itertools
-                    # for l, ms in zip(ax_1.lines, itertools.cycle('>^+*')):
-                    #     l.set_marker(ms)
-                    #     l.set_color('black')
-                    # #
-                    # for l, ms in zip(ax_name.lines, itertools.cycle('>^+*')):
-                    #     l.set_marker(ms)
-                    #     l.set_color('black')
-    mplcursors.cursor(hover=True)
-    logger.info("\n plot DONE! \n")
-    if save is True:
-        cwd = os.getcwd()
-
-        pulses = "-".join(str(n) for n in pulse_list)
-        # pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,
-        #                                               exist_ok=True)
-
-        fname = diag_json[:-5] + "_" + pulses
-        # plt.savefig('./figures/' + fname+'.eps', format='eps', dpi=50)
-        # plt.savefig('./figures/' + fname+'.pdf', dpi=50)
-        # plt.savefig('./figures/' + fname+'.png', dpi=50)
-        plt.savefig(cwd + os.sep + "figures/" + fname + ".png", dpi=300)
-
-        logger.info(" picture saved to {} \n".format(cwd + os.sep + "figures/" + fname))
-    t = Toggle(fig)
-    fig.canvas.mpl_connect("button_press_event", t.toggle)
-    # fig.canvas.mpl_connect("key_press_event", t.toggle)
-    plt.show(block=True)
+                logger.info(" picture saved to {} \n".format(cwd + os.sep + "figures/" + fname))
+            t = Toggle(fig)
+            fig.canvas.mpl_connect("button_press_event", t.toggle)
+            # fig.canvas.mpl_connect("key_press_event", t.toggle)
+            plt.show(block=True)
     # fig.tight_layout()
 
     # leave plt.show() outside
-
+        else:
+            logger.error('error reading data')
 
 
 
@@ -2603,9 +2555,27 @@ def plot_time_traces_main(nshot, save=False):
         # plt.savefig('./figures/'+fname+'.eps', format='eps')
         # plt.savefig('./figures/'+fname)
         # plt.show()
-
-
 def find_nearest(array, value):
+    """
+
+    :param array:
+    :param value:
+    :return: returns value and index of the closest element in the array to the value
+    """
+    import numpy as np
+    import math
+
+    array = np.sort(array)
+    idx = np.searchsorted(array, value, side="left")
+    if idx > 0 and (
+        idx == len(array)
+        or math.fabs(value - array[idx - 1]) < math.fabs(value - array[idx])
+    ):
+        return idx - 1, array[idx - 1]
+    else:
+        return idx, array[idx]
+
+def find_nearest_inverted(array, value):
     """
 
     :param array:
@@ -2651,8 +2621,8 @@ def find_psol(nshot, ntime):
 
         # raise SystemExit
         x = timetraces['Time_LID3'].values
-        value_1, index_t1 = find_nearest(x, time - delta)
-        value_2, index_t2 = find_nearest(x, time + delta)
+        value_1, index_t1 = find_nearest_inverted(x, time - delta)
+        value_2, index_t2 = find_nearest_inverted(x, time + delta)
 
         TOPI = timetraces['BOLO/TOPI'].values  # total radiation
         TOBU = timetraces['BOLO/TOBU'].values  # bulk radiation
@@ -3164,8 +3134,8 @@ def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
     #
             if ((dda == 'KG1V') & (dtype == 'LID3')):
                 #
-                dummy,ix1 = find_nearest(lid3_time,tmin)
-                dummy, ix2 = find_nearest(lid3_time,tmax)
+                dummy,ix1 = find_nearest_inverted(lid3_time,tmin)
+                dummy, ix2 = find_nearest_inverted(lid3_time,tmax)
                 nrow = ix2 - ix1 + 1
                 #find_indices doesn't work well with floats
                 # ix1 = find_indices(lid3_time, lambda e: e == tmin)
