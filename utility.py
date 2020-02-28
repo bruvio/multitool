@@ -1,19 +1,57 @@
 #!/usr/bin/env python
 __author__ = "bruvio"
 __version__ = "0.1"
+
 import logging
+logger = logging.getLogger(__name__)
+import sys
+import os
+from importlib import import_module
+
+
+
+
+libnames = ['ppf','getdat']
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+
 import datetime
 from time import strptime
 import pandas as pd
 import os.path
-from ppf import *
+
 from numpy import arange,asscalar,nan
 import matplotlib.pyplot as plt
 import sys
 # sys.path.append('../')
 # from status_flags.status_flag import GetSF
 from time import gmtime, strftime
-import getdat
+
 from collections import OrderedDict
 from matplotlib.gridspec import GridSpec
 import pathlib
@@ -22,14 +60,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.gridspec import GridSpec
 import mplcursors
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 import pandas as pd
-import numpy as np
 from matplotlib.pylab import yticks, xticks, ylabel, xlabel
 import sys
 import logging
@@ -58,8 +93,6 @@ import math
 
 from scipy.integrate import simps
 from scipy import stats
-from ppf import *
-import numpy as np
 from matplotlib import path
 from bisect import bisect_left
 

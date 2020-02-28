@@ -15,27 +15,57 @@ __status__ = "Testing"
 
 
 
-
-
-
-
 # from importlib import reload
-import eproc as ep
+import sys
+import os
+import logging
+logger = logging.getLogger(__name__)
+from importlib import import_module
+libnames = ['eproc']
+
+relative_imports = []
+
+
+for libname in libnames:
+    try:
+        lib = import_module(libname)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+for libname in relative_imports:
+    try:
+        anchor = libname.split('.')
+        libr = anchor[0]
+        package = anchor[1]
+
+        lib = import_module(libr,package=package)
+    except:
+        exc_type, exc, tb = sys.exc_info()
+        print(os.path.realpath(__file__))
+        print(exc)
+    else:
+        globals()[libname] = lib
+
+
+
 import numpy as np
 from class_geom import geom
 from class_eirene import Eirene
-import os
+
 import csv
 import stat
 import math
-import os
+
 import pathlib
 import mpmath
 import math
 from types import SimpleNamespace
 import logging
 from time import gmtime, strftime
-# from ppf import *
 from matplotlib.patches import Polygon
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -43,12 +73,16 @@ from matplotlib.ticker import ScalarFormatter
 from matplotlib.collections import PatchCollection
 #from django.utils.datastructures import SortedDict
 from collections import OrderedDict
-import Struct as st
+# import Struct as st
 import pdb;
-logger = logging.getLogger(__name__)
+
 pi=mpmath.pi
 
-
+try:
+    ep = eproc
+except:
+    logger.error('failed to load EPROC')
+    # raise SystemExit
 
 def slice_npts(array, physid):
     return_array = (array[physid])[0:array['npts']]
