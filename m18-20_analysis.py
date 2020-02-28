@@ -1239,8 +1239,8 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
 
 
 def main():
-    allow_write_ppf = True
-    allow_plot = False
+    allow_write_ppf = False
+    allow_plot = True
     runFebsimulations7MW(allow_write_ppf, allow_plot)
     runFebsimulations11MW(allow_write_ppf, allow_plot)
 
