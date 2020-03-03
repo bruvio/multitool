@@ -3,19 +3,26 @@ import sys
 import unittest
 import subprocess
 import numpy as np
-
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # sys.path.append("../")
 
 topdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.append(topdir)
-from myapp import app
+import bruvio_tools
+from magSurfGA_SL import Ui_magsurf_window
+from edge2d_window import Ui_edge2d_window
+from eqdsk_window import Ui_eqdsk_window
+
 
 
 def run_init():
     # first authenticate
-    suprocess
-    return response.status_code, token
+    result = bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow)
+    return result
+
 
 
 class ProjectTests(unittest.TestCase):
@@ -45,120 +52,12 @@ class ProjectTests(unittest.TestCase):
     ###############
 
     def test_main_page(self):
-        response = self.app.get("/", follow_redirects=True)
+        response = run_init()
 
-        assert response.status_code == 200
-        assert response.data == b"Hello, world!"
+        assert response == True
 
-    def test_register(self):
 
-        url = "http://127.0.0.1:3000/register"
 
-        payload = '{\n\t"username": "bruno",\n\t"password": "asdf"\n}\n'
-        headers = {"Content-Type": "application/json"}
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        print(response.json()["message"])
-        assert response.status_code == 400  # user already exists
-
-    # #
-    # # #
-    #
-    def test_auth(self):
-        status, dummy = authenticate()
-
-        assert status == 200
-
-    # #
-    # # #
-    def test_post_resource_already_exists(self):
-        status, token = authenticate()
-        url = "http://127.0.0.1:3000/item/test"
-
-        payload = '{\n\t"price": 10.99\n}'
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": "JWT  " + str(token),
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-    #     assert response.status_code == 400
-
-    #
-    def test_post_resource_doesnot_exist(self):
-        status, token = authenticate()
-
-        url = "http://127.0.0.1:3000/item/desk" + str(
-            np.random.randint(low=0, high=100, size=1)
-        )
-
-        payload = '{\n\t"price": 10.99\n}'
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": "JWT  " + str(token),
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-        assert response.status_code == 201
-
-    def test_put_resource_doesnot_exist(self):
-        status, token = authenticate()
-        url = "http://127.0.0.1:3000/item/test" + str(
-            np.random.randint(low=0, high=100, size=1)
-        )
-
-        payload = '{\n\t"price": 10.99\n}'
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": "JWT " + str(token),
-        }
-
-        response = requests.request("PUT", url, headers=headers, data=payload)
-        assert response.status_code == 201
-
-    def test_put_resource_exists(self):
-        status, token = authenticate()
-        url = "http://127.0.0.1:3000/item/desk" + str(
-            np.random.randint(low=0, high=100, size=1)
-        )
-
-        payload = '{\n\t"price": 212.99\n}'
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": "JWT " + str(token),
-        }
-
-        response = requests.request("PUT", url, headers=headers, data=payload)
-        assert response.status_code == 201
-
-    def test_delete(self):
-        status, token = authenticate()
-
-        url = "http://127.0.0.1:3000/item/test"
-
-        payload = {}
-        headers = {
-            "Authorization": "JWT " + str(token),
-        }
-
-        response = requests.request("DELETE", url, headers=headers, data=payload)
-
-        # print(response.json()["message"])
-        assert response.json()["message"] == "item deleted"
-
-    def test_items(self):
-        status, token = authenticate()
-
-        url = "http://127.0.0.1:3000/items"
-
-        payload = {}
-        headers = {
-            "Authorization": "JWT " + str(token),
-        }
-        response = requests.request("GET", url, headers=headers, data=payload)
-        print(response.text.encode("utf8"))
 
 
 if __name__ == "__main__":
