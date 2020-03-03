@@ -110,72 +110,77 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         """
         Setup the GUI, and connect the buttons to functions.
         """
-        import os
-        super(bruvio_tool, self).__init__(parent)
-        self.setupUi(self)
-        logger.debug('start')
-        cwd = os.getcwd()
-        self.workfold = cwd
-        self.home = cwd
-        parent= Path(self.home)
+        try:
+
+            super(bruvio_tool, self).__init__(parent)
+            self.setupUi(self)
+            logger.debug('start')
+            cwd = os.getcwd()
+            self.workfold = cwd
+            self.home = cwd
+            parent= Path(self.home)
 
 
 
-        with open("./user_installation_data.json", mode="r", encoding="utf-8") as f:
-            # Remove comments from input json
-            with open("temp.json", "w") as wf:
-                for line in f.readlines():
-                    if line[0:2] == "//" or line[0:1] == "#":
-                        continue
-                    wf.write(line)
+            with open("./user_installation_data.json", mode="r", encoding="utf-8") as f:
+                # Remove comments from input json
+                with open("temp.json", "w") as wf:
+                    for line in f.readlines():
+                        if line[0:2] == "//" or line[0:1] == "#":
+                            continue
+                        wf.write(line)
 
-        with open("temp.json", "r") as f:
-            self.input_dict = json.load(f, object_pairs_hook=OrderedDict)
-            os.remove("temp.json")
+            with open("temp.json", "r") as f:
+                self.input_dict = json.load(f, object_pairs_hook=OrderedDict)
+                os.remove("temp.json")
 
-        self.installationfolder =self.input_dict['install_folder']
-        self.basefolder = self.input_dict['base_folder']
-
-
+            self.installationfolder =self.input_dict['install_folder']
+            self.basefolder = self.input_dict['base_folder']
 
 
 
 
-        if "USR" in os.environ:
-            logger.debug('USR in env')
-            #self.owner = os.getenv('USR')
-            self.owner = os.getlogin()
-        else:
-            logger.debug('using getuser to authenticate')
-            import getpass
-            self.owner = getpass.getuser()
-
-        logger.info('this is your username {}'.format(self.owner))
-        self.homefold = os.path.join(os.sep, 'u', self.owner)
-        logger.info('this is your homefold {}'.format(self.homefold))
-        # logger.info('this is edge2d fold {}'.format(self.edge2dfold))
-        home = str(Path.home())
 
 
-        logger.info('we are in %s', cwd)
+            if "USR" in os.environ:
+                logger.debug('USR in env')
+                #self.owner = os.getenv('USR')
+                self.owner = os.getlogin()
+            else:
+                logger.debug('using getuser to authenticate')
+                import getpass
+                self.owner = getpass.getuser()
+
+            logger.info('this is your username {}'.format(self.owner))
+            self.homefold = os.path.join(os.sep, 'u', self.owner)
+            logger.info('this is your homefold {}'.format(self.homefold))
+            # logger.info('this is edge2d fold {}'.format(self.edge2dfold))
+            home = str(Path.home())
 
 
-        pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
-        pathlib.Path(cwd + os.sep + 'e2d_data').mkdir(parents=True,exist_ok=True)
-        pathlib.Path(cwd + os.sep + 'exp_data').mkdir(parents=True,exist_ok=True)
-
-        pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
-
-        self.readdata_button.clicked.connect(self.handle_readdata_button)
-        self.edge2d_button.clicked.connect(self.handle_edge2d_button)
-        self.eqdsk_button.clicked.connect(self.handle_eqdsk_button)
-        self.magsurf_button.clicked.connect(self.handle_magsurf_button)
-        self.readdata_button.setToolTip(
-            'opens windows to read standard set to plot time traces')
+            logger.info('we are in %s', cwd)
 
 
-        self.exit_button.clicked.connect(self.handle_exit_button)
-        self.PathTranfile = None
+            pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
+            pathlib.Path(cwd + os.sep + 'e2d_data').mkdir(parents=True,exist_ok=True)
+            pathlib.Path(cwd + os.sep + 'exp_data').mkdir(parents=True,exist_ok=True)
+
+            pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
+
+            self.readdata_button.clicked.connect(self.handle_readdata_button)
+            self.edge2d_button.clicked.connect(self.handle_edge2d_button)
+            self.eqdsk_button.clicked.connect(self.handle_eqdsk_button)
+            self.magsurf_button.clicked.connect(self.handle_magsurf_button)
+            self.readdata_button.setToolTip(
+                'opens windows to read standard set to plot time traces')
+
+
+            self.exit_button.clicked.connect(self.handle_exit_button)
+            self.PathTranfile = None
+            logger.info('INIT done')
+            return True
+        except:
+            return False
 
 
     def handle_readdata_button(self):
