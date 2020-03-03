@@ -4,7 +4,7 @@
 # ----------------------------
 __author__ = "Bruno Viola"
 __Name__ = "bruvio tool GUI"
-__version__ = "0"
+__version__ = "1"
 __release__ = "2"
 __maintainer__ = "Bruno Viola"
 __email__ = "bruno.viola@ukaea.uk"
@@ -69,15 +69,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import subprocess
-
-
-
 # sys.path.append('../')
-# from EDGE2D.class_sim import sim
-# from EDGE2D.library import *
-# from EDGE2D.EDGE2DAnalyze import shot
-# from kg1_tools.kg1_tools_gui.utility import *
-# sys.path.append('../')
+
 from class_sim import sim
 from EDGE2DAnalyze import shot
 from utility import *
@@ -88,11 +81,16 @@ plt.rcParams["savefig.directory"] = os.chdir(os.getcwd())
 
 
 
+
 try:
     ep = eproc
 except:
     logger.error('failed to load EPROC')
-    # raise SystemExit
+    # raise Systexit
+
+if 'ppf' not in sys.modules:
+    logging.warning('failed to load ppf')
+    logging.warning('you are offline!')
 
 myself = lambda: inspect.stack()[1][3]
 logger = logging.getLogger(__name__)
@@ -120,11 +118,29 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.workfold = cwd
         self.home = cwd
         parent= Path(self.home)
-        # print(parent.parent)
-        # print(parent)
-        # raise SystemExit
-        # self.edge2dfold = str(parent.parent)+'/EDGE2D'
-        self.edge2dfold = str(parent)
+
+
+
+        with open("./user_installation_data.json", mode="r", encoding="utf-8") as f:
+            # Remove comments from input json
+            with open("temp.json", "w") as wf:
+                for line in f.readlines():
+                    if line[0:2] == "//" or line[0:1] == "#":
+                        continue
+                    wf.write(line)
+
+        with open("temp.json", "r") as f:
+            self.input_dict = json.load(f, object_pairs_hook=OrderedDict)
+            os.remove("temp.json")
+
+        self.installationfolder =self.input_dict['install_folder']
+        self.basefolder = self.input_dict['base_folder']
+
+
+
+
+
+
         if "USR" in os.environ:
             logger.debug('USR in env')
             #self.owner = os.getenv('USR')
@@ -137,7 +153,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('this is your username {}'.format(self.owner))
         self.homefold = os.path.join(os.sep, 'u', self.owner)
         logger.info('this is your homefold {}'.format(self.homefold))
-        logger.info('this is edge2d fold {}'.format(self.edge2dfold))
+        # logger.info('this is edge2d fold {}'.format(self.edge2dfold))
         home = str(Path.home())
 
 
@@ -197,9 +213,6 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_plotdata.checkBox.toggled.connect(
             lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
 
-        # self.JSONSS = '/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/PLASMA_main_parameters_new.json'
-        # self.JSONSSname = os.path.basename(self.JSONSS)
-
         self.JSONSS = "PLASMA_main_parameters_new.json"
 
         logger.debug('default set is {}'.format(self.JSONSS))
@@ -224,7 +237,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
         self.ui_eqdsk.lineEdit_eqdskname.setText('g_p92121_t49.445_mod.eqdsk')
 
-        self.eqdsk = '/work/bviola/JET/m15-20/exp/g_p92121_t49.445_mod.eqdsk'
+        self.eqdsk = "/u/"+ self.owner+ "/"+ self.basefolder+ "/" + self.installationfolder+'/exp_data/g_p92121_t49.445_mod.eqdsk'
 
         self.ui_eqdsk.radioButton_efit.setChecked(True)
         self.ui_eqdsk.radioButton_other.setChecked(False)
@@ -247,7 +260,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
 
-        self.vesselfile = '/u/bviola/work/JET/m15-20/exp/vessel_JET_csv.txt'
+        self.vesselfile =             "/u/"
+        + self.owner
+        + "/"
+        + self.basefolder
+        + "/"
+        + self.installationfolder
+        +'/exp_data/vessel_JET_csv.txt'
 
 
 
@@ -350,22 +369,6 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_edge2d.runcpmparesims_button.clicked.connect(self.handle_run)
 
 
-
-
-
-
-
-        # self.ui_edge2d.enablecompare_check.setText('input_dict_84600.json')
-        #
-        #
-        # self.inputJSONSS = QtGui.QFileDialog.getOpenFileName(None,
-        #                                                 'Select Standard set',
-        #                                                 "./standard_set",
-        #                                                 'JSON Files(*.json)')
-        #
-        # self.inputJSONSS = os.path.basename(self.inputJSONSS)
-        # logger.debug('you have chosen {}'.format(self.inputJSONSS))
-        # os.chdir(self.home)
 
     def handle_magsurf_button(self):
         self.magsurf_window = QMainWindow()
@@ -483,14 +486,15 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_select_eqdsk(self):
-        self.eqdsk = QtGui.QFileDialog.getOpenFileName(None,'Select EQDSK',self.edge2dfold,'EQDSK Files(*.eqdsk)')
+        folder = os.path.join(self.homefold,os.sep, self.basefolder,os.sep,self.installationfolder,os.sep,"exp_data")
+        self.eqdsk, _filter = QtGui.QFileDialog.getOpenFileName(None,'Select EQDSK',folder,'EQDSK Files(*.eqdsk)')
+        if not self.eqdsk=='':
+            # self.eqdsk = os.path(self.eqdsk)
+            self.ui_eqdsk.lineEdit_eqdskname.setText(os.path.basename(self.eqdsk))
 
-        # self.eqdsk = os.path(self.eqdsk)
-        self.ui_eqdsk.lineEdit_eqdskname.setText(os.path.basename(self.eqdsk))
-
-        logger.debug('you have chosen {}'.format(os.path.basename(self.eqdsk)))
-        os.chdir(self.home)
-        return self.eqdsk
+            logger.debug('you have chosen {}'.format(os.path.basename(self.eqdsk)))
+            os.chdir(self.home)
+            return self.eqdsk
     #
     # def handle_readeqdsk(self):
     #     if not self.eqdsk:
@@ -505,7 +509,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_openinputfile(self):
-        inputfilefortran = '/work/bviola/Fortran/tokmagnmap_mac/tokinfo.txt'
+        inputfilefortran =  "/u/"
+        + self.owner
+        + "/"
+        + self.basefolder
+        + "/"
+        + self.installationfolder
+        +"/Fortran/tokmagnmap_mac/tokinfo.txt"
         logger.info('opening input file to Fortran code')
         # os.system('kate {}'.format(inputfilefortran))
         subprocess.Popen('atom {}'.format(inputfilefortran), shell=True)
@@ -513,7 +523,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_lcmsmap(self):
-        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        os.chdir("/u/"
+        + self.owner
+        + "/"
+        + self.basefolder
+        + "/"
+        + self.installationfolder
+        +"/Fortran/tokmagnmap_mac")
         logger.info('running LCMS map')
 
         # os.system('toksepmap')
@@ -522,7 +538,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         logger.info('done')
 
     def handle_lcmsmapX(self):
-        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        os.chdir("/u/"
+        + self.owner
+        + "/"
+        + self.basefolder
+        + "/"
+        + self.installationfolder
+        +"/Fortran/tokmagnmap_mac")
         logger.info('running LCMS X map')
 
         # os.system('toksepmapx')
@@ -534,7 +556,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_solmap(self):
-        os.chdir('/work/bviola/Fortran/tokmagnmap_mac')
+        os.chdir("/u/"
+        + self.owner
+        + "/"
+        + self.basefolder
+        + "/"
+        + self.installationfolder
+        +"/Fortran/tokmagnmap_mac")
         logger.info('running SOL map')
 
         # os.system('toksolmap')
@@ -656,8 +684,8 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             for index1 in range(0, len(self.simlist)):
                 logger.info('analyzing sim {}'.format(self.namelist[index1]))
 
-
-            sim.write_eirene_cur2file(self.simlist, self.edge2dfold + '/e2d_data', self.targetfilename)
+            folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+            sim.write_eirene_cur2file(self.simlist, folder + '/e2d_data', self.targetfilename)
 
 
 
@@ -666,9 +694,9 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         if not self.simlist:
             logger.error('choose a simulation first')
         else:
-            if self.owner == 'bviola':
+            folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
 
-                os.chdir(self.edge2dfold)
+            os.chdir(folder)
 
             self.variable = self.ui_edge2d.lineEdit_var.text().split(',')
             for index1 in range(0, len(self.simlist)):
@@ -712,7 +740,10 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
                 # print(simlist[i][0].fullpath)
             logger.info('writing print-file data to csv file')
             # logger.info('analyzing sim {}'.format(self.namelist[index1]))
-            sim.write_print2file(self.simlist, self.edge2dfold+'/e2d_data', self.targetfilename)
+            folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+
+
+            sim.write_print2file(self.simlist, folder+'/e2d_data', self.targetfilename)
 
             logger.info('done')
 
@@ -731,8 +762,9 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         else:
             # for index1 in range(0, len(self.simlist)):
             #     simu = self.simlist[index1][0]
-                if self.owner == 'bviola':
-                    os.chdir(self.edge2dfold)
+                folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+
+                os.chdir(folder)
 
                 upper = input('enter upper bound in exp notation \n')
                 sim.contour_rad_power(self.simlist, float(upper))
@@ -1669,15 +1701,6 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
     # ---------------------------
     def selectstandardset(self):
-        # qfd = QtGui.QFileDialog()
-        # path = "/"
-        # filter = "JSON(*.json)"
-        # f = QFileDialog.getOpenFileName(qfd, title, path, filter)
-        # os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
-        # self.JSONSS,ddd = QFileDialog.getOpenFileName(None,'Select Standard set',"./standard_set",'JSON Files(*.json)')
-        #
-        # self.JSONSSname = os.path.basename(self.JSONSS)
-        # logger.debug('you have chosen {}'.format(self.JSONSSname))
 
 
         self.JSONSS, ddd = QFileDialog.getOpenFileName(
@@ -1742,8 +1765,14 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             inputlist.append([pulselist[i]])
         #
         #
-        if self.owner =='bviola':
-            os.chdir('/work/bviola/Python/kg1_tools/kg1_tools_gui')
+        # if self.owner =='bviola':
+        #     os.chdir("/u/"
+        #     + self.owner
+        #     + "/"
+        #     + self.basefolder
+        #     + "/"
+        #     + self.installationfolder
+        #     +"/Python/kg1_tools/kg1_tools_gui')
 
         plot_time_traces(self.JSONSS, inputlist, save=save, smooth=smooth,
                          calc_mean=calc_mean, start_value=start_value,
@@ -1807,7 +1836,8 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         # print(dictionary[0],var, loc)
         # for i,j in enumerate(dictionary):
         #     print(i,j)
-        os.chdir(self.edge2dfold)
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+        os.chdir(folder)
         # print(os.curdir)
         # print(dictionary[0])
         # if len(dictionary) ==1:
@@ -1827,16 +1857,19 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_runanalyze_button(self):
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder 
         if self.ui_edge2d.enablecompare_check.isChecked() == False:
             logger.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
-            os.chdir(self.edge2dfold)
+
+            os.chdir(folder)
             # os.system(
             #     'run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1))
             subprocess.Popen('run_edge2danalysis.py  {} -d 0'.format(self.JSONSS1), shell=True)
             os.chdir(self.home)
         if self.ui_edge2d.enablecompare_check.isChecked() ==  True:
             logger.debug('running edge2d_analyze on {} and {}'.format(self.JSONSS1, self.JSONSS2))
-            os.chdir(self.edge2dfold)
+
+            os.chdir(folder)
             # os.system(
                 # 'run_edge2danalysis.py  {} --input_dict2 {} -d 0'.format(self.JSONSS1,self.JSONSS2))
             subprocess.Popen(
@@ -1860,16 +1893,17 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def checkstateJSON(self, button):
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
         if button.isChecked() == True:
             if button.text() == "edit JSON1":
 
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
-                subprocess.Popen('atom {}'.format(self.edge2dfold+'/'+self.JSONSS1), shell=True)
+                subprocess.Popen('atom {}'.format(folder+'/'+self.JSONSS1), shell=True)
 
                 self.ui_edge2d.edit_JSON1.setChecked(False)
             if button.text() == "edit JSON2":
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
-                subprocess.Popen('atom {}'.format(self.edge2dfold+'/'+self.JSONSS2), shell=True)
+                subprocess.Popen('atom {}'.format(folder+'/'+self.JSONSS2), shell=True)
                 self.ui_edge2d.edit_JSON2.setChecked(False)
 
             if button.isChecked() == True:
@@ -1877,29 +1911,31 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
                     # os.system(
                     #     'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
 
-                    subprocess.Popen('atom {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSSname), shell=True)
+                    subprocess.Popen('atom {}'.format(folder+ self.JSONSS), shell=True)
                     self.ui_plotdata.checkBox.setChecked(False)
 
 
 
     def handle_selectjson1(self):
-        self.JSONSS1 = QtGui.QFileDialog.getOpenFileName(None,'Select PULSE JSON',self.edge2dfold,'JSON Files(*.json)')
+        folder = self.homefold + os.sep+ self.basefolder+os.sep+ self.installationfolder
+        self.JSONSS1, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
+        if not self.JSONSS1=='':
+            self.JSONSS1 = os.path.basename(self.JSONSS1)
+            self.ui_edge2d.lineEdit_1st.setText(self.JSONSS1)
 
-        self.JSONSS1 = os.path.basename(self.JSONSS1)
-        self.ui_edge2d.lineEdit_1st.setText(self.JSONSS1)
-
-        logger.debug('you have chosen {}'.format(self.JSONSS1))
-        os.chdir(self.home)
-        return self.JSONSS1
+            logger.debug('you have chosen {}'.format(self.JSONSS1))
+            os.chdir(self.home)
+            return self.JSONSS1
 
     def handle_selectjson2(self):
-        self.JSONSS2 = QtGui.QFileDialog.getOpenFileName(None,'Select PULSE JSON',self.edge2dfold,'JSON Files(*.json)')
-
-        self.JSONSS2 = os.path.basename(self.JSONSS2)
-        self.ui_edge2d.lineEdit_2nd.setText(self.JSONSS2)
-        logger.debug('you have chosen {}'.format(self.JSONSS2))
-        os.chdir(self.home)
-        return self.JSONSS1
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+        self.JSONSS2, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
+        if not self.JSONSS2=='':
+            self.JSONSS2 = os.path.basename(self.JSONSS2)
+            self.ui_edge2d.lineEdit_2nd.setText(self.JSONSS2)
+            logger.debug('you have chosen {}'.format(self.JSONSS2))
+            os.chdir(self.home)
+            return self.JSONSS2
 
     def getsimnames(self):
         import eproc as ep

@@ -1,0 +1,32 @@
+{
+    "ppf":{
+        "jetppf/KG1V/LID1":["1",".",":"],
+        "jetppf/KG1V/LID2":["2",".",":"],
+        "jetppf/KG1V/LID3":["3",".",":"],
+        "jetppf/KG1V/LID4":["4",".",":"],
+        "jetppf/KG1V/LID5":["5",".",":"],
+        "jetppf/KG1V/LID6":["6",".",":"],
+        "jetppf/KG1V/LID7":["7",".",":"],
+        "jetppf/KG1V/LID8":["8",".",":"],
+        "jetppf/KG1H/LAD1":["1",".",":"],
+        "jetppf/KG1H/LAD2":["2",".",":"],
+        "jetppf/KG1H/LAD3":["3",".",":"],
+        "jetppf/KG1H/LAD4":["4",".",":"],
+        "jetppf/KG1H/LAD5":["5",".",":"],
+        "jetppf/KG1H/LAD6":["6",".",":"],
+        "jetppf/KG1H/LAD7":["7",".",":"],
+        "jetppf/KG1H/LAD8":["8",".",":"],
+        "jetppf/KG1H/LAD1":["1",".",":"],
+    "jetppf/KG1L/LAD2":["2",".",":"],
+    "jetppf/KG1L/LAD3":["3",".",":"],
+    "jetppf/KG1L/LAD4":["4",".",":"],
+    "jetppf/KG1L/LAD5":["5",".",":"],
+    "jetppf/KG1L/LAD6":["6",".",":"],
+    "jetppf/KG1L/LAD7":["7",".",":"],
+    "jetppf/KG1L/LAD8":["8",".",":"]
+},
+    "icolumn":"2",
+    "irow":"4",
+    "linewidth":"0.5",
+    "markersize":"2"
+    }
