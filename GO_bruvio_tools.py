@@ -260,13 +260,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
 
-        self.vesselfile =             "/u/"
-        + self.owner
-        + "/"
-        + self.basefolder
-        + "/"
-        + self.installationfolder
-        +'/exp_data/vessel_JET_csv.txt'
+        self.vesselfile =             "/u/"+ self.owner+ "/"+ self.basefolder+ "/"+ self.installationfolder+'/exp_data/vessel_JET_csv.txt'
 
 
 
@@ -509,66 +503,46 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_openinputfile(self):
-        inputfilefortran =  "/u/"
-        + self.owner
-        + "/"
-        + self.basefolder
-        + "/"
-        + self.installationfolder
-        +"/Fortran/tokmagnmap_mac/tokinfo.txt"
-        logger.info('opening input file to Fortran code')
-        # os.system('kate {}'.format(inputfilefortran))
-        subprocess.Popen('atom {}'.format(inputfilefortran), shell=True)
+        if self.owner == 'bviola':
+            inputfilefortran =  "/u/"+ self.owner+ "/work/Fortran/tokmagnmap_mac/tokinfo.txt"
+            logger.info('opening input file to Fortran code')
+            # os.system('kate {}'.format(inputfilefortran))
+            subprocess.Popen('atom {}'.format(inputfilefortran), shell=True)
 
 
 
     def handle_lcmsmap(self):
-        os.chdir("/u/"
-        + self.owner
-        + "/"
-        + self.basefolder
-        + "/"
-        + self.installationfolder
-        +"/Fortran/tokmagnmap_mac")
-        logger.info('running LCMS map')
+        if self.owner == 'bviola':
+            os.chdir("/u/"+ self.owner+ "/work/Fortran/tokmagnmap_mac")
+            logger.info('running LCMS map')
 
-        # os.system('toksepmap')
-        subprocess.Popen('toksepmap', shell=True)
-        os.chdir(self.home)
-        logger.info('done')
+            # os.system('toksepmap')
+            subprocess.Popen('toksepmap', shell=True)
+            os.chdir(self.home)
+            logger.info('done')
 
     def handle_lcmsmapX(self):
-        os.chdir("/u/"
-        + self.owner
-        + "/"
-        + self.basefolder
-        + "/"
-        + self.installationfolder
-        +"/Fortran/tokmagnmap_mac")
-        logger.info('running LCMS X map')
+        if self.owner == 'bviola':
+            os.chdir("/u/"+ self.owner+ "/work/Fortran/tokmagnmap_mac")
+            logger.info('running LCMS X map')
 
-        # os.system('toksepmapx')
-        subprocess.Popen('toksepmapx', shell=True)
-        os.chdir(self.home)
-        logger.info('done')
+            # os.system('toksepmapx')
+            subprocess.Popen('toksepmapx', shell=True)
+            os.chdir(self.home)
+            logger.info('done')
 
 
 
 
     def handle_solmap(self):
-        os.chdir("/u/"
-        + self.owner
-        + "/"
-        + self.basefolder
-        + "/"
-        + self.installationfolder
-        +"/Fortran/tokmagnmap_mac")
-        logger.info('running SOL map')
+        if self.owner == 'bviola':
+            os.chdir("/u/" + self.owner + "/work/Fortran/tokmagnmap_mac")
+            logger.info('running SOL map')
 
-        # os.system('toksolmap')
-        subprocess.Popen('toksolmap', shell=True)
-        os.chdir(self.home)
-        logger.info('done')
+            # os.system('toksolmap')
+            subprocess.Popen('toksolmap', shell=True)
+            os.chdir(self.home)
+            logger.info('done')
 
 
 
@@ -637,7 +611,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             else:
                 invert = False
             os.chdir(self.home)
-            if [file for file in os.listdir(self.home) if name in file]:
+            if [file for file in os.listdir(self.home) if nameIN in file]:
             # if os.path.isfile(nameIN):
                 B_pol, B_tot, Bphi2D, B_pol, Br2D, Bz2D, flux2D, fluxnorm, SH, r2, z2D, \
                 r_rect, z_rect, rmaxis, zmaxis = write_magnetic_data(nameIN,
@@ -661,11 +635,12 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             logger.error('select eqdsk first')
         else:
             nameIN = self.ui_eqdsk.lineEdit_labelIN.text()
+            nameOUT = self.ui_eqdsk.lineEdit_labelOUT.text()
             os.chdir(self.home)
-            if [file for file in os.listdir(self.home) if name in file]:
+            if [file for file in os.listdir(self.home) if nameIN in file]:
             # if os.path.isfile(nameIN) :
                 R, Z, PSI, BR, Bz, dPSIdR, dPSIdz, dBRdR, dBRdz, dBzdR, dBzdz = define_input_matrix_for_mesh(
-                    nameIN)
+                    nameOUT)
 
                 os.chdir(self.home)
                 logger.info('matrix written to file')
@@ -1857,7 +1832,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_runanalyze_button(self):
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder 
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
         if self.ui_edge2d.enablecompare_check.isChecked() == False:
             logger.debug('running edge2d_analyze on {}'.format(self.JSONSS1))
 
