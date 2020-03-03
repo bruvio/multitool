@@ -106,77 +106,87 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
     """
 
     # ----------------------------
-    def __init__(self, parent=None):
+
+
+    def __init__(self,parent=None):
         """
         Setup the GUI, and connect the buttons to functions.
         """
-        import os
-        super(bruvio_tool, self).__init__(parent)
-        self.setupUi(self)
-        logger.debug('start')
-        cwd = os.getcwd()
-        self.workfold = cwd
-        self.home = cwd
-        parent= Path(self.home)
+        try:
+
+            super(bruvio_tool, self).__init__(parent)
+            self.setupUi(self)
+            logger.debug('start')
+            cwd = os.getcwd()
+            self.workfold = cwd
+            self.home = cwd
+            parent= Path(self.home)
 
 
 
-        with open("./user_installation_data.json", mode="r", encoding="utf-8") as f:
-            # Remove comments from input json
-            with open("temp.json", "w") as wf:
-                for line in f.readlines():
-                    if line[0:2] == "//" or line[0:1] == "#":
-                        continue
-                    wf.write(line)
+            with open("./user_installation_data.json", mode="r", encoding="utf-8") as f:
+                # Remove comments from input json
+                with open("temp.json", "w") as wf:
+                    for line in f.readlines():
+                        if line[0:2] == "//" or line[0:1] == "#":
+                            continue
+                        wf.write(line)
 
-        with open("temp.json", "r") as f:
-            self.input_dict = json.load(f, object_pairs_hook=OrderedDict)
-            os.remove("temp.json")
+            with open("temp.json", "r") as f:
+                self.input_dict = json.load(f, object_pairs_hook=OrderedDict)
+                os.remove("temp.json")
 
-        self.installationfolder =self.input_dict['install_folder']
-        self.basefolder = self.input_dict['base_folder']
-
-
+            self.installationfolder =self.input_dict['install_folder']
+            self.basefolder = self.input_dict['base_folder']
 
 
 
 
-        if "USR" in os.environ:
-            logger.debug('USR in env')
-            #self.owner = os.getenv('USR')
-            self.owner = os.getlogin()
-        else:
-            logger.debug('using getuser to authenticate')
-            import getpass
-            self.owner = getpass.getuser()
-
-        logger.info('this is your username {}'.format(self.owner))
-        self.homefold = os.path.join(os.sep, 'u', self.owner)
-        logger.info('this is your homefold {}'.format(self.homefold))
-        # logger.info('this is edge2d fold {}'.format(self.edge2dfold))
-        home = str(Path.home())
 
 
-        logger.info('we are in %s', cwd)
+            if "USR" in os.environ:
+                logger.debug('USR in env')
+                #self.owner = os.getenv('USR')
+                self.owner = os.getlogin()
+            else:
+                logger.debug('using getuser to authenticate')
+                import getpass
+                self.owner = getpass.getuser()
+
+            logger.info('this is your username {}'.format(self.owner))
+            self.homefold = os.path.join(os.sep, 'u', self.owner)
+            logger.info('this is your homefold {}'.format(self.homefold))
+            # logger.info('this is edge2d fold {}'.format(self.edge2dfold))
+            home = str(Path.home())
 
 
-        pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
-        pathlib.Path(cwd + os.sep + 'e2d_data').mkdir(parents=True,exist_ok=True)
-        pathlib.Path(cwd + os.sep + 'exp_data').mkdir(parents=True,exist_ok=True)
-
-        pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
-
-        self.readdata_button.clicked.connect(self.handle_readdata_button)
-        self.edge2d_button.clicked.connect(self.handle_edge2d_button)
-        self.eqdsk_button.clicked.connect(self.handle_eqdsk_button)
-        self.magsurf_button.clicked.connect(self.handle_magsurf_button)
-        self.readdata_button.setToolTip(
-            'opens windows to read standard set to plot time traces')
+            logger.info('we are in %s', cwd)
 
 
-        self.exit_button.clicked.connect(self.handle_exit_button)
-        self.PathTranfile = None
+            pathlib.Path(cwd + os.sep + 'figures').mkdir(parents=True,exist_ok=True)
+            pathlib.Path(cwd + os.sep + 'e2d_data').mkdir(parents=True,exist_ok=True)
+            pathlib.Path(cwd + os.sep + 'exp_data').mkdir(parents=True,exist_ok=True)
 
+            pathlib.Path(cwd + os.sep + 'standard_set').mkdir(parents=True,exist_ok=True)
+
+            self.readdata_button.clicked.connect(self.handle_readdata_button)
+            self.edge2d_button.clicked.connect(self.handle_edge2d_button)
+            self.eqdsk_button.clicked.connect(self.handle_eqdsk_button)
+            self.magsurf_button.clicked.connect(self.handle_magsurf_button)
+            self.readdata_button.setToolTip(
+                'opens windows to read standard set to plot time traces')
+
+
+            self.exit_button.clicked.connect(self.handle_exit_button)
+            self.PathTranfile = None
+            logger.info('init DONE!\n')
+            self.value = 1
+        except:
+            logger.error('init FAILED!\n')
+            self.value = 0
+
+    def __int__(self):
+        return int(self.value)
 
     def handle_readdata_button(self):
         """
@@ -188,294 +198,309 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
         :return:
         """
+        try:
+            logger.info('\n')
+            logger.info('plotting tool')
 
-        logger.info('\n')
-        logger.info('plotting tool')
+            self.window_plotdata = QMainWindow()
+            self.ui_plotdata = Ui_plotdata_window()
+            self.ui_plotdata.setupUi(self.window_plotdata)
+            self.window_plotdata.show()
 
-        self.window_plotdata = QMainWindow()
-        self.ui_plotdata = Ui_plotdata_window()
-        self.ui_plotdata.setupUi(self.window_plotdata)
-        self.window_plotdata.show()
+            initpulse = ppf.pdmsht()
+            initpulse2 = initpulse -1
 
-        initpulse = ppf.pdmsht()
-        initpulse2 = initpulse -1
+            self.ui_plotdata.textEdit_pulselist.setText(str(initpulse))
+            # self.ui_plotdata.textEdit_colorlist.setText('black')
 
-        self.ui_plotdata.textEdit_pulselist.setText(str(initpulse))
-        # self.ui_plotdata.textEdit_colorlist.setText('black')
+            self.ui_plotdata.selectfile.clicked.connect(self.selectstandardset)
 
-        self.ui_plotdata.selectfile.clicked.connect(self.selectstandardset)
+            self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
+            self.ui_plotdata.savefigure_checkBox.setChecked(False)
+            self.ui_plotdata.smooth_checkBox.setChecked(False)
+            self.ui_plotdata.calcmean_checkBox.setChecked(False)
+            self.ui_plotdata.checkBox.setChecked(False)
+            self.ui_plotdata.checkBox.toggled.connect(
+                lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
 
-        self.ui_plotdata.plotbutton.clicked.connect(self.plotdata)
-        self.ui_plotdata.savefigure_checkBox.setChecked(False)
-        self.ui_plotdata.smooth_checkBox.setChecked(False)
-        self.ui_plotdata.calcmean_checkBox.setChecked(False)
-        self.ui_plotdata.checkBox.setChecked(False)
-        self.ui_plotdata.checkBox.toggled.connect(
-            lambda: self.checkstateJSON(self.ui_plotdata.checkBox))
+            self.JSONSS = "PLASMA_main_parameters_new.json"
 
-        self.JSONSS = "PLASMA_main_parameters_new.json"
-
-        logger.debug('default set is {}'.format(self.JSONSS))
-        logger.info('select a standard set')
-        logger.info('\n')
-        logger.info('type in a list of pulses')
-
+            logger.debug('default set is {}'.format(self.JSONSS))
+            logger.info('select a standard set')
+            logger.info('\n')
+            logger.info('type in a list of pulses')
+            return 1
+        except:
+            logger.error('failed to run Plot Data GUI')
+            return 0
     def handle_eqdsk_button(self):
-        logger.info('\n')
-        logger.info('eqdsk tool')
+        try:
+            logger.info('\n')
+            logger.info('eqdsk tool')
 
-        self.window_eqdsk = QMainWindow()
-        self.ui_eqdsk = Ui_eqdsk_window()
-        self.ui_eqdsk.setupUi(self.window_eqdsk)
-        self.window_eqdsk.show()
+            self.window_eqdsk = QMainWindow()
+            self.ui_eqdsk = Ui_eqdsk_window()
+            self.ui_eqdsk.setupUi(self.window_eqdsk)
+            self.window_eqdsk.show()
 
-        self.ui_eqdsk.checkBox_invert.setChecked(True)
-        self.ui_eqdsk.checkBox_normalize.setChecked(True)
+            self.ui_eqdsk.checkBox_invert.setChecked(True)
+            self.ui_eqdsk.checkBox_normalize.setChecked(True)
 
-        self.ui_eqdsk.eqdsk_exit.clicked.connect(self.exitGUI_eqdsk)
-
-
-        self.ui_eqdsk.lineEdit_eqdskname.setText('g_p92121_t49.445_mod.eqdsk')
-
-        self.eqdsk = "/u/"+ self.owner+ "/"+ self.basefolder+ "/" + self.installationfolder+'/exp_data/g_p92121_t49.445_mod.eqdsk'
-
-        self.ui_eqdsk.radioButton_efit.setChecked(True)
-        self.ui_eqdsk.radioButton_other.setChecked(False)
-        self.ui_eqdsk.lineEdit_psioffset.setText('7.4032')
-        self.ui_eqdsk.lineEdit_labelIN.setText('LFE_81472')
-        self.ui_eqdsk.lineEdit_labelOUT.setText('LFEexp_JET_python')
+            self.ui_eqdsk.eqdsk_exit.clicked.connect(self.exitGUI_eqdsk)
 
 
+            self.ui_eqdsk.lineEdit_eqdskname.setText('g_p92121_t49.445_mod.eqdsk')
 
+            self.eqdsk = "/u/"+ self.owner+ "/"+ self.basefolder+ "/" + self.installationfolder+'/exp_data/g_p92121_t49.445_mod.eqdsk'
 
-        self.ui_eqdsk.select_eqdsk.clicked.connect(self.handle_select_eqdsk)
-        self.ui_eqdsk.pushButton_read.clicked.connect(self.handle_readeqdsk)
-        self.ui_eqdsk.pushButton_lcmsmap.clicked.connect(self.handle_lcmsmap)
-        self.ui_eqdsk.pushButton_lcmsmapX.clicked.connect(self.handle_lcmsmapX)
-        self.ui_eqdsk.pushButton_solmap.clicked.connect(self.handle_solmap)
-        self.ui_eqdsk.pushButton_getmagneticdata.clicked.connect(self.handle_getmagneticdata)
-        self.ui_eqdsk.pushButton_writemagneticdata.clicked.connect(self.handle_writemagneticdata)
-        self.ui_eqdsk.pushButton_writematrix.clicked.connect(self.handle_writematrix)
-        self.ui_eqdsk.pushButton_openinputfile.clicked.connect(self.handle_openinputfile)
+            self.ui_eqdsk.radioButton_efit.setChecked(True)
+            self.ui_eqdsk.radioButton_other.setChecked(False)
+            self.ui_eqdsk.lineEdit_psioffset.setText('7.4032')
+            self.ui_eqdsk.lineEdit_labelIN.setText('LFE_81472')
+            self.ui_eqdsk.lineEdit_labelOUT.setText('LFEexp_JET_python')
 
 
 
-        self.vesselfile =             "/u/"+ self.owner+ "/"+ self.basefolder+ "/"+ self.installationfolder+'/exp_data/vessel_JET_csv.txt'
+
+            self.ui_eqdsk.select_eqdsk.clicked.connect(self.handle_select_eqdsk)
+            self.ui_eqdsk.pushButton_read.clicked.connect(self.handle_readeqdsk)
+            self.ui_eqdsk.pushButton_lcmsmap.clicked.connect(self.handle_lcmsmap)
+            self.ui_eqdsk.pushButton_lcmsmapX.clicked.connect(self.handle_lcmsmapX)
+            self.ui_eqdsk.pushButton_solmap.clicked.connect(self.handle_solmap)
+            self.ui_eqdsk.pushButton_getmagneticdata.clicked.connect(self.handle_getmagneticdata)
+            self.ui_eqdsk.pushButton_writemagneticdata.clicked.connect(self.handle_writemagneticdata)
+            self.ui_eqdsk.pushButton_writematrix.clicked.connect(self.handle_writematrix)
+            self.ui_eqdsk.pushButton_openinputfile.clicked.connect(self.handle_openinputfile)
 
 
+
+            self.vesselfile =             "/u/"+ self.owner+ "/"+ self.basefolder+ "/"+ self.installationfolder+'/exp_data/vessel_JET_csv.txt'
+            return 1
+        except:
+            logger.error('failed to launch EQDSK GUI ')
+            return 0
 
     def handle_edge2d_button(self):
-        logger.info('\n')
-        logger.info('edge2d tool')
-        self.Inputcode = 0
-        self.ExtraInput = 0
-        self.PathCatalog = '/home'
+        try:
+            logger.info('\n')
+            logger.info('edge2d tool')
+            self.Inputcode = 0
+            self.ExtraInput = 0
+            self.PathCatalog = '/home'
 
-        self.edge2d_window = QMainWindow()
-        self.ui_edge2d = Ui_edge2d_window()
-        self.ui_edge2d.setupUi(self.edge2d_window)
-        self.edge2d_window.show()
+            self.edge2d_window = QMainWindow()
+            self.ui_edge2d = Ui_edge2d_window()
+            self.ui_edge2d.setupUi(self.edge2d_window)
+            self.edge2d_window.show()
 
-        self.ui_edge2d.edge2d_exit.clicked.connect(self.exitGUI_edge2d)
-        self.ui_edge2d.rungetnames_button.clicked.connect(self.getsimnames)
+            self.ui_edge2d.edge2d_exit.clicked.connect(self.exitGUI_edge2d)
+            self.ui_edge2d.rungetnames_button.clicked.connect(self.getsimnames)
 
-        self.ui_edge2d.pushButton_pumpcurrents.clicked.connect(self.handle_pumpcurrents)
-        self.ui_edge2d.pushButton_contour.clicked.connect(self.handle_contour)
-        self.ui_edge2d.pushButton_powerbalance.clicked.connect(self.handle_powerbalance)
-        self.ui_edge2d.pushButton_print.clicked.connect(self.handle_print)
-        self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
-        # self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
-        self.ui_edge2d.pushButton_radiation.clicked.connect(self.handle_radiation)
+            self.ui_edge2d.pushButton_pumpcurrents.clicked.connect(self.handle_pumpcurrents)
+            self.ui_edge2d.pushButton_contour.clicked.connect(self.handle_contour)
+            self.ui_edge2d.pushButton_powerbalance.clicked.connect(self.handle_powerbalance)
+            self.ui_edge2d.pushButton_print.clicked.connect(self.handle_print)
+            self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
+            # self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
+            self.ui_edge2d.pushButton_radiation.clicked.connect(self.handle_radiation)
 
-        # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
-
-
-        self.ui_edge2d.lineEdit_1st.setText('compare_dict_84600.json')
-        self.JSONSS1 = 'compare_dict_84600.json'
-        self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600_tuningVassili.json')
-        self.JSONSS2 = 'compare_dict_84600_tuningVassili.json'
-
-        fsm = QFileSystemModel()
-        index = fsm.setRootPath(self.PathCatalog)
-        # self.comboBox = Qt.QComboBox()
-        self.ui_edge2d.comboBox_Name.setModel(fsm)
-        self.ui_edge2d.comboBox_Name.setRootModelIndex(index)
-        self.ui_edge2d.comboBox_Name.currentIndexChanged.connect(self.ScanName)
-
-        self.simlist = []
-        self.namelist = []
-
-        # self.ui_edge2d.comboBoxProgramE2d.currentIndexChanged.connect(self.ProgramE2dFunc)
-
-        self.ui_edge2d.comboBox_Machine.currentIndexChanged.connect(self.MachineFunc)
-
-        self.ui_edge2d.comboBox_Shot.currentIndexChanged.connect(self.ShotFunc)
-
-        self.ui_edge2d.comboBox_Date.currentIndexChanged.connect(self.DatagFunc)
-
-        self.ui_edge2d.comboBox_Seq.currentIndexChanged.connect(self.SeqFunc)
+            # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
 
 
-        self.ui_edge2d.add_sim.clicked.connect(self.handle_add_sim)
-        self.ui_edge2d.lineEdit_var.setText('denel')
-        self.ui_edge2d.lineEdit_var_5.setText(self.ui_edge2d.lineEdit_var.text())
+            self.ui_edge2d.lineEdit_1st.setText('compare_dict_84600.json')
+            self.JSONSS1 = 'compare_dict_84600.json'
+            self.ui_edge2d.lineEdit_2nd.setText('compare_dict_84600_tuningVassili.json')
+            self.JSONSS2 = 'compare_dict_84600_tuningVassili.json'
+
+            fsm = QFileSystemModel()
+            index = fsm.setRootPath(self.PathCatalog)
+            # self.comboBox = Qt.QComboBox()
+            self.ui_edge2d.comboBox_Name.setModel(fsm)
+            self.ui_edge2d.comboBox_Name.setRootModelIndex(index)
+            self.ui_edge2d.comboBox_Name.currentIndexChanged.connect(self.ScanName)
+
+            self.simlist = []
+            self.namelist = []
+
+            # self.ui_edge2d.comboBoxProgramE2d.currentIndexChanged.connect(self.ProgramE2dFunc)
+
+            self.ui_edge2d.comboBox_Machine.currentIndexChanged.connect(self.MachineFunc)
+
+            self.ui_edge2d.comboBox_Shot.currentIndexChanged.connect(self.ShotFunc)
+
+            self.ui_edge2d.comboBox_Date.currentIndexChanged.connect(self.DatagFunc)
+
+            self.ui_edge2d.comboBox_Seq.currentIndexChanged.connect(self.SeqFunc)
 
 
-        self.ui_edge2d.lineEdit_var.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var))
-        self.ui_edge2d.lineEdit_var_5.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var_5))
+            self.ui_edge2d.add_sim.clicked.connect(self.handle_add_sim)
+            self.ui_edge2d.lineEdit_var.setText('denel')
+            self.ui_edge2d.lineEdit_var_5.setText(self.ui_edge2d.lineEdit_var.text())
 
 
-        self.ui_edge2d.lineEdit_var_2.setText('ot')
-        self.ui_edge2d.lineEdit_var_3.setText('test')
-        self.ui_edge2d.lineEdit_var_4.setText('targetfilename')
-        self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
+            self.ui_edge2d.lineEdit_var.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var))
+            self.ui_edge2d.lineEdit_var_5.textChanged.connect(lambda: self.updateLineedit(self.ui_edge2d.lineEdit_var_5))
 
 
-
+            self.ui_edge2d.lineEdit_var_2.setText('ot')
+            self.ui_edge2d.lineEdit_var_3.setText('test')
+            self.ui_edge2d.lineEdit_var_4.setText('targetfilename')
+            self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
 
 
 
-        self.ui_edge2d.checkBox_profile.setChecked(False)
-        self.ui_edge2d.checkBox_time.setChecked(False)
-        self.ui_edge2d.checkBox_flux.setChecked(False)
-        self.ui_edge2d.checkBox_geom.setChecked(False)
 
-        self.ui_edge2d.select_json1.clicked.connect(self.handle_selectjson1)
-        self.ui_edge2d.select_json2.setEnabled(False);
-        self.ui_edge2d.lineEdit_2nd.setEnabled(False);
-        self.ui_edge2d.enablecompare_check.setChecked(False)
 
-        self.ui_edge2d.enablecompare_check.toggled.connect(
-            lambda: self.checkprintstate(self.ui_edge2d.enablecompare_check))
 
-        self.ui_edge2d.select_json2.clicked.connect(self.handle_selectjson2)
+            self.ui_edge2d.checkBox_profile.setChecked(False)
+            self.ui_edge2d.checkBox_time.setChecked(False)
+            self.ui_edge2d.checkBox_flux.setChecked(False)
+            self.ui_edge2d.checkBox_geom.setChecked(False)
 
-        self.ui_edge2d.runanalyze_button.clicked.connect(self.handle_runanalyze_button)
+            self.ui_edge2d.select_json1.clicked.connect(self.handle_selectjson1)
+            self.ui_edge2d.select_json2.setEnabled(False);
+            self.ui_edge2d.lineEdit_2nd.setEnabled(False);
+            self.ui_edge2d.enablecompare_check.setChecked(False)
 
-        self.ui_edge2d.edit_JSON2.setChecked(False)
-        self.ui_edge2d.edit_JSON1.setChecked(False)
+            self.ui_edge2d.enablecompare_check.toggled.connect(
+                lambda: self.checkprintstate(self.ui_edge2d.enablecompare_check))
 
-        self.ui_edge2d.edit_JSON1.toggled.connect(
-            lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON1))
-        self.ui_edge2d.edit_JSON2.toggled.connect(
-            lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON2))
-        self.ui_edge2d.textEdit_message2.setText('input_dict_84600.json')
-        self.ui_edge2d.runcpmparesims_button.clicked.connect(self.handle_run)
+            self.ui_edge2d.select_json2.clicked.connect(self.handle_selectjson2)
 
+            self.ui_edge2d.runanalyze_button.clicked.connect(self.handle_runanalyze_button)
+
+            self.ui_edge2d.edit_JSON2.setChecked(False)
+            self.ui_edge2d.edit_JSON1.setChecked(False)
+
+            self.ui_edge2d.edit_JSON1.toggled.connect(
+                lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON1))
+            self.ui_edge2d.edit_JSON2.toggled.connect(
+                lambda: self.checkstateJSON(self.ui_edge2d.edit_JSON2))
+            self.ui_edge2d.textEdit_message2.setText('input_dict_84600.json')
+            self.ui_edge2d.runcpmparesims_button.clicked.connect(self.handle_run)
+
+            return 1
+        except:
+            logger.error('failed to open EDGE2D GUI')
+            return 0
 
 
     def handle_magsurf_button(self):
-        self.magsurf_window = QMainWindow()
-        self.ui_magsurf = Ui_magsurf_window()
-        self.ui_magsurf.setupUi(self.magsurf_window)
-        plt.close()
-        self.magsurf_window.show()
-        #
-        toolBar = NavigationToolbar(self.ui_magsurf.canvas, self.magsurf_window)
-        self.magsurf_window.addToolBar(toolBar)
+        try:
+            self.magsurf_window = QMainWindow()
+            self.ui_magsurf = Ui_magsurf_window()
+            self.ui_magsurf.setupUi(self.magsurf_window)
+            plt.close()
+            self.magsurf_window.show()
+            #
+            toolBar = NavigationToolbar(self.ui_magsurf.canvas, self.magsurf_window)
+            self.magsurf_window.addToolBar(toolBar)
 
-        #
-        initpulse = ppf.pdmsht()
-        self.ui_magsurf.JPNedit.setText(str(initpulse))
-        self.ui_magsurf.timeEdit.setText('50')  # s
-        self.ui_magsurf.stepPsiEdit.setText('0.1') # V/s
-        self.ui_magsurf.solEdit.setText('1') # cm
-        self.ui_magsurf.NsolEdit.setText('5') # integer, nr of SOL lines
-        self.ui_magsurf.coreEdit.setText('5') # integer, nr of CORE lines
-        self.ui_magsurf.coreStepEdit.setText('0.1') # V/s
-
-
-
-        #
-        # #
+            #
+            initpulse = ppf.pdmsht()
+            self.ui_magsurf.JPNedit.setText(str(initpulse))
+            self.ui_magsurf.timeEdit.setText('50')  # s
+            self.ui_magsurf.stepPsiEdit.setText('0.1') # V/s
+            self.ui_magsurf.solEdit.setText('1') # cm
+            self.ui_magsurf.NsolEdit.setText('5') # integer, nr of SOL lines
+            self.ui_magsurf.coreEdit.setText('5') # integer, nr of CORE lines
+            self.ui_magsurf.coreStepEdit.setText('0.1') # V/s
 
 
 
-        self.ui_magsurf.FW_CB.setChecked(True)
-        self.ui_magsurf.GAP_CB.setChecked(True)
-        self.ui_magsurf.GAP_CB.setStyleSheet("color:red")
-        self.ui_magsurf.SP_CB.setChecked(True)
-        self.ui_magsurf.SP_CB.setStyleSheet("color:cyan")
-        self.ui_magsurf.XLOC_CB.setChecked(True)
-        self.ui_magsurf.XLOC_CB.setStyleSheet("color:magenta")
-        self.ui_magsurf.WALLS_CB.setChecked(True)
-        self.ui_magsurf.WALLS_CB.setStyleSheet("color:blue")
-        self.ui_magsurf.EFIT_CB.setChecked(True)
-        self.ui_magsurf.EFIT_CB.setStyleSheet("color:green")
-        #
-        self.ui_magsurf.minSlider.setText('40s')
-        self.ui_magsurf.maxSlider.setText('70s')
-        self.ui_magsurf.actualSlider.setText('  ')
-        self.ui_magsurf.configPlasma.setText('   ')
-        self.ui_magsurf.timeXLOC_LB.setText('   ')
-        self.ui_magsurf.timeWALLS_LB.setText('   ')
-        self.ui_magsurf.timeEFIT_LB.setText('   ')
-        #
-        self.ui_magsurf.resetPB.clicked.connect(self.resetGUI)
-        self.ui_magsurf.defaultPB.clicked.connect(self.defaultGUI)
-        self.ui_magsurf.exitPB.clicked.connect(self.exitGUI)
-        #
-
-        self.ui_magsurf.plotParam = {
-            'JPNobj': None,
-            'expDataDictJPNobj_EFIT': None,
-            'nameListGap': None,
-            'nameListStrikePoints': None,
-            'expDataDictJPNobj_XLOC': None,
-            'expDataDictJPNobj_WALLS': None,
-            'offR_XLOC': None,
-            'offZ_XLOC': None,
-            'time' : None,
-            'gapDict' : None,
-            'xFW' : None,
-            'yFW' : None,
-            'rEFIT' : None,
-            'zEFIT' : None,
-            'rBND_XLOC_smooth' : None,
-            'zBND_XLOC_smooth' : None,
-            'rBND_XLOC' : None,
-            'zBND_XLOC' : None,
-            'rXp' : None,
-            'zXp' : None,
-            'rSP' : None,
-            'zSP' : None,
-            'rBND_WALLS': None,
-            'zBND_WALLS': None,
-            'checkFW' : None,
-            'checkGAP' : None,
-            'checkSP'  : None,
-            'checkXLOC' : None,
-            'checkWALLS':None,
-            'checkEFIT' : None,
-            'flagDiverted' :  None,
-            'rGrid': None,
-            'zGrid': None,
-            'psiGrid': None,
-            'psiEFIT':None
-        }
+            #
+            # #
 
 
-        #
-        self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
-        self.ui_magsurf.isopsiPB.clicked.connect(self.plotIsoPsi)
-        self.ui_magsurf.isopsiFillPB.clicked.connect(self.plotIsoPsiFill)
-        self.ui_magsurf.solPB.clicked.connect(self.plotSol)
-        self.ui_magsurf.corePB.clicked.connect(self.plotCore)
 
-        self.ui_magsurf.runPB.released.connect(self.button_released)
-        self.ui_magsurf.isopsiPB.released.connect(self.button_released)
-        self.ui_magsurf.isopsiFillPB.released.connect(self.button_released)
-        self.ui_magsurf.solPB.released.connect(self.button_released)
-        self.ui_magsurf.corePB.released.connect(self.button_released)
+            self.ui_magsurf.FW_CB.setChecked(True)
+            self.ui_magsurf.GAP_CB.setChecked(True)
+            self.ui_magsurf.GAP_CB.setStyleSheet("color:red")
+            self.ui_magsurf.SP_CB.setChecked(True)
+            self.ui_magsurf.SP_CB.setStyleSheet("color:cyan")
+            self.ui_magsurf.XLOC_CB.setChecked(True)
+            self.ui_magsurf.XLOC_CB.setStyleSheet("color:magenta")
+            self.ui_magsurf.WALLS_CB.setChecked(True)
+            self.ui_magsurf.WALLS_CB.setStyleSheet("color:blue")
+            self.ui_magsurf.EFIT_CB.setChecked(True)
+            self.ui_magsurf.EFIT_CB.setStyleSheet("color:green")
+            #
+            self.ui_magsurf.minSlider.setText('40s')
+            self.ui_magsurf.maxSlider.setText('70s')
+            self.ui_magsurf.actualSlider.setText('  ')
+            self.ui_magsurf.configPlasma.setText('   ')
+            self.ui_magsurf.timeXLOC_LB.setText('   ')
+            self.ui_magsurf.timeWALLS_LB.setText('   ')
+            self.ui_magsurf.timeEFIT_LB.setText('   ')
+            #
+            self.ui_magsurf.resetPB.clicked.connect(self.resetGUI)
+            self.ui_magsurf.defaultPB.clicked.connect(self.defaultGUI)
+            self.ui_magsurf.exitPB.clicked.connect(self.exitGUI)
+            #
+
+            self.ui_magsurf.plotParam = {
+                'JPNobj': None,
+                'expDataDictJPNobj_EFIT': None,
+                'nameListGap': None,
+                'nameListStrikePoints': None,
+                'expDataDictJPNobj_XLOC': None,
+                'expDataDictJPNobj_WALLS': None,
+                'offR_XLOC': None,
+                'offZ_XLOC': None,
+                'time' : None,
+                'gapDict' : None,
+                'xFW' : None,
+                'yFW' : None,
+                'rEFIT' : None,
+                'zEFIT' : None,
+                'rBND_XLOC_smooth' : None,
+                'zBND_XLOC_smooth' : None,
+                'rBND_XLOC' : None,
+                'zBND_XLOC' : None,
+                'rXp' : None,
+                'zXp' : None,
+                'rSP' : None,
+                'zSP' : None,
+                'rBND_WALLS': None,
+                'zBND_WALLS': None,
+                'checkFW' : None,
+                'checkGAP' : None,
+                'checkSP'  : None,
+                'checkXLOC' : None,
+                'checkWALLS':None,
+                'checkEFIT' : None,
+                'flagDiverted' :  None,
+                'rGrid': None,
+                'zGrid': None,
+                'psiGrid': None,
+                'psiEFIT':None
+            }
 
 
-        self.SenderActual=[]
+            #
+            self.ui_magsurf.runPB.clicked.connect(self.goMagSurfGA)
+            self.ui_magsurf.isopsiPB.clicked.connect(self.plotIsoPsi)
+            self.ui_magsurf.isopsiFillPB.clicked.connect(self.plotIsoPsiFill)
+            self.ui_magsurf.solPB.clicked.connect(self.plotSol)
+            self.ui_magsurf.corePB.clicked.connect(self.plotCore)
 
-        self.ui_magsurf.horizontalSlider.valueChanged.connect(self.slider_moved)
-        # self.ui_magsurf.horizontalSlider.sliderReleased.connect(
-        #    lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
+            self.ui_magsurf.runPB.released.connect(self.button_released)
+            self.ui_magsurf.isopsiPB.released.connect(self.button_released)
+            self.ui_magsurf.isopsiFillPB.released.connect(self.button_released)
+            self.ui_magsurf.solPB.released.connect(self.button_released)
+            self.ui_magsurf.corePB.released.connect(self.button_released)
 
 
+            self.SenderActual=[]
+
+            self.ui_magsurf.horizontalSlider.valueChanged.connect(self.slider_moved)
+            # self.ui_magsurf.horizontalSlider.sliderReleased.connect(
+            #    lambda: self.ui_magsurf.plotBoundaryFromSliderReleased(self.horizontalSlider))
+
+            return 1
+        except:
+            logger.error('failed to start MAGSurf GUI')
+            return 0
 
 
 
