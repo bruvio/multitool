@@ -1,0 +1,10 @@
+//TO COMMENT USE // AT THE START OF THE LINE
+// last item does need ,
+{
+//this folder is /u/username/base_folder/
+  "base_folder":"work" ,
+//this folder is /u/username/base_folder/install_folder
+  "install_folder" :"Python/bruvio_tool"
+
+
+}

@@ -1,0 +1,27 @@
+{
+    "ppf":{
+        "jetppf/KG1V/LID3":["1",".",":"],
+//          "jetppf/EFIT/RMAG":["2",".",":"],
+          "jetppf/EHTR/RMAG":["2",".",":"],
+//          "jetppf/KG1L/LID3":["3",".",":"],        
+//        "jetppf/KG1L/LAD3":["4",".",":"],
+//        "jetppf/KG1L/LEN3":["5",".",":"],
+//        "jetppf/KG1L/XTA3":["6",".",":"],
+        "jetppf/KG1H/LID3":["3",".",":"],        
+        "jetppf/KG1H/LAD3":["4",".",":"],
+        "jetppf/KG1H/LEN3":["5",".",":"],
+        "jetppf/KG1H/XTA3":["6",".",":"],
+//        "jetppf/KG1L/LID3":["3",".",":"],        
+//        "bviola/KG1L/LAD3":["4",".",":"],
+//        "bviola/KG1L/LEN3":["5",".",":"],
+//        "bviola/KG1L/XTA3":["6",".",":"]
+        "bviola/KG1H/LID3":["3",".",":"],        
+        "bviola/KG1H/LAD3":["4",".",":"],
+        "bviola/KG1H/LEN3":["5",".",":"],
+        "bviola/KG1H/XTA3":["6",".",":"]
+},
+    "icolumn":"1",
+    "irow":"6",
+    "linewidth":"0.5",
+    "markersize":"2"
+    }
