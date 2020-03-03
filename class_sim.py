@@ -3244,70 +3244,81 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
       #simu=simu_list[0]
       #result=simu.eirene_netcur()
     ncol=19
-    simu=simu_list[0]
-    #print(dir(simu))
-    surface_in=simu_list[0][1]
-    # print(surface_in)
-    surface_out=simu_list[0][2]
-    # print(surface_out)
-    # if simu_list[0][3] is None:
-    #     ExtraInput = None
-    # else:
-    #     ExtraInput = simu_list[0][3]
-    # print(ExtraInput)
-      # ;ofile='eirene_neutcur_sep.dat'
-      # ;targetfilename
-    time=strftime("%Y-%m-%d", gmtime())
-    with  open(path+'/'+filename+'_current.csv','wt') as ofile:
-        writer = csv.writer(ofile, delimiter='\t')
-        writer.writerow([str(ncol),filename,str(time)])
-        writer.writerow([
-            'Neutral current across: ',str(surface_in) ,str(surface_out)])
-        writer.writerow(['n/a',
-                'W','W','W',
-                'm^-3','m^-3','eV','eV',
-                'm^-3','m^-3','eV','eV',
-                's-1','s-1','s-1',
-                's-1','s-1','s-1',
-                's-1'])
-
-        writer.writerow([
-            'EDGE2D',
-            'pcore_e','pcore_i','pcore_tot',
-            'ne_core','ni_core','Te_core','Ti_core',
-            'ne_sep','ni_sep','Te_sep','Ti_sep',
-            'I_neut_in','I_neut_in2',
-            'I_neut_in_net2',
-            'I_neut_out','I_neut_out2',
-            'I_neut_out_net2',
-            'I_neut_net'])
-    with open(path+'/'+filename+'_current.csv', 'a') as f:  # Just use 'w' mode in 3.x
-      writer = csv.writer(f, delimiter='\t')
-      for index1 in range(0,len(simu_list)):
-        simu=simu_list[index1][0]
-        #print(simu)
-        surface_in=simu_list[index1][1]
-        #print(surface_in)
-        surface_out=simu_list[index1][2]
-        # if simu_list[index1][2] is None:
+    if len(simu_list)>1:
+        simu=simu_list[0]
+        #print(dir(simu))
+        # surface_in=simu_list[0][1]
+        surface_in=input('enter surface IN number ')
+        # print(surface_in)
+        surface_out = input('enter surface OUT number ')
+        # surface_out=simu_list[0][2]
+        # print(surface_out)
+        # if simu_list[0][3] is None:
         #     ExtraInput = None
         # else:
-        #     ExtraInput = simu_list[index1][3]
-        result=simu.eirene_netcur(surface_in,surface_out)
-        print(result['name'])
-        writer.writerow([result['name'],result['pcoree'],result['pcorei'],
-                result['pcore'],
-                result['omp_ade_sep'],
-                result['omp_adi_sep'],
-                result['omp_ate_sep'],
-                result['omp_ati_sep'],
-                result['neutcurrent_in_tot'],
-                result['neutcurrent_in2_tot'],
-                result['neutcurrent_in2_net_tot'],
-                result['neutcurrent_out_tot'],
-                result['neutcurrent_out2_tot'],
-                result['neutcurrent_out2_net_tot'],
-                result['neutcurrent_net_tot']])
+        #     ExtraInput = simu_list[0][3]
+        # print(ExtraInput)
+          # ;ofile='eirene_neutcur_sep.dat'
+          # ;targetfilename
+        time=strftime("%Y-%m-%d", gmtime())
+        with  open(path+'/'+filename+'_current.csv','wt') as ofile:
+            writer = csv.writer(ofile, delimiter='\t')
+            writer.writerow([str(ncol),filename,str(time)])
+            writer.writerow([
+                'Neutral current across: ',str(surface_in) ,str(surface_out)])
+            writer.writerow(['n/a',
+                    'W','W','W',
+                    'm^-3','m^-3','eV','eV',
+                    'm^-3','m^-3','eV','eV',
+                    's-1','s-1','s-1',
+                    's-1','s-1','s-1',
+                    's-1'])
+
+            writer.writerow([
+                'EDGE2D',
+                'pcore_e','pcore_i','pcore_tot',
+                'ne_core','ni_core','Te_core','Ti_core',
+                'ne_sep','ni_sep','Te_sep','Ti_sep',
+                'I_neut_in','I_neut_in2',
+                'I_neut_in_net2',
+                'I_neut_out','I_neut_out2',
+                'I_neut_out_net2',
+                'I_neut_net'])
+        with open(path+'/'+filename+'_current.csv', 'a') as f:  # Just use 'w' mode in 3.x
+          writer = csv.writer(f, delimiter='\t')
+          for index1 in range(0,len(simu_list)):
+            simu=simu_list[index1][0]
+            #print(simu)
+            # surface_in=simu_list[index1][1]
+            # surface_in=simu_list[0][1]
+            surface_in = input('enter surface IN number ')
+            # print(surface_in)
+            surface_out = input('enter surface OUT number ')
+
+            #print(surface_in)
+            # surface_out=simu_list[index1][2]
+            # if simu_list[index1][2] is None:
+            #     ExtraInput = None
+            # else:
+            #     ExtraInput = simu_list[index1][3]
+            result=simu.eirene_netcur(surface_in,surface_out)
+            print(result['name'])
+            writer.writerow([result['name'],result['pcoree'],result['pcorei'],
+                    result['pcore'],
+                    result['omp_ade_sep'],
+                    result['omp_adi_sep'],
+                    result['omp_ate_sep'],
+                    result['omp_ati_sep'],
+                    result['neutcurrent_in_tot'],
+                    result['neutcurrent_in2_tot'],
+                    result['neutcurrent_in2_net_tot'],
+                    result['neutcurrent_out_tot'],
+                    result['neutcurrent_out2_tot'],
+                    result['neutcurrent_out2_net_tot'],
+                    result['neutcurrent_net_tot']])
+        f.close()
+    else:
+        logger.error('simulation list is empty')
 
 
 
@@ -3315,8 +3326,6 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
 
-
-    f.close()
 
     print('Neutral currents across surfaces ', surface_in, surface_out,' written to ... ', path+'/'+filename+'_print.csv')
 

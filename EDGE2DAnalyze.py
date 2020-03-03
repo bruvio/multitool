@@ -147,16 +147,30 @@ class shot:
 
     """
     def __init__(self,input_dict):
+
+
+        if "USR" in os.environ:
+            logger.debug('USR in env')
+            #self.owner = os.getenv('USR')
+            self.owner = os.getlogin()
+        else:
+            logger.debug('using getuser to authenticate')
+            import getpass
+            self.owner = getpass.getuser()
+
         # logger.info("Reading simulation data.")
         self.color = input_dict['color']
         self.pulse = (input_dict['pulse'])
         self.conf =  input_dict['conf']
         self.sim_user =input_dict['sim_user']
         self.reload = input_dict['reload']
+        self.basefolder = input_dict['base_folder']
+        self.installationfolder = input_dict['installation_folder']
+        folder = '/u/'+self.owner + os.sep + self.basefolder+os.sep+self.installationfolder+os.sep
         # self.profile_omp= input_dict['omp_profiles']
-        self.profile_omp= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_omp= folder+ "e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
         # self.profile_ot= input_dict['ot_profiles']
-        self.profile_ot= "/u/bviola/work/Python/EDGE2D/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_ot= folder+"e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
         self.plot_sim = input_dict['plot_sim']
         self.plot_exp = input_dict['plot_exp']
         self.label = input_dict['label']

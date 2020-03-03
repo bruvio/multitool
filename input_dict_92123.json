@@ -1,6 +1,8 @@
 {
   "machine": "JET",
   "tranfile": "/u/bviola/cmg/catalog/edge2d/jet/81472/may1316/seq#2/tran",
+  "base_folder": "work",
+  "installation_folder": "Python/bruvio_tool",
   "sim":"2",
   "color":"blue",
   "pulse": "92123",

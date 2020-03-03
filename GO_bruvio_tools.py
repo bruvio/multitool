@@ -284,7 +284,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         self.ui_edge2d.pushButton_powerbalance.clicked.connect(self.handle_powerbalance)
         self.ui_edge2d.pushButton_print.clicked.connect(self.handle_print)
         self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
-        self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
+        # self.ui_edge2d.pushButton_profiles.clicked.connect(self.handle_profiles)
         self.ui_edge2d.pushButton_radiation.clicked.connect(self.handle_radiation)
 
         # self.ui_edge2d.pushButton_pumpcurrents.setEnabled(False);
@@ -650,6 +650,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_pumpcurrents(self):
+
         if not self.simlist:
             logger.error('choose a simulation first')
         else:
@@ -658,6 +659,24 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
             for index1 in range(0, len(self.simlist)):
                 logger.info('analyzing sim {}'.format(self.namelist[index1]))
+                simdata = self.namelist[index1].split('/')
+                owner = simdata[0]
+                pulse = simdata[1]
+                date = simdata[2]
+                seq = simdata[3]
+
+                folder = "/u/"+owner+os.sep+'cmg/catalog/edge2d/jet/'+pulse+os.sep+date+os.sep+'seq#'+seq
+                eirenesurfaces= 'eirene_nondefaultsur'
+                if not [file for file in os.listdir(folder) if eirenesurfaces in file]:
+                    logger.error('simulation {} does not contain EIRENE non default surfaces files\n skipping'.format(self.namelist[index1]))
+                    self.simlist.pop(index1)
+                    self.ui_edge2d.textEdit_message.clear()
+
+                    self.namelist.pop(index1)
+                    for simname in self.namelist:
+                        self.ui_edge2d.textEdit_message.append(str(simname))
+
+
 
             folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
             sim.write_eirene_cur2file(self.simlist, folder + '/e2d_data', self.targetfilename)
@@ -1773,9 +1792,9 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
     def handle_add_sim(self):
 
-
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
         # print(self.seq)
-        simul = sim(self.shot,self.date,(self.seq.split('#')[1]),'work/Python/EDGE2D',self.user)
+        simul = sim(self.shot,self.date,(self.seq.split('#')[1]),folder,self.user)
         name='/'.join([self.owner,self.shot, self.date,self.seq.split('#')[1]])
         label = self.ui_edge2d.lineEdit_var_3.text()
         if name in self.namelist:
