@@ -289,7 +289,7 @@ read_eirene
 # /u/bviola/cmg/catalog/edge2d/jet
     self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,'seq#',sequence)
     self.workingdir=folder
-    self.initfolder(folder)
+    self.initfolder(folder,pulse)
     self.data = SimpleNamespace()  # dictionary object that contains all data
     
     
@@ -312,7 +312,7 @@ read_eirene
 
     return ret
 
-  def initfolder(self,folder, owner=None):
+  def initfolder(self,folder,shot, owner=None):
       if owner is None:
           owner = os.getenv('USR')
       else:
@@ -321,18 +321,20 @@ read_eirene
       # print(owner)
       # print(homefold)
       # print(homefold + os.sep+ folder)
-      pathlib.Path(homefold + os.sep + folder).mkdir(parents=True,
+      pathlib.Path(folder).mkdir(parents=True,
                                                      exist_ok=True)
-      pathlib.Path(homefold + os.sep + folder+ os.sep + 'e2d_data').mkdir(parents=True,
+      pathlib.Path(folder+ os.sep + 'e2d_data').mkdir(parents=True,
                                                      exist_ok=True)
-      pathlib.Path(homefold + os.sep + folder+ os.sep +'e2d_data'+ os.sep + str(self.shot)).mkdir(parents=True,
-                                                     exist_ok=True)
-      pathlib.Path(homefold + os.sep + folder+ os.sep + 'exp_data').mkdir(parents=True,
-                                                     exist_ok=True)
-      pathlib.Path(homefold + os.sep + folder+ os.sep + 'figures').mkdir(parents=True,
+      pathlib.Path(folder+ os.sep +'e2d_data'+ os.sep + str(shot)).mkdir(parents=True,
                                                      exist_ok=True)
 
-      self.workingdir=  homefold + os.sep + folder
+
+      pathlib.Path(folder+ os.sep + 'exp_data').mkdir(parents=True,
+                                                     exist_ok=True)
+      pathlib.Path(folder+ os.sep + 'figures').mkdir(parents=True,
+                                                     exist_ok=True)
+
+      # self.workingdir=  homefold + os.sep + folder
       # print('Parent output folder will be')
       # print(homefold + os.sep + folder)
 
@@ -361,1033 +363,1037 @@ read_eirene
 
     # print(file)
     dummy=[]
-    with open(file) as f:
-        lines = f.readlines()
-    # 	# print(lines)
-        text = 'H0 RECL+RECOM+PUF'
-        for index, line in enumerate(lines):
-            if text in str(line):
-                # print(line)
-                dummy=lines[index].split()
-                # print(dummy)
-                # type(dummy)
-                i_h0_reclrecpuf=float(dummy[2])
-                # print(i_h0_reclrecpuf)
-        text='H0 FLUX TO MP'
-        for index, line in enumerate(lines):
-            if text in str(line):
-                dummy=lines[index].split()
-                i_h0_main=float(dummy[5])
-                # print(i_h0_main)
-        text='H0 PUMPED FLUX'
-        for index, line in enumerate(lines):
-            if text in str(line):
-                dummy=lines[index].split()
-                i_h0_pump=float(dummy[4])
-                # print(i_h0_pump)
-        text = 'Z0 PUMPED FLUX'
-        z1_pump = 0
-        z2_pump = 0
-        for index, line in enumerate(lines):
-            if text in str(line):
-                dummy = lines[index].split()
-                # print(dummy)
-                if len(dummy) > 4:
-                    z1_pump=dummy[4]
-                if len(dummy) > 5:
-                    z2_pump=dummy[5]
-                # print(z1_pump,z2_pump)
-        text1 = ' CNTL H PUFF (S-1):'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                i_cntl_h0=float(dummy[4])
-                # print(i_cntl_h0)
-        text1 = ' EXT. H PUFFW(S-1):'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                i_ext_h0_wall=float(dummy[3])
-                # print(i_ext_h0_wall)
-        text1 = 'EXT. H PUFFT(S-1):'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                i_ext_h0_target=float(dummy[3])
-                # print(i_ext_h0_target)
-        text1 = 'CNTL Z PUFF (S-1):'
-        i_cntl_z1 = 0
-        i_cntl_z2 = 0
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                if len(dummy) > 4:
-                    i_cntl_z1=dummy[4]
-                if len(dummy) > 5:
-                    i_cntl_z2=dummy[5]
-                # print(i_cntl_z1,i_cntl_z2)
-
-        text1 = 'CNTL Z RECY.(S-1):'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                z1_cntl_r = 0
-                z2_cntl_r = 0
-                if len(dummy) > 3:
-                    z1_cntl_r=float(dummy[3])
-                if len(dummy) > 4:
-                    z2_cntl_r=float(dummy[4])
-                # print(z1_cntl_r,z2_cntl_r)
-        text1 = 'EXT. Z PUFFW(S-1):'
-        z1_ext_puffw = 0
-        z2_ext_puffw = 0
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-
-                if len(dummy) > 3:
-                    z1_ext_puffw=float(dummy[3])
-                if len(dummy) > 4:
-                    z2_ext_puffw=float(dummy[4])
-                # print(z1_ext_puffw,z2_ext_puffw)
-        text1 = 'EXT. Z PUFFT(S-1):'
-        z1_ext_pufft = 0
-        z2_ext_pufft = 0
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index].split()
-                # print(dummy)
-                if len(dummy) > 3:
-                    z1_ext_pufft=float(dummy[3])
-                if len(dummy) > 4:
-                    z2_ext_pufft=float(dummy[4])
-                # print(z1_ext_pufft,z2_ext_pufft)
-        text1 = ' DIVERTOR RESULTS :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-                # print(dummy)
-                nisep_omp=float(dummy[3])
-                nisep_imp=float(dummy[4])
-                nisep_ot=float(dummy[5])
-                nisep_it=float(dummy[6])
-                dummy=lines[index+5].split()
-                # print(dummy)
-                nesep_omp=float(dummy[3])
-                nesep_imp=float(dummy[4])
-                nesep_ot=float(dummy[5])
-                nesep_it=float(dummy[6])
-                dummy=lines[index+6].split()
-                # print(dummy)
-                tisep_omp=float(dummy[3])
-                tisep_imp=float(dummy[4])
-                tisep_ot=float(dummy[5])
-                tisep_it=float(dummy[6])
-                dummy=lines[index+7].split()
-                # print(dummy)
-                tesep_omp=float(dummy[3])
-                tesep_imp=float(dummy[4])
-                tesep_ot=float(dummy[5])
-                tesep_it=float(dummy[6])
-                dummy=lines[index+8].split()
-                # print(dummy)
-                psep_omp=float(dummy[3])
-                psep_imp=float(dummy[4])
-                psep_ot=float(dummy[5])
-                psep_it=float(dummy[6])
-                dummy=lines[index+12].split()
-                # print(dummy)
-                niavg_omp=float(dummy[3])
-                niavg_imp=float(dummy[4])
-                niavg_ot=float(dummy[5])
-                niavg_it=float(dummy[6])
-                dummy=lines[index+13].split()
-                # print(dummy)
-                neavg_omp=float(dummy[3])
-                neavg_imp=float(dummy[4])
-                neavg_ot=float(dummy[5])
-                neavg_it=float(dummy[6])
-                dummy=lines[index+14].split()
-                # print(dummy)
-                tiavg_omp=float(dummy[3])
-                tiavg_imp=float(dummy[4])
-                tiavg_ot=float(dummy[5])
-                tiavg_it=float(dummy[6])
-                dummy=lines[index+15].split()
-                # print(dummy)
-                teavg_omp=float(dummy[3])
-                teavg_imp=float(dummy[4])
-                teavg_ot=float(dummy[5])
-                teavg_it=float(dummy[6])
-                dummy=lines[index+16].split()
-                # print(dummy)
-                pavg_omp=float(dummy[3])
-                pavg_imp=float(dummy[4])
-                pavg_ot=float(dummy[5])
-                pavg_it=float(dummy[6])
-                dummy=lines[index+18].split()
-                # print(dummy)
-                pdepinn=-float(dummy[3])
-                dummy=lines[index+19].split()
-                # print(dummy)
-                pdepout=-float(dummy[3])
-
-        text1 = ' POWER & PARTICLE GLOBAL CONSERVATION :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-                # print(dummy)
-                pcorei=float(dummy[2])*1.e6
-                pcoree=float(dummy[3])*1.e6
-                i_input=float(dummy[4])
-                # i_imp_tot=float(buf[5])
-                prec=float(dummy[5])
-                i_imp1_tot = 0
-                i_imp2_tot = 0
-                # print(len(dummy))
-                if len(dummy) > 6:
-                    i_imp1_tot=float(dummy[6])
-                if len(dummy) > 7:
-                    i_imp2_tot=float(dummy[7])
-                # print(i_imp1_tot,i_imp2_tot)
-
-
-                i_ves_buf = lines[index+5].split()
-                i_ves_odiv_buf = lines[index+8].split()
-                i_ves_msol_buf = lines[index+11].split()
-                i_ves_idiv_buf = lines[index+14].split()
-                i_ves_pfr_buf = lines[index+17].split()
-                i_idiv_buf = lines[index+20].split()
-                i_odiv_buf = lines[index+23].split()
-                i_ionis_buf = lines[index+27].split()
-                i_atomic_buf = lines[index+28].split()
-                i_molec_buf = lines[index+29].split()
-                i_CX_buf = lines[index+30].split()
-                i_hydrad_buf = lines[index+31].split()
-                i_radiated_buf = lines[index+37].split()
-                i_recomb_buf = lines[index+38].split()
-                i_particle_buf = lines[index+39].split()
-                i_eq_buf =  lines[index+42].split()
-                i_compr_buf =  lines[index+43].split()
-                i_dt_buf =  lines[index+45].split()
-
-                i_ves=float(i_ves_buf[6])
-                i_ves_msol=float(i_ves_msol_buf[6])
-                i_ves_odiv=float(i_ves_odiv_buf[6])
-                i_ves_idiv=float(i_ves_idiv_buf[6])
-                i_ves_pfr=float(i_ves_pfr_buf[6])
-                #
-                # ;stop
-                # print( i_ves,i_ves_msol,i_ves_odiv,i_ves_idiv,i_ves_pfr)
-                #
-                # ; total power to outer and inner targets
-                p_idiv = float(i_idiv_buf[4]) + float(i_idiv_buf[5])
-                p_odiv = float(i_odiv_buf[4]) + float(i_odiv_buf[5])
-                p_rec_odiv  = float(i_odiv_buf[7])
-                p_rec_idiv  = float(i_idiv_buf[7])
-                p_rec_vessel  = float(i_ves_buf[7])
-                #
-                # print(p_idiv, p_odiv, p_rec_odiv, p_rec_idiv, p_rec_vessel)
-                # ; total particle flux to inner and outer targets
-                i_idiv = float(i_idiv_buf[6])
-                i_odiv = float(i_odiv_buf[6])
-                #
-                # ; total power source due to neutral interactions
-                # print(i_ionis_buf)
-                pi_ions = float(i_ionis_buf[4])
-                pe_ions = float(i_ionis_buf[5])
-                #
-                # # ; total power source due to atomic contribution
-                pi_atomic = float(i_atomic_buf[3])
-                pe_atomic = float(i_atomic_buf[4])
-                # print(pi_atomic,pe_atomic)
-                # #
-                # # ; total power source due to molecular dissociation
-                pi_mol = float(i_molec_buf[2])
-                pe_mol = float(i_molec_buf[3])
-                # print(pi_mol,pe_mol)
-                # print( i_idiv, i_odiv, pi_ions, pe_ions, pi_atomic, pe_atomic, pi_mol, pe_mol)				#  # total power source due to CX
-                pi_cx = float(i_CX_buf[4])
-                # print(pi_cx)
-                # #
-                # # ; total power source due to hrad and zrad
-                pe_hrad = float(i_hydrad_buf[3])
-                pe_zrad = float(i_radiated_buf[3])
-                # print(pe_hrad,pe_zrad)
-                # #
-                # ; total power source due to recombination
-                pi_rec = float(i_recomb_buf[2])
-                pe_rec = float(i_recomb_buf[3])
-                # print(pi_rec)
-                # #
-                # # ; total power source due to equipartition
-                pi_eq = float(i_eq_buf[2])
-                pe_eq = float(i_eq_buf[3])
-                # print(pi_eq,pe_eq)
-                #
-                # # ; total power source due to compression
-                pi_com = float(i_compr_buf[2])
-                pe_com = float(i_compr_buf[3])
-
-
-                # ; total dt
-                pi_dt = float(i_dt_buf[3])
-                pe_dt = float(i_dt_buf[4])
-                # print(pi_dt,pe_dt)
-
-                # ; ------------------------------------------------------
-        text1 = ' MISCELLANEOUS SUMMATIONS BY MACRO-ZONE :-'
-                #
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-                # print(dummy)
-                part_core = dummy
-                part_sol = lines[index+6].split()
-                part_ods = lines[index+8].split()
-                part_ids = lines[index+10].split()
-                part_odp = lines[index+12].split()
-                part_idp = lines[index+14].split()
-                part_t = lines[index+16].split()
-                #
-                # ;stop
-                #
-                core_ioniz=float(part_core[5])
-                core_recom=float(part_core[6])
-                # print(core_ioniz)
-                msol_ioniz=float(part_sol[5])
-                msol_recom=float(part_sol[6])
-                odiv_ioniz=float(part_ods[5])
-                odiv_recom=float(part_ods[6])
-                idiv_ioniz=float(part_ids[5])
-                idiv_recom=float(part_ids[6])
-                opfr_ioniz=float(part_odp[5])
-                opfr_recom=float(part_odp[6])
-                ipfr_ioniz=float(part_idp[5])
-                ipfr_recom=float(part_idp[6])
-                #
-                sol_ioniz = (float(part_sol[5])+
-                        float(part_ods[5])+float(part_ids[6])+
-                                float(part_odp[5])+float(part_idp[6]))
-                sol_recom= (float(part_sol[6])+
-                        float(part_ods[6])+float(part_ids[6])+
-                                float(part_odp[6])+float(part_idp[6]))
-
-                tot_ioniz = core_ioniz + sol_ioniz
-                tot_recom = core_recom + sol_recom
-                #
-                # ; ------------------------------------------------------
-        text1 = ' ION POWER BALANCE BY MACRO-ZONE :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-                # print(dummy)		#
-
-                infocore = lines[index+5].split()
-                infosol = lines[index+6].split()
-                infoods =lines[index+7].split()
-                infoids = lines[index+8].split()
-                infoodp = lines[index+9].split()
-                infoidp = lines[index+10].split()
-                infot = lines[index+11].split()
-
-                infocore2 = lines[index+14].split()
-                infosol2 = lines[index+15].split()
-                infoods2 =lines[index+16].split()
-                infoids2 = lines[index+17].split()
-                infoodp2 = lines[index+18].split()
-                infoidp2 = lines[index+19].split()
-                infot2 = lines[index+20].split()
-                # print(infoidp2)
-                i_dt_core = float(infocore2[2])*1.e6
-                i_dt_sol = float(infosol2[2])*1.e6
-                i_dt_ods = float(infoods2[2])*1.e6
-                i_dt_ids = float(infoids2[2])*1.e6
-                i_dt_odp = float(infoodp2[2])*1.e6
-                i_dt_idp = float(infoidp2[2])*1.e6
-                i_dt_tot = float(infot2[2])*1.e6
-
-                i_AT_ELASTIC_core = float(infocore2[3])*1.e6
-                i_AT_ELASTIC_sol = float(infosol2[3])*1.e6
-                i_AT_ELASTIC_ods = float(infoods2[3])*1.e6
-                i_AT_ELASTIC_ids = float(infoids2[3])*1.e6
-                i_AT_ELASTIC_odp = float(infoodp2[3])*1.e6
-                i_AT_ELASTIC_idp = float(infoidp2[3])*1.e6
-                i_AT_ELASTIC_tot = float(infot2[3])*1.e6
-
-                I_MOLE_ELASTIC_core = float(infocore2[4])*1.e6
-                i_MOLE_ELASTIC_sol = float(infosol2[4])*1.e6
-                i_MOLE_ELASTIC_ods = float(infoods2[4])*1.e6
-                i_MOLE_ELASTIC_ids = float(infoids2[4])*1.e6
-                i_MOLE_ELASTIC_odp = float(infoodp2[4])*1.e6
-                i_MOLE_ELASTIC_idp = float(infoidp2[4])*1.e6
-                i_MOLE_ELASTIC_tot = float(infot2[4])*1.e6
-
-                i_KIN_EN_CORR_core = float(infocore2[5])*1.e6
-                i_KIN_EN_CORR_sol = float(infosol2[5])*1.e6
-                i_KIN_EN_CORR_ods = float(infoods2[5])*1.e6
-                i_KIN_EN_CORR_ids = float(infoids2[5])*1.e6
-                i_KIN_EN_CORR_odp = float(infoodp2[5])*1.e6
-                i_KIN_EN_CORR_idp = float(infoidp2[5])*1.e6
-                i_KIN_EN_CORR_tot = float(infot2[5])*1.e6
-
-                i_VISCOUS_core = float(infocore2[6])*1.e6
-                i_VISCOUS_sol = float(infosol2[6])*1.e6
-                i_VISCOUS_ods = float(infoods2[6])*1.e6
-                i_VISCOUS_ids = float(infoids2[6])*1.e6
-                i_VISCOUS_odp = float(infoodp2[6])*1.e6
-                i_VISCOUS_idp = float(infoidp2[6])*1.e6
-                i_VISCOUS_tot = float(infot2[6])*1.e6
-
-                i_EXT_core = float(infocore2[7])*1.e6
-                i_EXT_sol = float(infosol2[7])*1.e6
-                i_EXT_ods = float(infoods2[7])*1.e6
-                i_EXT_ids = float(infoids2[7])*1.e6
-                i_EXT_odp = float(infoodp2[7])*1.e6
-                i_EXT_idp = float(infoidp2[7])*1.e6
-                i_EXT_tot = float(infot2[7])*1.e6
-
-                cx_core=float(infocore[7])*1.e6
-                cx_msol=float(infosol[7])*1.e6
-                cx_odiv=float(infoods[7])*1.e6
-                cx_idiv=float(infoids[7])*1.e6
-                cx_opfr=float(infoodp[7])*1.e6
-                cx_ipfr=float(infoidp[7])*1.e6
-
-                ati_core=float(infocore[5])*1.e6
-                ati_msol=float(infosol[5])*1.e6
-                ati_odiv=float(infoods[5])*1.e6
-                ati_idiv=float(infoids[5])*1.e6
-                ati_opfr=float(infoodp[5])*1.e6
-                ati_ipfr=float(infoidp[5])*1.e6
-
-                moli_core=float(infocore[6])*1.e6
-                moli_msol=float(infosol[6])*1.e6
-                moli_odiv=float(infoods[6])*1.e6
-                moli_idiv=float(infoids[6])*1.e6
-                moli_opfr=float(infoodp[6])*1.e6
-                moli_ipfr=float(infoidp[6])*1.e6
-
-                reci_core=float(infocore[8])*1.e6
-                reci_msol=float(infosol[8])*1.e6
-                reci_odiv=float(infoods[8])*1.e6
-                reci_idiv=float(infoids[8])*1.e6
-                reci_opfr=float(infoodp[8])*1.e6
-                reci_ipfr=float(infoidp[8])*1.e6
-                #
-                cx_sol = (float(infosol[7])+
-                          float(infoods[7])+float(infoids[7])+
-                              float(infoodp[7])+float(infoidp[7]))*1.e6
-
-                cx_div = (float(infoods[7])+float(infoids[7])+
-                              float(infoodp[7])+float(infoidp[7]))*1.e6
-
-                cx_tot = cx_core + cx_sol
-                #
-
-                infot = lines[index+24].split()
-                pcore_out_ion = float(infot[3])*1.e6
-                #
-                infot = lines[index+25].split()
-                # ; power to the outer divertor entrance
-                pod_ion = float(infot[4])*1.e6
-                # ; power to the inner divertor entracen
-                pid_ion = float(infot[5])*1.e6
-                # ; power to the vessel wall between X-points. Main sol.
-                pves_ion = float(infot[3])*1.e6
-
-                infot =  lines[index+26].split()
-                pves_od_ion = float(infot[3])*1.e6
-
-                infot =  lines[index+27].split()
-                pves_id_ion = float(infot[3])*1.e6
-
-                infot =  lines[index+28].split()
-                pves_opfr_ion = float(infot[2])*1.e6
-
-                infot =  lines[index+29].split()
-                pves_ipfr_ion = float(infot[2])*1.e6
-                #
-                # ; ------------------------------------------------------
-        text1 = ' ELECTRON POWER BALANCE BY MACRO-ZONE :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-
-
-                infocore = dummy
-                # print(infocore)
-
-                infosol = lines[index+5].split()
-                # print(infosol)
-
-                infoods =lines[index+6].split()
-                # print(infoods)
-
-                infoids = lines[index+7].split()
-                # print(infoids)
-
-                infoodp = lines[index+8].split()
-                # print(infoodp)
-
-                infoidp = lines[index+9].split()
-                # print(infoidp)
-
-                infot = lines[index+10].split()
-                # print(infot)
-
-                infocore2 = lines[index+14].split()
-                infosol2 = lines[index+15].split()
-                infoods2 =lines[index+16].split()
-                infoids2 = lines[index+17].split()
-                infoodp2 = lines[index+18].split()
-                infoidp2 = lines[index+19].split()
-                infot2 = lines[index+20].split()
-
-                e_dt_core = float(infocore2[2])*1.e6
-                e_dt_sol = float(infosol2[2])*1.e6
-                e_dt_ods = float(infoods2[2])*1.e6
-                e_dt_ids = float(infoids2[2])*1.e6
-                e_dt_odp = float(infoodp2[2])*1.e6
-                e_dt_idp = float(infoidp2[2])*1.e6
-                e_dt_tot = float(infot2[2])*1.e6
-
-                e_OHM_HEAT_core = float(infocore2[3])*1.e6
-                e_OHM_HEAT_sol = float(infosol2[3])*1.e6
-                e_OHM_HEAT_ods = float(infoods2[3])*1.e6
-                e_OHM_HEAT_ids = float(infoids2[3])*1.e6
-                e_OHM_HEAT_odp = float(infoodp2[3])*1.e6
-                e_OHM_HEAT_idp = float(infoidp2[3])*1.e6
-                e_OHM_HEAT_tot = float(infot2[3])*1.e6
-
-                i_MOLE_ELASTIC_core = float(infocore2[4])*1.e6
-                i_MOLE_ELASTIC_sol = float(infosol2[4])*1.e6
-                i_MOLE_ELASTIC_ods = float(infoods2[4])*1.e6
-                i_MOLE_ELASTIC_ids = float(infoids2[4])*1.e6
-                i_MOLE_ELASTIC_odp = float(infoodp2[4])*1.e6
-                i_MOLE_ELASTIC_idp = float(infoidp2[4])*1.e6
-                i_MOLE_ELASTIC_tot = float(infot2[4])*1.e6
-
-
-                prad_core_z=float(infocore[2])*1.e6
-                prad_core_h=float(infocore[7])*1.e6
-                prad_msol_z=float(infosol[2])*1.e6
-                prad_msol_h=float(infosol[7])*1.e6
-                prad_odiv_z=float(infoods[2])*1.e6
-                prad_odiv_h=float(infoods[7])*1.e6
-                prad_idiv_z=float(infoids[2])*1.e6
-                prad_idiv_h=float(infoids[7])*1.e6
-                prad_opfr_z=float(infoodp[2])*1.e6
-                prad_opfr_h=float(infoodp[7])*1.e6
-                prad_ipfr_z=float(infoidp[2])*1.e6
-                prad_ipfr_h=float(infoidp[7])*1.e6
-
-                ate_core=float(infocore[5])*1.e6
-                mole_core=float(infocore[6])*1.e6
-                ate_msol=float(infosol[5])*1.e6
-                mole_msol=float(infosol[6])*1.e6
-                ate_odiv=float(infoods[5])*1.e6
-                mole_odiv=float(infoods[6])*1.e6
-                ate_idiv=float(infoids[5])*1.e6
-                mole_idiv=float(infoids[6])*1.e6
-                ate_opfr=float(infoodp[5])*1.e6
-                mole_opfr=float(infoodp[6])*1.e6
-                ate_ipfr=float(infoidp[5])*1.e6
-                mole_ipfr=float(infoidp[6])*1.e6
-
-
-                prad_sol_h = (float(infosol[7])+
-                        float(infoods[7])+float(infoids[7])+
-                                float(infoodp[7])+float(infoidp[7]))*1.e6
-                prad_sol_z = (float(infosol[2])+
-                        float(infoods[2])+float(infoids[2])+
-                                float(infoodp[2])+float(infoidp[2]))*1.e6
-                prad_sol = prad_sol_h + prad_sol_z
-
-                prad_div_h = (float(infoods[7])+float(infoids[7])+
-                                float(infoodp[7])+float(infoidp[7]))*1.e6
-                prad_div_z = (float(infoods[2])+float(infoids[2])+
-                                float(infoodp[2])+float(infoidp[2]))*1.e6
-                prad_div = prad_div_h + prad_div_z
-
-                prad_h = prad_core_h + prad_sol_h
-                prad_z = prad_core_z + prad_sol_z
-                prad_tot = prad_h + prad_z
-
-                infot = lines[index+24].split()
-                # print(infot)
-                pcore_out_ele = float(infot[3])*1.e6
-
-
-                infot =  lines[index+25].split()
-                pod_ele = float(infot[4])*1.e6
-                pid_ele = float(infot[5])*1.e6
-                pves_ele = float(infot[3])*1.e6
-
-                infot =  lines[index+26].split()
-                pves_od_ele = float(infot[3])*1.e6
-
-                infot = lines[index+27].split()
-                pves_id_ele = float(infot[3])*1.e6
-
-                infot =  lines[index+28].split()
-                pves_opfr_ele = float(infot[2])*1.e6
-
-                infot =  lines[index+29].split()
-                # print(infot)
-                pves_ipfr_ele = float(infot[2])*1.e6
-                # #
-                # ; ------------------------------------------------------
-        # text1 = ' ION PARTICLE BALANCE BY MACRO-ZONE :-'
-        text1 = ' * ION PARTICLE FLUX *'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                # dummy=lines[index+4].split()
-                dummy=lines[index+2].split()
-                #
-
-                infocore = dummy
-                # print(infocore)
-                ionflux_core_out = float(infocore[3])
-                #
-                # #
-                # infosol  =lines[index+5].split()
-                infosol  =lines[index+3].split()
-                ionflux_sol_wall = float(infosol[3])
-                #
-                # infosol  =lines[index+6].split()
-                infosol  =lines[index+4].split()
-                ionflux_sol_outdiv = float(infosol[4])
-                #
-                #
-                # infoinsol  =lines[index+7].split()
-                infoinsol  =lines[index+5].split()
-                ionflux_sol_indiv = float(infoinsol[5])
-                #
-                # infooutprv  =lines[index+8].split()
-                infooutprv  =lines[index+6].split()
-                ionflux_prv_outdiv = float(infooutprv[4])
-                #
-                # infoinprv  =lines[index+9].split()
-                infoinprv  =lines[index+7].split()
-                ionflux_prv_indiv = float(infoinprv[5])
-                #
-                # print(ionflux_core_out)
-                # print(ionflux_sol_wall)
-                # print(ionflux_sol_outdiv)
-                # print(ionflux_sol_indiv)
-                # print(ionflux_prv_outdiv)
-                # print(ionflux_prv_indiv)
-                # ;
-
-                #
-                imp1flux_core_out = 0
-                imp2flux_core_out = 0
-        text1  = ' IMPURITY PARTICLE BALANCE BY MACRO-ZONE :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                # dummy=lines[index+3]
-
-                text1  = ' * IMPURITY(1) SOURCES *'
+    try:
+        with open(file) as f:
+            lines = f.readlines()
+        # 	# print(lines)
+            text = 'H0 RECL+RECOM+PUF'
+            for index, line in enumerate(lines):
+                if text in str(line):
+                    # print(line)
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    # type(dummy)
+                    i_h0_reclrecpuf=float(dummy[2])
+                    # print(i_h0_reclrecpuf)
+            text='H0 FLUX TO MP'
+            for index, line in enumerate(lines):
+                if text in str(line):
+                    dummy=lines[index].split()
+                    i_h0_main=float(dummy[5])
+                    # print(i_h0_main)
+            text='H0 PUMPED FLUX'
+            for index, line in enumerate(lines):
+                if text in str(line):
+                    dummy=lines[index].split()
+                    i_h0_pump=float(dummy[4])
+                    # print(i_h0_pump)
+            text = 'Z0 PUMPED FLUX'
+            z1_pump = 0
+            z2_pump = 0
+            for index, line in enumerate(lines):
+                if text in str(line):
+                    dummy = lines[index].split()
+                    # print(dummy)
+                    if len(dummy) > 4:
+                        z1_pump=dummy[4]
+                    if len(dummy) > 5:
+                        z2_pump=dummy[5]
+                    # print(z1_pump,z2_pump)
+            text1 = ' CNTL H PUFF (S-1):'
+            for index, line in enumerate(lines):
                 if text1 in str(line):
-                    infocore =lines[index+3].split()
-                    imp1flux_core_out = float(infocore[3])
-                text1  = ' * IMPURITY(2) SOURCES *'
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    i_cntl_h0=float(dummy[4])
+                    # print(i_cntl_h0)
+            text1 = ' EXT. H PUFFW(S-1):'
+            for index, line in enumerate(lines):
                 if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    i_ext_h0_wall=float(dummy[3])
+                    # print(i_ext_h0_wall)
+            text1 = 'EXT. H PUFFT(S-1):'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    i_ext_h0_target=float(dummy[3])
+                    # print(i_ext_h0_target)
+            text1 = 'CNTL Z PUFF (S-1):'
+            i_cntl_z1 = 0
+            i_cntl_z2 = 0
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    if len(dummy) > 4:
+                        i_cntl_z1=dummy[4]
+                    if len(dummy) > 5:
+                        i_cntl_z2=dummy[5]
+                    # print(i_cntl_z1,i_cntl_z2)
 
-                    infocore = lines[index+3].split()
-                    imp2flux_core_out = float(infocore[3])
-                # endif
-                # endif
-                #
-                # ; ------------------------------------------------------
-        text1 = ' ION MOMENTUM BALANCE BY MACRO-ZONE :-'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+4].split()
-                #
+            text1 = 'CNTL Z RECY.(S-1):'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    z1_cntl_r = 0
+                    z2_cntl_r = 0
+                    if len(dummy) > 3:
+                        z1_cntl_r=float(dummy[3])
+                    if len(dummy) > 4:
+                        z2_cntl_r=float(dummy[4])
+                    # print(z1_cntl_r,z2_cntl_r)
+            text1 = 'EXT. Z PUFFW(S-1):'
+            z1_ext_puffw = 0
+            z2_ext_puffw = 0
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
 
-                infocore = dummy
+                    if len(dummy) > 3:
+                        z1_ext_puffw=float(dummy[3])
+                    if len(dummy) > 4:
+                        z2_ext_puffw=float(dummy[4])
+                    # print(z1_ext_puffw,z2_ext_puffw)
+            text1 = 'EXT. Z PUFFT(S-1):'
+            z1_ext_pufft = 0
+            z2_ext_pufft = 0
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index].split()
+                    # print(dummy)
+                    if len(dummy) > 3:
+                        z1_ext_pufft=float(dummy[3])
+                    if len(dummy) > 4:
+                        z2_ext_pufft=float(dummy[4])
+                    # print(z1_ext_pufft,z2_ext_pufft)
+            text1 = ' DIVERTOR RESULTS :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+                    # print(dummy)
+                    nisep_omp=float(dummy[3])
+                    nisep_imp=float(dummy[4])
+                    nisep_ot=float(dummy[5])
+                    nisep_it=float(dummy[6])
+                    dummy=lines[index+5].split()
+                    # print(dummy)
+                    nesep_omp=float(dummy[3])
+                    nesep_imp=float(dummy[4])
+                    nesep_ot=float(dummy[5])
+                    nesep_it=float(dummy[6])
+                    dummy=lines[index+6].split()
+                    # print(dummy)
+                    tisep_omp=float(dummy[3])
+                    tisep_imp=float(dummy[4])
+                    tisep_ot=float(dummy[5])
+                    tisep_it=float(dummy[6])
+                    dummy=lines[index+7].split()
+                    # print(dummy)
+                    tesep_omp=float(dummy[3])
+                    tesep_imp=float(dummy[4])
+                    tesep_ot=float(dummy[5])
+                    tesep_it=float(dummy[6])
+                    dummy=lines[index+8].split()
+                    # print(dummy)
+                    psep_omp=float(dummy[3])
+                    psep_imp=float(dummy[4])
+                    psep_ot=float(dummy[5])
+                    psep_it=float(dummy[6])
+                    dummy=lines[index+12].split()
+                    # print(dummy)
+                    niavg_omp=float(dummy[3])
+                    niavg_imp=float(dummy[4])
+                    niavg_ot=float(dummy[5])
+                    niavg_it=float(dummy[6])
+                    dummy=lines[index+13].split()
+                    # print(dummy)
+                    neavg_omp=float(dummy[3])
+                    neavg_imp=float(dummy[4])
+                    neavg_ot=float(dummy[5])
+                    neavg_it=float(dummy[6])
+                    dummy=lines[index+14].split()
+                    # print(dummy)
+                    tiavg_omp=float(dummy[3])
+                    tiavg_imp=float(dummy[4])
+                    tiavg_ot=float(dummy[5])
+                    tiavg_it=float(dummy[6])
+                    dummy=lines[index+15].split()
+                    # print(dummy)
+                    teavg_omp=float(dummy[3])
+                    teavg_imp=float(dummy[4])
+                    teavg_ot=float(dummy[5])
+                    teavg_it=float(dummy[6])
+                    dummy=lines[index+16].split()
+                    # print(dummy)
+                    pavg_omp=float(dummy[3])
+                    pavg_imp=float(dummy[4])
+                    pavg_ot=float(dummy[5])
+                    pavg_it=float(dummy[6])
+                    dummy=lines[index+18].split()
+                    # print(dummy)
+                    pdepinn=-float(dummy[3])
+                    dummy=lines[index+19].split()
+                    # print(dummy)
+                    pdepout=-float(dummy[3])
 
-                infosol = lines[index+5].split()
-
-                infoods = lines[index+6].split()
-
-                infoids = lines[index+7].split()
-
-                infoodp = lines[index+8].split()
-
-                infoidp = lines[index+9].split()
-
-                infot = lines[index+10].split()
-                # print(infot)
-                momsrc_core=float(infocore[3])*1.e5 * 1.67e-30 # unit in Newton
-                momsrc_sol=float(infosol[3])*1.e5 * 1.67e-30
-                momsrc_ods=float(infoods[3])*1.e5 * 1.67e-30
-                momsrc_ids=float(infoids[3])*1.e5 * 1.67e-30
-                momsrc_odp=float(infoodp[3])*1.e5 * 1.67e-30
-                momsrc_idp=float(infoidp[3])*1.e5 * 1.67e-30
-                momsrc_tot=float(infot[3])*1.e5 * 1.67e-30
-
-                momsrc_odiv = momsrc_ods + momsrc_odp
-                momsrc_idiv = momsrc_ids + momsrc_idp
-                momsrc_tdiv = abs(momsrc_odiv) + abs(momsrc_idiv)
-
-                gradpsrc_core=float(infocore[2])*1.e5 * 1.67e-30 # unit in Newton
-                gradpsrc_sol=float(infosol[2])*1.e5 * 1.67e-30
-                gradpsrc_ods=float(infoods[2])*1.e5 * 1.67e-30
-                gradpsrc_ids=float(infoids[2])*1.e5 * 1.67e-30
-                gradpsrc_odp=float(infoodp[2])*1.e5 * 1.67e-30
-                gradpsrc_idp=float(infoidp[2])*1.e5 * 1.67e-30
-                gradpsrc_tot=float(infot[2])*1.e5 * 1.67e-30
-                gradpsrc_odiv = gradpsrc_ods + gradpsrc_odp
-                gradpsrc_idiv = gradpsrc_ids + gradpsrc_idp
-                gradpsrc_tdiv = abs(gradpsrc_odiv) + abs(gradpsrc_idiv)
-
-                esrc_core=float(infocore[4])*1.e5 * 1.67e-30 # unit in Newton
-                esrc_sol=float(infosol[4])*1.e5 * 1.67e-30
-                esrc_ods=float(infoods[4])*1.e5 * 1.67e-30
-                esrc_ids=float(infoids[4])*1.e5 * 1.67e-30
-                esrc_odp=float(infoodp[4])*1.e5 * 1.67e-30
-                esrc_idp=float(infoidp[4])*1.e5 * 1.67e-30
-                esrc_tot=float(infot[4])*1.e5 * 1.67e-30
-                esrc_odiv = esrc_ods + esrc_odp
-                esrc_idiv = esrc_ids + esrc_idp
-                esrc_tdiv = abs(esrc_odiv) + abs(esrc_idiv)
-
-                ezfrcitsrc_core=float(infocore[5])*1.e5 * 1.67e-30 # unit in Newton
-                ezfrictsrc_sol=float(infosol[5])*1.e5 * 1.67e-30
-                ezfrictsrc_ods=float(infoods[5])*1.e5 * 1.67e-30
-                ezfrictsrc_ids=float(infoids[5])*1.e5 * 1.67e-30
-                ezfrictsrc_odp=float(infoodp[5])*1.e5 * 1.67e-30
-                ezfrictsrc_idp=float(infoidp[5])*1.e5 * 1.67e-30
-                ezfrictsrc_tot=float(infot[5])*1.e5 * 1.67e-30
-                ezfrictsrc_odiv = ezfrictsrc_ods + ezfrictsrc_odp
-                ezfrictsrc_idiv = ezfrictsrc_ids + ezfrictsrc_idp
-                ezfrictsrc_tdiv = abs(ezfrictsrc_odiv) + abs(ezfrictsrc_idiv)
-
-                ezthermsrc_core=float(infocore[6])*1.e5 * 1.67e-30 # unit in Newton
-                ezthermsrc_sol=float(infosol[6])*1.e5 * 1.67e-30
-                ezthermsrc_ods=float(infoods[6])*1.e5 * 1.67e-30
-                ezthermsrc_ids=float(infoids[6])*1.e5 * 1.67e-30
-                ezthermsrc_odp=float(infoodp[6])*1.e5 * 1.67e-30
-                ezthermsrc_idp=float(infoidp[6])*1.e5 * 1.67e-30
-                ezthermsrc_tot=float(infot[6])*1.e5 * 1.67e-30
-                ezthermsrc_odiv = ezthermsrc_ods + ezthermsrc_odp
-                ezthermsrc_idiv = ezthermsrc_ids + ezthermsrc_idp
-                ezthermsrc_tdiv = abs(ezthermsrc_odiv) + abs(ezthermsrc_idiv)
-                #
-        text1 = ' * ION MOMENTUM FLUX *'
-        for index, line in enumerate(lines):
-            if text1 in str(line):
-                dummy=lines[index+2].split()
-                                #
-
-                infocore = dummy
-                # print(infocore)
-                infosol = lines[index+3].split()
-
-                infoods = lines[index+4].split()
-
-                infoids = lines[index+5].split()
-
-                infoodp = lines[index+6].split()
-                # print(infoodp)
-                infoidp = lines[index+7].split()
-
-                # infot =lines[index+8].split()
-                # print(infot)
-
-                momflux_ods_l = float(infoods[2])*1.e5 * 1.67e-30
-                momflux_ods_r = float(infoods[3])*1.e5 * 1.67e-30
-                momflux_ods_d = float(infoods[4])*1.e5 * 1.67e-30
-                momflux_ods_u = float(infoods[5])*1.e5 * 1.67e-30
-                momflux_odp_l = float(infoodp[2])*1.e5 * 1.67e-30
-                momflux_odp_r = float(infoodp[3])*1.e5 * 1.67e-30
-                momflux_odp_d = float(infoodp[4])*1.e5 * 1.67e-30
-                momflux_odp_u = float(infoodp[5])*1.e5 * 1.67e-30
-
-                momflux_left_odiv=momflux_odp_l
-                momflux_right_odiv=momflux_ods_r
-                momflux_down_odiv=momflux_odp_d+momflux_ods_d
-                momflux_up_odiv=momflux_odp_u+momflux_ods_u
-    f.close()
-    result=OrderedDict()
-    name = str(self.owner) + '/' + str(self.shot) + '/' + str(
-        self.date) + '/' + str(self.seq)
-    result['name']=name
-    result['pcoree']=pcoree
-    result['pcorei']=pcorei
-    result['i_cntl_h0']=i_cntl_h0
-    result['i_cntl_z2']=i_cntl_z2
-    result['i_h0_pump']=i_h0_pump
-    result['i_h0_reclrecpuf']=i_h0_reclrecpuf
-    result['i_ext_h0_wall']=i_ext_h0_wall
-    result['i_ext_h0_target']=i_ext_h0_target
-    result['i_h0_main']=i_h0_main
-    result['z1_pump']=z1_pump
-    result['z2_pump']=z2_pump
-    result['z1_ext_pufft']=z1_ext_pufft
-    result['z2_ext_pufft']=z2_ext_pufft
-    result['z1_ext_puffw']=z1_ext_puffw
-    result['z2_ext_puffw']=z2_ext_puffw
-    result['p_rec_odiv']=p_rec_odiv
-    result['p_rec_idiv']=p_rec_idiv
-    result['p_rec_vessel']=p_rec_vessel
-    result['core_ioniz']=core_ioniz
-    result['core_recom']=core_recom
-    result['msol_ioniz']=msol_ioniz
-    result['msol_recom']=msol_recom
-    result['odiv_ioniz']=odiv_ioniz
-    result['odiv_recom']=odiv_recom
-    result['idiv_ioniz']=idiv_ioniz
-    result['idiv_recom']=idiv_recom
-    result['opfr_ioniz']=opfr_ioniz
-    result['opfr_recom']=opfr_recom
-    result['ipfr_ioniz']=ipfr_ioniz
-    result['ipfr_recom']=ipfr_recom
-    result['sol_ioniz']=sol_ioniz
-    result['sol_recom']=sol_recom
-    result['tot_ioniz']=tot_ioniz
-    result['tot_recom']=tot_recom
-    result['cx_core']=cx_core
-    result['cx_msol']=cx_msol
-    result['cx_odiv']=cx_odiv
-    result['cx_idiv']=cx_idiv
-    result['cx_opfr']=cx_opfr
-    result['cx_ipfr']=cx_ipfr
-    result['ati_core']=ati_core
-    result['ati_msol']=ati_msol
-    result['ati_odiv']=ati_odiv
-    result['ati_idiv']=ati_idiv
-    result['ati_opfr']=ati_opfr
-    result['ati_ipfr']=ati_ipfr
-    result['moli_core']=moli_core
-    result['moli_msol']=moli_msol
-    result['moli_odiv']=moli_odiv
-    result['moli_idiv']=moli_idiv
-    result['moli_opfr']=moli_opfr
-    result['moli_ipfr']=moli_ipfr
-    result['reci_core']=reci_core
-    result['reci_msol']=reci_msol
-    result['reci_odiv']=reci_odiv
-    result['reci_idiv']=reci_idiv
-    result['reci_opfr']=reci_opfr
-    result['reci_ipfr']=reci_ipfr
-    result['prad_core_h']=prad_core_h
-    result['prad_core_z']=prad_core_z
-    result['prad_msol_h']=prad_msol_h
-    result['prad_msol_z']=prad_msol_z
-    result['prad_odiv_h']=prad_odiv_h
-    result['prad_odiv_z']=prad_odiv_z
-    result['prad_idiv_h']=prad_idiv_h
-    result['prad_idiv_z']=prad_idiv_z
-    result['prad_opfr_h']=prad_opfr_h
-    result['prad_opfr_z']=prad_opfr_z
-    result['prad_ipfr_h']=prad_ipfr_h
-    result['prad_ipfr_z']=prad_ipfr_z
-    result['prad_sol_h']=prad_sol_h
-    result['prad_sol_z']=prad_sol_z
-    result['prad_sol']=prad_sol
-    result['prad_div_h']=prad_div_h
-    result['prad_div_z']=prad_div_z
-    result['prad_div']=prad_div
-    result['prad_h']=prad_h
-    result['prad_z']=prad_z
-    result['prad_tot']=prad_tot
-    result['ate_core']=ate_core
-    result['ate_msol']=ate_msol
-    result['ate_odiv']=ate_odiv
-    result['ate_idiv']=ate_idiv
-    result['ate_opfr']=ate_opfr
-    result['ate_ipfr']=ate_ipfr
-    result['mole_core']=mole_core
-    result['mole_msol']=mole_msol
-    result['mole_odiv']=mole_odiv
-    result['mole_idiv']=mole_idiv
-    result['mole_opfr']=mole_opfr
-    result['mole_ipfr']=mole_ipfr
-    result['i_ves']=i_ves
-    result['i_ves_msol']=i_ves_msol
-    result['i_ves_odiv']=i_ves_odiv
-    result['i_ves_idiv']=i_ves_idiv
-    result['i_ves_pfr']=i_ves_pfr
-    result['i_idiv']=i_idiv
-    result['i_odiv']=i_odiv
-    result['p_idiv']=p_idiv
-    result['p_odiv']=p_odiv
-    result['momsrc_core']=momsrc_core
-    result['momsrc_sol']=momsrc_sol
-    result['momsrc_ids']=momsrc_ids
-    result['momsrc_ods']=momsrc_ods
-    result['momsrc_idp']=momsrc_idp
-    result['momsrc_odp']=momsrc_odp
-    result['momsrc_idiv']=momsrc_idiv
-    result['momsrc_odiv']=momsrc_odiv
-    result['momsrc_tdiv']=momsrc_tdiv
-    result['nisep_omp']=nisep_omp
-    result['nisep_imp']=nisep_imp
-    result['nisep_ot']=nisep_ot
-    result['nisep_it']=nisep_it
-    result['nesep_omp']=nesep_omp
-    result['nesep_imp']=nesep_imp
-    result['nesep_ot']=nesep_ot
-    result['nesep_it']=nesep_it
-    result['tisep_omp']=tisep_omp
-    result['tisep_imp']=tisep_imp
-    result['tisep_ot']=tisep_ot
-    result['tisep_it']=tisep_it
-    result['tesep_omp']=tesep_omp
-    result['tesep_imp']=tesep_imp
-    result['tesep_ot']=tesep_ot
-    result['tesep_it']=tesep_it
-    result['psep_omp']=psep_omp
-    result['psep_imp']=psep_imp
-    result['psep_ot']=psep_ot
-    result['psep_it']=psep_it
-    result['niavg_omp']=niavg_omp
-    result['niavg_imp']=niavg_imp
-    result['niavg_ot']=niavg_ot
-    result['niavg_it']=niavg_it
-    result['neavg_omp']=neavg_omp
-    result['neavg_imp']=neavg_imp
-    result['neavg_ot']=neavg_ot
-    result['neavg_it']=neavg_it
-    result['tiavg_omp']=tiavg_omp
-    result['tiavg_imp']=tiavg_imp
-    result['tiavg_ot']=tiavg_ot
-    result['tiavg_it']=tiavg_it
-    result['teavg_omp']=teavg_omp
-    result['teavg_imp']=teavg_imp
-    result['teavg_ot']=teavg_ot
-    result['teavg_it']=teavg_it
-    result['pavg_omp']=pavg_omp
-    result['pavg_imp']=pavg_imp
-    result['pavg_ot']=pavg_ot
-    result['pavg_it']=pavg_it
-    result['pi_ions']=pi_ions
-    result['pi_atomic']=pi_atomic
-    result['pi_mol']=pi_mol
-    result['pi_cx']=pi_cx
-    result['pi_rec']=pi_rec
-    result['pi_eq']=pi_eq
-    result['pi_com']=pi_com
-    result['pi_dt']=pi_dt
-    result['pe_ions']=pe_ions
-    result['pe_atomic']=pe_atomic
-    result['pe_mol']=pe_mol
-    result['pe_rec'] = pe_rec
-    result['pe_hrad']=pe_hrad
-    result['pe_zrad']=pe_zrad
-    result['pe_eq']=pe_eq
-    result['pe_com'] = pe_com
-    result['pe_dt']=pe_dt
-    result['ionflux_core_out']=ionflux_core_out
-    result['ionflux_sol_wall']=ionflux_sol_wall
-    result['ionflux_sol_outdiv']=ionflux_sol_outdiv
-    result['ionflux_sol_indiv']=ionflux_sol_indiv
-    result['ionflux_prv_outdiv']=ionflux_prv_outdiv
-    result['ionflux_prv_indiv']=ionflux_prv_indiv
-    result['pcore_out_ion']=pcore_out_ion
-    result['pcore_out_ele']=pcore_out_ele
-    result['pod_ion']=pod_ion
-    result['pod_ele']=pod_ele
-    result['pid_ion']=pid_ion
-    result['pid_ele']=pid_ele
-    result['pves_ion']=pves_ion
-    result['pves_ele']=pves_ele
-    result['pves_od_ion']=pves_od_ion
-    result['pves_od_ele']=pves_od_ele
-    result['pves_id_ion']=pves_id_ion
-    result['pves_id_ele']=pves_id_ele
-    result['pves_opfr_ion']=pves_opfr_ion
-    result['pves_opfr_ele']=pves_opfr_ele
-    result['pves_ipfr_ion']=pves_ipfr_ion
-    result['pves_ipfr_ele']=pves_ipfr_ele
-    result['imp1flux_core_out']=imp1flux_core_out
-    result['imp2flux_core_out']=imp2flux_core_out
-    result['gradpsrc_odiv']=gradpsrc_odiv
-    result['esrc_odiv']=esrc_odiv
-    result['ezfrictsrc_odiv']=ezfrictsrc_odiv
-    result['ezthermsrc_odiv']=ezthermsrc_odiv
-    result['momflux_left_odiv']=momflux_left_odiv
-    result['momflux_right_odiv']=momflux_right_odiv
-    result['momflux_down_odiv']=momflux_down_odiv
-    result['momflux_up_odiv']=momflux_up_odiv
-    result['e_dt_core'] =                e_dt_core
-    result['e_dt_sol'] =                 e_dt_sol
-    result['e_dt_ods'] =                e_dt_ods
-    result['e_dt_ids'] =                 e_dt_ids
-    result['e_dt_odp'] =                 e_dt_odp
-    result['e_dt_idp'] =                 e_dt_idp
-    result['e_dt_tot'] =                 e_dt_tot
-    result['i_dt_core'] =                i_dt_core
-    result['i_dt_sol'] =                 i_dt_sol
-    result['i_dt_ods'] =                i_dt_ods
-    result['i_dt_ids'] =                 i_dt_ids
-    result['i_dt_odp'] =                 i_dt_odp
-    result['i_dt_idp'] =                 i_dt_idp
-    result['i_dt_tot'] =                 i_dt_tot
-    result['e_OHM_HEAT_core'] =                 e_OHM_HEAT_core
-    result['e_OHM_HEAT_sol'] =                 e_OHM_HEAT_sol
-    result['e_OHM_HEAT_ods'] =                 e_OHM_HEAT_ods
-    result['e_OHM_HEAT_ids'] =                 e_OHM_HEAT_ids
-    result['e_OHM_HEAT_odp'] =                 e_OHM_HEAT_odp
-    result['e_OHM_HEAT_idp'] =                 e_OHM_HEAT_idp
-    result['e_OHM_HEAT_tot'] =                 e_OHM_HEAT_tot
-    result['i_MOLE_ELASTIC_core'] =                i_MOLE_ELASTIC_core
-    result['i_MOLE_ELASTIC_sol'] =                 i_MOLE_ELASTIC_sol
-    result['i_MOLE_ELASTIC_ods'] =                 i_MOLE_ELASTIC_ods
-    result['i_MOLE_ELASTIC_ids'] =                 i_MOLE_ELASTIC_ids
-    result['i_MOLE_ELASTIC_odp'] =                 i_MOLE_ELASTIC_odp
-    result['i_MOLE_ELASTIC_idp'] =                 i_MOLE_ELASTIC_idp
-    result['i_MOLE_ELASTIC_tot'] =                 i_MOLE_ELASTIC_tot
-    result['i_AT_ELASTIC_core'] =                i_AT_ELASTIC_core
-    result['i_AT_ELASTIC_sol'] =                 i_AT_ELASTIC_sol
-    result['i_AT_ELASTIC_ods'] =                 i_AT_ELASTIC_ods
-    result['i_AT_ELASTIC_ids'] =                 i_AT_ELASTIC_ids
-    result['i_AT_ELASTIC_odp'] =                 i_AT_ELASTIC_odp
-    result['i_AT_ELASTIC_idp'] =                 i_AT_ELASTIC_idp
-    result['i_AT_ELASTIC_tot'] =                 i_AT_ELASTIC_tot
-    result['I_MOLE_ELASTIC_core'] =                I_MOLE_ELASTIC_core
-    result['i_MOLE_ELASTIC_sol'] =                 i_MOLE_ELASTIC_sol
-    result['i_MOLE_ELASTIC_ods'] =                 i_MOLE_ELASTIC_ods
-    result['i_MOLE_ELASTIC_ids'] =                 i_MOLE_ELASTIC_ids
-    result['i_MOLE_ELASTIC_odp'] =                 i_MOLE_ELASTIC_odp
-    result['i_MOLE_ELASTIC_idp'] =                 i_MOLE_ELASTIC_idp
-    result['i_MOLE_ELASTIC_tot'] =                 i_MOLE_ELASTIC_tot
-    result['i_KIN_EN_CORR_core'] =                i_KIN_EN_CORR_core
-    result['i_KIN_EN_CORR_sol'] =                 i_KIN_EN_CORR_sol
-    result['i_KIN_EN_CORR_ods'] =                 i_KIN_EN_CORR_ods
-    result['i_KIN_EN_CORR_ids'] =                 i_KIN_EN_CORR_ids
-    result['i_KIN_EN_CORR_odp'] =                 i_KIN_EN_CORR_odp
-    result['i_KIN_EN_CORR_idp'] =                 i_KIN_EN_CORR_idp
-    result['i_KIN_EN_CORR_tot'] =                 i_KIN_EN_CORR_tot
-    result['i_VISCOUS_core'] =                i_VISCOUS_core
-    result['i_VISCOUS_sol'] =                 i_VISCOUS_sol
-    result['i_VISCOUS_ods'] =                 i_VISCOUS_ods
-    result['i_VISCOUS_ids'] =                 i_VISCOUS_ids
-    result['i_VISCOUS_odp'] =                 i_VISCOUS_odp
-    result['i_VISCOUS_idp'] =                 i_VISCOUS_idp
-    result['i_VISCOUS_tot'] =                          i_VISCOUS_tot
-    result['i_EXT_core'] =                i_EXT_core
-    result['i_EXT_sol'] =                 i_EXT_sol
-    result['i_EXT_ods'] =                 i_EXT_ods
-    result['i_EXT_ids'] =                 i_EXT_ids
-    result['i_EXT_odp'] =                 i_EXT_odp
-    result['i_EXT_idp'] =                 i_EXT_idp
-    result['i_EXT_tot'] =                   i_EXT_tot
+            text1 = ' POWER & PARTICLE GLOBAL CONSERVATION :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+                    # print(dummy)
+                    pcorei=float(dummy[2])*1.e6
+                    pcoree=float(dummy[3])*1.e6
+                    i_input=float(dummy[4])
+                    # i_imp_tot=float(buf[5])
+                    prec=float(dummy[5])
+                    i_imp1_tot = 0
+                    i_imp2_tot = 0
+                    # print(len(dummy))
+                    if len(dummy) > 6:
+                        i_imp1_tot=float(dummy[6])
+                    if len(dummy) > 7:
+                        i_imp2_tot=float(dummy[7])
+                    # print(i_imp1_tot,i_imp2_tot)
 
 
+                    i_ves_buf = lines[index+5].split()
+                    i_ves_odiv_buf = lines[index+8].split()
+                    i_ves_msol_buf = lines[index+11].split()
+                    i_ves_idiv_buf = lines[index+14].split()
+                    i_ves_pfr_buf = lines[index+17].split()
+                    i_idiv_buf = lines[index+20].split()
+                    i_odiv_buf = lines[index+23].split()
+                    i_ionis_buf = lines[index+27].split()
+                    i_atomic_buf = lines[index+28].split()
+                    i_molec_buf = lines[index+29].split()
+                    i_CX_buf = lines[index+30].split()
+                    i_hydrad_buf = lines[index+31].split()
+                    i_radiated_buf = lines[index+37].split()
+                    i_recomb_buf = lines[index+38].split()
+                    i_particle_buf = lines[index+39].split()
+                    i_eq_buf =  lines[index+42].split()
+                    i_compr_buf =  lines[index+43].split()
+                    i_dt_buf =  lines[index+45].split()
+
+                    i_ves=float(i_ves_buf[6])
+                    i_ves_msol=float(i_ves_msol_buf[6])
+                    i_ves_odiv=float(i_ves_odiv_buf[6])
+                    i_ves_idiv=float(i_ves_idiv_buf[6])
+                    i_ves_pfr=float(i_ves_pfr_buf[6])
+                    #
+                    # ;stop
+                    # print( i_ves,i_ves_msol,i_ves_odiv,i_ves_idiv,i_ves_pfr)
+                    #
+                    # ; total power to outer and inner targets
+                    p_idiv = float(i_idiv_buf[4]) + float(i_idiv_buf[5])
+                    p_odiv = float(i_odiv_buf[4]) + float(i_odiv_buf[5])
+                    p_rec_odiv  = float(i_odiv_buf[7])
+                    p_rec_idiv  = float(i_idiv_buf[7])
+                    p_rec_vessel  = float(i_ves_buf[7])
+                    #
+                    # print(p_idiv, p_odiv, p_rec_odiv, p_rec_idiv, p_rec_vessel)
+                    # ; total particle flux to inner and outer targets
+                    i_idiv = float(i_idiv_buf[6])
+                    i_odiv = float(i_odiv_buf[6])
+                    #
+                    # ; total power source due to neutral interactions
+                    # print(i_ionis_buf)
+                    pi_ions = float(i_ionis_buf[4])
+                    pe_ions = float(i_ionis_buf[5])
+                    #
+                    # # ; total power source due to atomic contribution
+                    pi_atomic = float(i_atomic_buf[3])
+                    pe_atomic = float(i_atomic_buf[4])
+                    # print(pi_atomic,pe_atomic)
+                    # #
+                    # # ; total power source due to molecular dissociation
+                    pi_mol = float(i_molec_buf[2])
+                    pe_mol = float(i_molec_buf[3])
+                    # print(pi_mol,pe_mol)
+                    # print( i_idiv, i_odiv, pi_ions, pe_ions, pi_atomic, pe_atomic, pi_mol, pe_mol)				#  # total power source due to CX
+                    pi_cx = float(i_CX_buf[4])
+                    # print(pi_cx)
+                    # #
+                    # # ; total power source due to hrad and zrad
+                    pe_hrad = float(i_hydrad_buf[3])
+                    pe_zrad = float(i_radiated_buf[3])
+                    # print(pe_hrad,pe_zrad)
+                    # #
+                    # ; total power source due to recombination
+                    pi_rec = float(i_recomb_buf[2])
+                    pe_rec = float(i_recomb_buf[3])
+                    # print(pi_rec)
+                    # #
+                    # # ; total power source due to equipartition
+                    pi_eq = float(i_eq_buf[2])
+                    pe_eq = float(i_eq_buf[3])
+                    # print(pi_eq,pe_eq)
+                    #
+                    # # ; total power source due to compression
+                    pi_com = float(i_compr_buf[2])
+                    pe_com = float(i_compr_buf[3])
 
 
-    return result
+                    # ; total dt
+                    pi_dt = float(i_dt_buf[3])
+                    pe_dt = float(i_dt_buf[4])
+                    # print(pi_dt,pe_dt)
+
+                    # ; ------------------------------------------------------
+            text1 = ' MISCELLANEOUS SUMMATIONS BY MACRO-ZONE :-'
+                    #
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+                    # print(dummy)
+                    part_core = dummy
+                    part_sol = lines[index+6].split()
+                    part_ods = lines[index+8].split()
+                    part_ids = lines[index+10].split()
+                    part_odp = lines[index+12].split()
+                    part_idp = lines[index+14].split()
+                    part_t = lines[index+16].split()
+                    #
+                    # ;stop
+                    #
+                    core_ioniz=float(part_core[5])
+                    core_recom=float(part_core[6])
+                    # print(core_ioniz)
+                    msol_ioniz=float(part_sol[5])
+                    msol_recom=float(part_sol[6])
+                    odiv_ioniz=float(part_ods[5])
+                    odiv_recom=float(part_ods[6])
+                    idiv_ioniz=float(part_ids[5])
+                    idiv_recom=float(part_ids[6])
+                    opfr_ioniz=float(part_odp[5])
+                    opfr_recom=float(part_odp[6])
+                    ipfr_ioniz=float(part_idp[5])
+                    ipfr_recom=float(part_idp[6])
+                    #
+                    sol_ioniz = (float(part_sol[5])+
+                            float(part_ods[5])+float(part_ids[6])+
+                                    float(part_odp[5])+float(part_idp[6]))
+                    sol_recom= (float(part_sol[6])+
+                            float(part_ods[6])+float(part_ids[6])+
+                                    float(part_odp[6])+float(part_idp[6]))
+
+                    tot_ioniz = core_ioniz + sol_ioniz
+                    tot_recom = core_recom + sol_recom
+                    #
+                    # ; ------------------------------------------------------
+            text1 = ' ION POWER BALANCE BY MACRO-ZONE :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+                    # print(dummy)		#
+
+                    infocore = lines[index+5].split()
+                    infosol = lines[index+6].split()
+                    infoods =lines[index+7].split()
+                    infoids = lines[index+8].split()
+                    infoodp = lines[index+9].split()
+                    infoidp = lines[index+10].split()
+                    infot = lines[index+11].split()
+
+                    infocore2 = lines[index+14].split()
+                    infosol2 = lines[index+15].split()
+                    infoods2 =lines[index+16].split()
+                    infoids2 = lines[index+17].split()
+                    infoodp2 = lines[index+18].split()
+                    infoidp2 = lines[index+19].split()
+                    infot2 = lines[index+20].split()
+                    # print(infoidp2)
+                    i_dt_core = float(infocore2[2])*1.e6
+                    i_dt_sol = float(infosol2[2])*1.e6
+                    i_dt_ods = float(infoods2[2])*1.e6
+                    i_dt_ids = float(infoids2[2])*1.e6
+                    i_dt_odp = float(infoodp2[2])*1.e6
+                    i_dt_idp = float(infoidp2[2])*1.e6
+                    i_dt_tot = float(infot2[2])*1.e6
+
+                    i_AT_ELASTIC_core = float(infocore2[3])*1.e6
+                    i_AT_ELASTIC_sol = float(infosol2[3])*1.e6
+                    i_AT_ELASTIC_ods = float(infoods2[3])*1.e6
+                    i_AT_ELASTIC_ids = float(infoids2[3])*1.e6
+                    i_AT_ELASTIC_odp = float(infoodp2[3])*1.e6
+                    i_AT_ELASTIC_idp = float(infoidp2[3])*1.e6
+                    i_AT_ELASTIC_tot = float(infot2[3])*1.e6
+
+                    I_MOLE_ELASTIC_core = float(infocore2[4])*1.e6
+                    i_MOLE_ELASTIC_sol = float(infosol2[4])*1.e6
+                    i_MOLE_ELASTIC_ods = float(infoods2[4])*1.e6
+                    i_MOLE_ELASTIC_ids = float(infoids2[4])*1.e6
+                    i_MOLE_ELASTIC_odp = float(infoodp2[4])*1.e6
+                    i_MOLE_ELASTIC_idp = float(infoidp2[4])*1.e6
+                    i_MOLE_ELASTIC_tot = float(infot2[4])*1.e6
+
+                    i_KIN_EN_CORR_core = float(infocore2[5])*1.e6
+                    i_KIN_EN_CORR_sol = float(infosol2[5])*1.e6
+                    i_KIN_EN_CORR_ods = float(infoods2[5])*1.e6
+                    i_KIN_EN_CORR_ids = float(infoids2[5])*1.e6
+                    i_KIN_EN_CORR_odp = float(infoodp2[5])*1.e6
+                    i_KIN_EN_CORR_idp = float(infoidp2[5])*1.e6
+                    i_KIN_EN_CORR_tot = float(infot2[5])*1.e6
+
+                    i_VISCOUS_core = float(infocore2[6])*1.e6
+                    i_VISCOUS_sol = float(infosol2[6])*1.e6
+                    i_VISCOUS_ods = float(infoods2[6])*1.e6
+                    i_VISCOUS_ids = float(infoids2[6])*1.e6
+                    i_VISCOUS_odp = float(infoodp2[6])*1.e6
+                    i_VISCOUS_idp = float(infoidp2[6])*1.e6
+                    i_VISCOUS_tot = float(infot2[6])*1.e6
+
+                    i_EXT_core = float(infocore2[7])*1.e6
+                    i_EXT_sol = float(infosol2[7])*1.e6
+                    i_EXT_ods = float(infoods2[7])*1.e6
+                    i_EXT_ids = float(infoids2[7])*1.e6
+                    i_EXT_odp = float(infoodp2[7])*1.e6
+                    i_EXT_idp = float(infoidp2[7])*1.e6
+                    i_EXT_tot = float(infot2[7])*1.e6
+
+                    cx_core=float(infocore[7])*1.e6
+                    cx_msol=float(infosol[7])*1.e6
+                    cx_odiv=float(infoods[7])*1.e6
+                    cx_idiv=float(infoids[7])*1.e6
+                    cx_opfr=float(infoodp[7])*1.e6
+                    cx_ipfr=float(infoidp[7])*1.e6
+
+                    ati_core=float(infocore[5])*1.e6
+                    ati_msol=float(infosol[5])*1.e6
+                    ati_odiv=float(infoods[5])*1.e6
+                    ati_idiv=float(infoids[5])*1.e6
+                    ati_opfr=float(infoodp[5])*1.e6
+                    ati_ipfr=float(infoidp[5])*1.e6
+
+                    moli_core=float(infocore[6])*1.e6
+                    moli_msol=float(infosol[6])*1.e6
+                    moli_odiv=float(infoods[6])*1.e6
+                    moli_idiv=float(infoids[6])*1.e6
+                    moli_opfr=float(infoodp[6])*1.e6
+                    moli_ipfr=float(infoidp[6])*1.e6
+
+                    reci_core=float(infocore[8])*1.e6
+                    reci_msol=float(infosol[8])*1.e6
+                    reci_odiv=float(infoods[8])*1.e6
+                    reci_idiv=float(infoids[8])*1.e6
+                    reci_opfr=float(infoodp[8])*1.e6
+                    reci_ipfr=float(infoidp[8])*1.e6
+                    #
+                    cx_sol = (float(infosol[7])+
+                              float(infoods[7])+float(infoids[7])+
+                                  float(infoodp[7])+float(infoidp[7]))*1.e6
+
+                    cx_div = (float(infoods[7])+float(infoids[7])+
+                                  float(infoodp[7])+float(infoidp[7]))*1.e6
+
+                    cx_tot = cx_core + cx_sol
+                    #
+
+                    infot = lines[index+24].split()
+                    pcore_out_ion = float(infot[3])*1.e6
+                    #
+                    infot = lines[index+25].split()
+                    # ; power to the outer divertor entrance
+                    pod_ion = float(infot[4])*1.e6
+                    # ; power to the inner divertor entracen
+                    pid_ion = float(infot[5])*1.e6
+                    # ; power to the vessel wall between X-points. Main sol.
+                    pves_ion = float(infot[3])*1.e6
+
+                    infot =  lines[index+26].split()
+                    pves_od_ion = float(infot[3])*1.e6
+
+                    infot =  lines[index+27].split()
+                    pves_id_ion = float(infot[3])*1.e6
+
+                    infot =  lines[index+28].split()
+                    pves_opfr_ion = float(infot[2])*1.e6
+
+                    infot =  lines[index+29].split()
+                    pves_ipfr_ion = float(infot[2])*1.e6
+                    #
+                    # ; ------------------------------------------------------
+            text1 = ' ELECTRON POWER BALANCE BY MACRO-ZONE :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+
+
+                    infocore = dummy
+                    # print(infocore)
+
+                    infosol = lines[index+5].split()
+                    # print(infosol)
+
+                    infoods =lines[index+6].split()
+                    # print(infoods)
+
+                    infoids = lines[index+7].split()
+                    # print(infoids)
+
+                    infoodp = lines[index+8].split()
+                    # print(infoodp)
+
+                    infoidp = lines[index+9].split()
+                    # print(infoidp)
+
+                    infot = lines[index+10].split()
+                    # print(infot)
+
+                    infocore2 = lines[index+14].split()
+                    infosol2 = lines[index+15].split()
+                    infoods2 =lines[index+16].split()
+                    infoids2 = lines[index+17].split()
+                    infoodp2 = lines[index+18].split()
+                    infoidp2 = lines[index+19].split()
+                    infot2 = lines[index+20].split()
+
+                    e_dt_core = float(infocore2[2])*1.e6
+                    e_dt_sol = float(infosol2[2])*1.e6
+                    e_dt_ods = float(infoods2[2])*1.e6
+                    e_dt_ids = float(infoids2[2])*1.e6
+                    e_dt_odp = float(infoodp2[2])*1.e6
+                    e_dt_idp = float(infoidp2[2])*1.e6
+                    e_dt_tot = float(infot2[2])*1.e6
+
+                    e_OHM_HEAT_core = float(infocore2[3])*1.e6
+                    e_OHM_HEAT_sol = float(infosol2[3])*1.e6
+                    e_OHM_HEAT_ods = float(infoods2[3])*1.e6
+                    e_OHM_HEAT_ids = float(infoids2[3])*1.e6
+                    e_OHM_HEAT_odp = float(infoodp2[3])*1.e6
+                    e_OHM_HEAT_idp = float(infoidp2[3])*1.e6
+                    e_OHM_HEAT_tot = float(infot2[3])*1.e6
+
+                    i_MOLE_ELASTIC_core = float(infocore2[4])*1.e6
+                    i_MOLE_ELASTIC_sol = float(infosol2[4])*1.e6
+                    i_MOLE_ELASTIC_ods = float(infoods2[4])*1.e6
+                    i_MOLE_ELASTIC_ids = float(infoids2[4])*1.e6
+                    i_MOLE_ELASTIC_odp = float(infoodp2[4])*1.e6
+                    i_MOLE_ELASTIC_idp = float(infoidp2[4])*1.e6
+                    i_MOLE_ELASTIC_tot = float(infot2[4])*1.e6
+
+
+                    prad_core_z=float(infocore[2])*1.e6
+                    prad_core_h=float(infocore[7])*1.e6
+                    prad_msol_z=float(infosol[2])*1.e6
+                    prad_msol_h=float(infosol[7])*1.e6
+                    prad_odiv_z=float(infoods[2])*1.e6
+                    prad_odiv_h=float(infoods[7])*1.e6
+                    prad_idiv_z=float(infoids[2])*1.e6
+                    prad_idiv_h=float(infoids[7])*1.e6
+                    prad_opfr_z=float(infoodp[2])*1.e6
+                    prad_opfr_h=float(infoodp[7])*1.e6
+                    prad_ipfr_z=float(infoidp[2])*1.e6
+                    prad_ipfr_h=float(infoidp[7])*1.e6
+
+                    ate_core=float(infocore[5])*1.e6
+                    mole_core=float(infocore[6])*1.e6
+                    ate_msol=float(infosol[5])*1.e6
+                    mole_msol=float(infosol[6])*1.e6
+                    ate_odiv=float(infoods[5])*1.e6
+                    mole_odiv=float(infoods[6])*1.e6
+                    ate_idiv=float(infoids[5])*1.e6
+                    mole_idiv=float(infoids[6])*1.e6
+                    ate_opfr=float(infoodp[5])*1.e6
+                    mole_opfr=float(infoodp[6])*1.e6
+                    ate_ipfr=float(infoidp[5])*1.e6
+                    mole_ipfr=float(infoidp[6])*1.e6
+
+
+                    prad_sol_h = (float(infosol[7])+
+                            float(infoods[7])+float(infoids[7])+
+                                    float(infoodp[7])+float(infoidp[7]))*1.e6
+                    prad_sol_z = (float(infosol[2])+
+                            float(infoods[2])+float(infoids[2])+
+                                    float(infoodp[2])+float(infoidp[2]))*1.e6
+                    prad_sol = prad_sol_h + prad_sol_z
+
+                    prad_div_h = (float(infoods[7])+float(infoids[7])+
+                                    float(infoodp[7])+float(infoidp[7]))*1.e6
+                    prad_div_z = (float(infoods[2])+float(infoids[2])+
+                                    float(infoodp[2])+float(infoidp[2]))*1.e6
+                    prad_div = prad_div_h + prad_div_z
+
+                    prad_h = prad_core_h + prad_sol_h
+                    prad_z = prad_core_z + prad_sol_z
+                    prad_tot = prad_h + prad_z
+
+                    infot = lines[index+24].split()
+                    # print(infot)
+                    pcore_out_ele = float(infot[3])*1.e6
+
+
+                    infot =  lines[index+25].split()
+                    pod_ele = float(infot[4])*1.e6
+                    pid_ele = float(infot[5])*1.e6
+                    pves_ele = float(infot[3])*1.e6
+
+                    infot =  lines[index+26].split()
+                    pves_od_ele = float(infot[3])*1.e6
+
+                    infot = lines[index+27].split()
+                    pves_id_ele = float(infot[3])*1.e6
+
+                    infot =  lines[index+28].split()
+                    pves_opfr_ele = float(infot[2])*1.e6
+
+                    infot =  lines[index+29].split()
+                    # print(infot)
+                    pves_ipfr_ele = float(infot[2])*1.e6
+                    # #
+                    # ; ------------------------------------------------------
+            # text1 = ' ION PARTICLE BALANCE BY MACRO-ZONE :-'
+            text1 = ' * ION PARTICLE FLUX *'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    # dummy=lines[index+4].split()
+                    dummy=lines[index+2].split()
+                    #
+
+                    infocore = dummy
+                    # print(infocore)
+                    ionflux_core_out = float(infocore[3])
+                    #
+                    # #
+                    # infosol  =lines[index+5].split()
+                    infosol  =lines[index+3].split()
+                    ionflux_sol_wall = float(infosol[3])
+                    #
+                    # infosol  =lines[index+6].split()
+                    infosol  =lines[index+4].split()
+                    ionflux_sol_outdiv = float(infosol[4])
+                    #
+                    #
+                    # infoinsol  =lines[index+7].split()
+                    infoinsol  =lines[index+5].split()
+                    ionflux_sol_indiv = float(infoinsol[5])
+                    #
+                    # infooutprv  =lines[index+8].split()
+                    infooutprv  =lines[index+6].split()
+                    ionflux_prv_outdiv = float(infooutprv[4])
+                    #
+                    # infoinprv  =lines[index+9].split()
+                    infoinprv  =lines[index+7].split()
+                    ionflux_prv_indiv = float(infoinprv[5])
+                    #
+                    # print(ionflux_core_out)
+                    # print(ionflux_sol_wall)
+                    # print(ionflux_sol_outdiv)
+                    # print(ionflux_sol_indiv)
+                    # print(ionflux_prv_outdiv)
+                    # print(ionflux_prv_indiv)
+                    # ;
+
+                    #
+                    imp1flux_core_out = 0
+                    imp2flux_core_out = 0
+            text1  = ' IMPURITY PARTICLE BALANCE BY MACRO-ZONE :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    # dummy=lines[index+3]
+
+                    text1  = ' * IMPURITY(1) SOURCES *'
+                    if text1 in str(line):
+                        infocore =lines[index+3].split()
+                        imp1flux_core_out = float(infocore[3])
+                    text1  = ' * IMPURITY(2) SOURCES *'
+                    if text1 in str(line):
+
+                        infocore = lines[index+3].split()
+                        imp2flux_core_out = float(infocore[3])
+                    # endif
+                    # endif
+                    #
+                    # ; ------------------------------------------------------
+            text1 = ' ION MOMENTUM BALANCE BY MACRO-ZONE :-'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+4].split()
+                    #
+
+                    infocore = dummy
+
+                    infosol = lines[index+5].split()
+
+                    infoods = lines[index+6].split()
+
+                    infoids = lines[index+7].split()
+
+                    infoodp = lines[index+8].split()
+
+                    infoidp = lines[index+9].split()
+
+                    infot = lines[index+10].split()
+                    # print(infot)
+                    momsrc_core=float(infocore[3])*1.e5 * 1.67e-30 # unit in Newton
+                    momsrc_sol=float(infosol[3])*1.e5 * 1.67e-30
+                    momsrc_ods=float(infoods[3])*1.e5 * 1.67e-30
+                    momsrc_ids=float(infoids[3])*1.e5 * 1.67e-30
+                    momsrc_odp=float(infoodp[3])*1.e5 * 1.67e-30
+                    momsrc_idp=float(infoidp[3])*1.e5 * 1.67e-30
+                    momsrc_tot=float(infot[3])*1.e5 * 1.67e-30
+
+                    momsrc_odiv = momsrc_ods + momsrc_odp
+                    momsrc_idiv = momsrc_ids + momsrc_idp
+                    momsrc_tdiv = abs(momsrc_odiv) + abs(momsrc_idiv)
+
+                    gradpsrc_core=float(infocore[2])*1.e5 * 1.67e-30 # unit in Newton
+                    gradpsrc_sol=float(infosol[2])*1.e5 * 1.67e-30
+                    gradpsrc_ods=float(infoods[2])*1.e5 * 1.67e-30
+                    gradpsrc_ids=float(infoids[2])*1.e5 * 1.67e-30
+                    gradpsrc_odp=float(infoodp[2])*1.e5 * 1.67e-30
+                    gradpsrc_idp=float(infoidp[2])*1.e5 * 1.67e-30
+                    gradpsrc_tot=float(infot[2])*1.e5 * 1.67e-30
+                    gradpsrc_odiv = gradpsrc_ods + gradpsrc_odp
+                    gradpsrc_idiv = gradpsrc_ids + gradpsrc_idp
+                    gradpsrc_tdiv = abs(gradpsrc_odiv) + abs(gradpsrc_idiv)
+
+                    esrc_core=float(infocore[4])*1.e5 * 1.67e-30 # unit in Newton
+                    esrc_sol=float(infosol[4])*1.e5 * 1.67e-30
+                    esrc_ods=float(infoods[4])*1.e5 * 1.67e-30
+                    esrc_ids=float(infoids[4])*1.e5 * 1.67e-30
+                    esrc_odp=float(infoodp[4])*1.e5 * 1.67e-30
+                    esrc_idp=float(infoidp[4])*1.e5 * 1.67e-30
+                    esrc_tot=float(infot[4])*1.e5 * 1.67e-30
+                    esrc_odiv = esrc_ods + esrc_odp
+                    esrc_idiv = esrc_ids + esrc_idp
+                    esrc_tdiv = abs(esrc_odiv) + abs(esrc_idiv)
+
+                    ezfrcitsrc_core=float(infocore[5])*1.e5 * 1.67e-30 # unit in Newton
+                    ezfrictsrc_sol=float(infosol[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_ods=float(infoods[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_ids=float(infoids[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_odp=float(infoodp[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_idp=float(infoidp[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_tot=float(infot[5])*1.e5 * 1.67e-30
+                    ezfrictsrc_odiv = ezfrictsrc_ods + ezfrictsrc_odp
+                    ezfrictsrc_idiv = ezfrictsrc_ids + ezfrictsrc_idp
+                    ezfrictsrc_tdiv = abs(ezfrictsrc_odiv) + abs(ezfrictsrc_idiv)
+
+                    ezthermsrc_core=float(infocore[6])*1.e5 * 1.67e-30 # unit in Newton
+                    ezthermsrc_sol=float(infosol[6])*1.e5 * 1.67e-30
+                    ezthermsrc_ods=float(infoods[6])*1.e5 * 1.67e-30
+                    ezthermsrc_ids=float(infoids[6])*1.e5 * 1.67e-30
+                    ezthermsrc_odp=float(infoodp[6])*1.e5 * 1.67e-30
+                    ezthermsrc_idp=float(infoidp[6])*1.e5 * 1.67e-30
+                    ezthermsrc_tot=float(infot[6])*1.e5 * 1.67e-30
+                    ezthermsrc_odiv = ezthermsrc_ods + ezthermsrc_odp
+                    ezthermsrc_idiv = ezthermsrc_ids + ezthermsrc_idp
+                    ezthermsrc_tdiv = abs(ezthermsrc_odiv) + abs(ezthermsrc_idiv)
+                    #
+            text1 = ' * ION MOMENTUM FLUX *'
+            for index, line in enumerate(lines):
+                if text1 in str(line):
+                    dummy=lines[index+2].split()
+                                    #
+
+                    infocore = dummy
+                    # print(infocore)
+                    infosol = lines[index+3].split()
+
+                    infoods = lines[index+4].split()
+
+                    infoids = lines[index+5].split()
+
+                    infoodp = lines[index+6].split()
+                    # print(infoodp)
+                    infoidp = lines[index+7].split()
+
+                    # infot =lines[index+8].split()
+                    # print(infot)
+
+                    momflux_ods_l = float(infoods[2])*1.e5 * 1.67e-30
+                    momflux_ods_r = float(infoods[3])*1.e5 * 1.67e-30
+                    momflux_ods_d = float(infoods[4])*1.e5 * 1.67e-30
+                    momflux_ods_u = float(infoods[5])*1.e5 * 1.67e-30
+                    momflux_odp_l = float(infoodp[2])*1.e5 * 1.67e-30
+                    momflux_odp_r = float(infoodp[3])*1.e5 * 1.67e-30
+                    momflux_odp_d = float(infoodp[4])*1.e5 * 1.67e-30
+                    momflux_odp_u = float(infoodp[5])*1.e5 * 1.67e-30
+
+                    momflux_left_odiv=momflux_odp_l
+                    momflux_right_odiv=momflux_ods_r
+                    momflux_down_odiv=momflux_odp_d+momflux_ods_d
+                    momflux_up_odiv=momflux_odp_u+momflux_ods_u
+        f.close()
+        result=OrderedDict()
+        name = str(self.owner) + '/' + str(self.shot) + '/' + str(
+            self.date) + '/' + str(self.seq)
+        result['name']=name
+        result['pcoree']=pcoree
+        result['pcorei']=pcorei
+        result['i_cntl_h0']=i_cntl_h0
+        result['i_cntl_z2']=i_cntl_z2
+        result['i_h0_pump']=i_h0_pump
+        result['i_h0_reclrecpuf']=i_h0_reclrecpuf
+        result['i_ext_h0_wall']=i_ext_h0_wall
+        result['i_ext_h0_target']=i_ext_h0_target
+        result['i_h0_main']=i_h0_main
+        result['z1_pump']=z1_pump
+        result['z2_pump']=z2_pump
+        result['z1_ext_pufft']=z1_ext_pufft
+        result['z2_ext_pufft']=z2_ext_pufft
+        result['z1_ext_puffw']=z1_ext_puffw
+        result['z2_ext_puffw']=z2_ext_puffw
+        result['p_rec_odiv']=p_rec_odiv
+        result['p_rec_idiv']=p_rec_idiv
+        result['p_rec_vessel']=p_rec_vessel
+        result['core_ioniz']=core_ioniz
+        result['core_recom']=core_recom
+        result['msol_ioniz']=msol_ioniz
+        result['msol_recom']=msol_recom
+        result['odiv_ioniz']=odiv_ioniz
+        result['odiv_recom']=odiv_recom
+        result['idiv_ioniz']=idiv_ioniz
+        result['idiv_recom']=idiv_recom
+        result['opfr_ioniz']=opfr_ioniz
+        result['opfr_recom']=opfr_recom
+        result['ipfr_ioniz']=ipfr_ioniz
+        result['ipfr_recom']=ipfr_recom
+        result['sol_ioniz']=sol_ioniz
+        result['sol_recom']=sol_recom
+        result['tot_ioniz']=tot_ioniz
+        result['tot_recom']=tot_recom
+        result['cx_core']=cx_core
+        result['cx_msol']=cx_msol
+        result['cx_odiv']=cx_odiv
+        result['cx_idiv']=cx_idiv
+        result['cx_opfr']=cx_opfr
+        result['cx_ipfr']=cx_ipfr
+        result['ati_core']=ati_core
+        result['ati_msol']=ati_msol
+        result['ati_odiv']=ati_odiv
+        result['ati_idiv']=ati_idiv
+        result['ati_opfr']=ati_opfr
+        result['ati_ipfr']=ati_ipfr
+        result['moli_core']=moli_core
+        result['moli_msol']=moli_msol
+        result['moli_odiv']=moli_odiv
+        result['moli_idiv']=moli_idiv
+        result['moli_opfr']=moli_opfr
+        result['moli_ipfr']=moli_ipfr
+        result['reci_core']=reci_core
+        result['reci_msol']=reci_msol
+        result['reci_odiv']=reci_odiv
+        result['reci_idiv']=reci_idiv
+        result['reci_opfr']=reci_opfr
+        result['reci_ipfr']=reci_ipfr
+        result['prad_core_h']=prad_core_h
+        result['prad_core_z']=prad_core_z
+        result['prad_msol_h']=prad_msol_h
+        result['prad_msol_z']=prad_msol_z
+        result['prad_odiv_h']=prad_odiv_h
+        result['prad_odiv_z']=prad_odiv_z
+        result['prad_idiv_h']=prad_idiv_h
+        result['prad_idiv_z']=prad_idiv_z
+        result['prad_opfr_h']=prad_opfr_h
+        result['prad_opfr_z']=prad_opfr_z
+        result['prad_ipfr_h']=prad_ipfr_h
+        result['prad_ipfr_z']=prad_ipfr_z
+        result['prad_sol_h']=prad_sol_h
+        result['prad_sol_z']=prad_sol_z
+        result['prad_sol']=prad_sol
+        result['prad_div_h']=prad_div_h
+        result['prad_div_z']=prad_div_z
+        result['prad_div']=prad_div
+        result['prad_h']=prad_h
+        result['prad_z']=prad_z
+        result['prad_tot']=prad_tot
+        result['ate_core']=ate_core
+        result['ate_msol']=ate_msol
+        result['ate_odiv']=ate_odiv
+        result['ate_idiv']=ate_idiv
+        result['ate_opfr']=ate_opfr
+        result['ate_ipfr']=ate_ipfr
+        result['mole_core']=mole_core
+        result['mole_msol']=mole_msol
+        result['mole_odiv']=mole_odiv
+        result['mole_idiv']=mole_idiv
+        result['mole_opfr']=mole_opfr
+        result['mole_ipfr']=mole_ipfr
+        result['i_ves']=i_ves
+        result['i_ves_msol']=i_ves_msol
+        result['i_ves_odiv']=i_ves_odiv
+        result['i_ves_idiv']=i_ves_idiv
+        result['i_ves_pfr']=i_ves_pfr
+        result['i_idiv']=i_idiv
+        result['i_odiv']=i_odiv
+        result['p_idiv']=p_idiv
+        result['p_odiv']=p_odiv
+        result['momsrc_core']=momsrc_core
+        result['momsrc_sol']=momsrc_sol
+        result['momsrc_ids']=momsrc_ids
+        result['momsrc_ods']=momsrc_ods
+        result['momsrc_idp']=momsrc_idp
+        result['momsrc_odp']=momsrc_odp
+        result['momsrc_idiv']=momsrc_idiv
+        result['momsrc_odiv']=momsrc_odiv
+        result['momsrc_tdiv']=momsrc_tdiv
+        result['nisep_omp']=nisep_omp
+        result['nisep_imp']=nisep_imp
+        result['nisep_ot']=nisep_ot
+        result['nisep_it']=nisep_it
+        result['nesep_omp']=nesep_omp
+        result['nesep_imp']=nesep_imp
+        result['nesep_ot']=nesep_ot
+        result['nesep_it']=nesep_it
+        result['tisep_omp']=tisep_omp
+        result['tisep_imp']=tisep_imp
+        result['tisep_ot']=tisep_ot
+        result['tisep_it']=tisep_it
+        result['tesep_omp']=tesep_omp
+        result['tesep_imp']=tesep_imp
+        result['tesep_ot']=tesep_ot
+        result['tesep_it']=tesep_it
+        result['psep_omp']=psep_omp
+        result['psep_imp']=psep_imp
+        result['psep_ot']=psep_ot
+        result['psep_it']=psep_it
+        result['niavg_omp']=niavg_omp
+        result['niavg_imp']=niavg_imp
+        result['niavg_ot']=niavg_ot
+        result['niavg_it']=niavg_it
+        result['neavg_omp']=neavg_omp
+        result['neavg_imp']=neavg_imp
+        result['neavg_ot']=neavg_ot
+        result['neavg_it']=neavg_it
+        result['tiavg_omp']=tiavg_omp
+        result['tiavg_imp']=tiavg_imp
+        result['tiavg_ot']=tiavg_ot
+        result['tiavg_it']=tiavg_it
+        result['teavg_omp']=teavg_omp
+        result['teavg_imp']=teavg_imp
+        result['teavg_ot']=teavg_ot
+        result['teavg_it']=teavg_it
+        result['pavg_omp']=pavg_omp
+        result['pavg_imp']=pavg_imp
+        result['pavg_ot']=pavg_ot
+        result['pavg_it']=pavg_it
+        result['pi_ions']=pi_ions
+        result['pi_atomic']=pi_atomic
+        result['pi_mol']=pi_mol
+        result['pi_cx']=pi_cx
+        result['pi_rec']=pi_rec
+        result['pi_eq']=pi_eq
+        result['pi_com']=pi_com
+        result['pi_dt']=pi_dt
+        result['pe_ions']=pe_ions
+        result['pe_atomic']=pe_atomic
+        result['pe_mol']=pe_mol
+        result['pe_rec'] = pe_rec
+        result['pe_hrad']=pe_hrad
+        result['pe_zrad']=pe_zrad
+        result['pe_eq']=pe_eq
+        result['pe_com'] = pe_com
+        result['pe_dt']=pe_dt
+        result['ionflux_core_out']=ionflux_core_out
+        result['ionflux_sol_wall']=ionflux_sol_wall
+        result['ionflux_sol_outdiv']=ionflux_sol_outdiv
+        result['ionflux_sol_indiv']=ionflux_sol_indiv
+        result['ionflux_prv_outdiv']=ionflux_prv_outdiv
+        result['ionflux_prv_indiv']=ionflux_prv_indiv
+        result['pcore_out_ion']=pcore_out_ion
+        result['pcore_out_ele']=pcore_out_ele
+        result['pod_ion']=pod_ion
+        result['pod_ele']=pod_ele
+        result['pid_ion']=pid_ion
+        result['pid_ele']=pid_ele
+        result['pves_ion']=pves_ion
+        result['pves_ele']=pves_ele
+        result['pves_od_ion']=pves_od_ion
+        result['pves_od_ele']=pves_od_ele
+        result['pves_id_ion']=pves_id_ion
+        result['pves_id_ele']=pves_id_ele
+        result['pves_opfr_ion']=pves_opfr_ion
+        result['pves_opfr_ele']=pves_opfr_ele
+        result['pves_ipfr_ion']=pves_ipfr_ion
+        result['pves_ipfr_ele']=pves_ipfr_ele
+        result['imp1flux_core_out']=imp1flux_core_out
+        result['imp2flux_core_out']=imp2flux_core_out
+        result['gradpsrc_odiv']=gradpsrc_odiv
+        result['esrc_odiv']=esrc_odiv
+        result['ezfrictsrc_odiv']=ezfrictsrc_odiv
+        result['ezthermsrc_odiv']=ezthermsrc_odiv
+        result['momflux_left_odiv']=momflux_left_odiv
+        result['momflux_right_odiv']=momflux_right_odiv
+        result['momflux_down_odiv']=momflux_down_odiv
+        result['momflux_up_odiv']=momflux_up_odiv
+        result['e_dt_core'] =                e_dt_core
+        result['e_dt_sol'] =                 e_dt_sol
+        result['e_dt_ods'] =                e_dt_ods
+        result['e_dt_ids'] =                 e_dt_ids
+        result['e_dt_odp'] =                 e_dt_odp
+        result['e_dt_idp'] =                 e_dt_idp
+        result['e_dt_tot'] =                 e_dt_tot
+        result['i_dt_core'] =                i_dt_core
+        result['i_dt_sol'] =                 i_dt_sol
+        result['i_dt_ods'] =                i_dt_ods
+        result['i_dt_ids'] =                 i_dt_ids
+        result['i_dt_odp'] =                 i_dt_odp
+        result['i_dt_idp'] =                 i_dt_idp
+        result['i_dt_tot'] =                 i_dt_tot
+        result['e_OHM_HEAT_core'] =                 e_OHM_HEAT_core
+        result['e_OHM_HEAT_sol'] =                 e_OHM_HEAT_sol
+        result['e_OHM_HEAT_ods'] =                 e_OHM_HEAT_ods
+        result['e_OHM_HEAT_ids'] =                 e_OHM_HEAT_ids
+        result['e_OHM_HEAT_odp'] =                 e_OHM_HEAT_odp
+        result['e_OHM_HEAT_idp'] =                 e_OHM_HEAT_idp
+        result['e_OHM_HEAT_tot'] =                 e_OHM_HEAT_tot
+        result['i_MOLE_ELASTIC_core'] =                i_MOLE_ELASTIC_core
+        result['i_MOLE_ELASTIC_sol'] =                 i_MOLE_ELASTIC_sol
+        result['i_MOLE_ELASTIC_ods'] =                 i_MOLE_ELASTIC_ods
+        result['i_MOLE_ELASTIC_ids'] =                 i_MOLE_ELASTIC_ids
+        result['i_MOLE_ELASTIC_odp'] =                 i_MOLE_ELASTIC_odp
+        result['i_MOLE_ELASTIC_idp'] =                 i_MOLE_ELASTIC_idp
+        result['i_MOLE_ELASTIC_tot'] =                 i_MOLE_ELASTIC_tot
+        result['i_AT_ELASTIC_core'] =                i_AT_ELASTIC_core
+        result['i_AT_ELASTIC_sol'] =                 i_AT_ELASTIC_sol
+        result['i_AT_ELASTIC_ods'] =                 i_AT_ELASTIC_ods
+        result['i_AT_ELASTIC_ids'] =                 i_AT_ELASTIC_ids
+        result['i_AT_ELASTIC_odp'] =                 i_AT_ELASTIC_odp
+        result['i_AT_ELASTIC_idp'] =                 i_AT_ELASTIC_idp
+        result['i_AT_ELASTIC_tot'] =                 i_AT_ELASTIC_tot
+        result['I_MOLE_ELASTIC_core'] =                I_MOLE_ELASTIC_core
+        result['i_MOLE_ELASTIC_sol'] =                 i_MOLE_ELASTIC_sol
+        result['i_MOLE_ELASTIC_ods'] =                 i_MOLE_ELASTIC_ods
+        result['i_MOLE_ELASTIC_ids'] =                 i_MOLE_ELASTIC_ids
+        result['i_MOLE_ELASTIC_odp'] =                 i_MOLE_ELASTIC_odp
+        result['i_MOLE_ELASTIC_idp'] =                 i_MOLE_ELASTIC_idp
+        result['i_MOLE_ELASTIC_tot'] =                 i_MOLE_ELASTIC_tot
+        result['i_KIN_EN_CORR_core'] =                i_KIN_EN_CORR_core
+        result['i_KIN_EN_CORR_sol'] =                 i_KIN_EN_CORR_sol
+        result['i_KIN_EN_CORR_ods'] =                 i_KIN_EN_CORR_ods
+        result['i_KIN_EN_CORR_ids'] =                 i_KIN_EN_CORR_ids
+        result['i_KIN_EN_CORR_odp'] =                 i_KIN_EN_CORR_odp
+        result['i_KIN_EN_CORR_idp'] =                 i_KIN_EN_CORR_idp
+        result['i_KIN_EN_CORR_tot'] =                 i_KIN_EN_CORR_tot
+        result['i_VISCOUS_core'] =                i_VISCOUS_core
+        result['i_VISCOUS_sol'] =                 i_VISCOUS_sol
+        result['i_VISCOUS_ods'] =                 i_VISCOUS_ods
+        result['i_VISCOUS_ids'] =                 i_VISCOUS_ids
+        result['i_VISCOUS_odp'] =                 i_VISCOUS_odp
+        result['i_VISCOUS_idp'] =                 i_VISCOUS_idp
+        result['i_VISCOUS_tot'] =                          i_VISCOUS_tot
+        result['i_EXT_core'] =                i_EXT_core
+        result['i_EXT_sol'] =                 i_EXT_sol
+        result['i_EXT_ods'] =                 i_EXT_ods
+        result['i_EXT_ids'] =                 i_EXT_ids
+        result['i_EXT_odp'] =                 i_EXT_odp
+        result['i_EXT_idp'] =                 i_EXT_idp
+        result['i_EXT_tot'] =                   i_EXT_tot
+
+
+
+
+        return result
+    except:
+        logger.error('error reading the print file, check simulation {}'.format(self.fullpath))
+        return None
 
 
 ###############################################
@@ -1399,19 +1405,23 @@ read_eirene
     with open(path+'/'+filename+'_print.csv', 'w') as f:  # Just use 'w' mode in 3.x
       simu=simu_list[0][0]
       result=simu.read_print_file_edge2d()
-      w = csv.DictWriter(f, result.keys(), delimiter='\t')
-      w.writeheader()
-    with open(path+'/'+filename+'_print.csv', 'a') as f:  # Just use 'w' mode in 3.x
-      writer = csv.writer(f, delimiter='\t')
-      for index1 in range(0,len(simu_list)):
-        simu=simu_list[index1][0]
-        #print(simu)
-        result=simu.read_print_file_edge2d()
-        writer.writerow(result.values())
+      if result:
+
+
+          w = csv.DictWriter(f, result.keys(), delimiter='\t')
+          w.writeheader()
+    if result:
+        with open(path+'/'+filename+'_print.csv', 'a') as f:  # Just use 'w' mode in 3.x
+          writer = csv.writer(f, delimiter='\t')
+          for index1 in range(0,len(simu_list)):
+            simu=simu_list[index1][0]
+            #print(simu)
+            result=simu.read_print_file_edge2d()
+            writer.writerow(result.values())
         
    
-    f.close()
-    print('print file written to ... ', path+'/'+filename+'_print.csv')
+        f.close()
+        print('print file written to ... ', path+'/'+filename+'_print.csv')
 
 ###############################################
 
@@ -3317,6 +3327,8 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
                     result['neutcurrent_out2_net_tot'],
                     result['neutcurrent_net_tot']])
         f.close()
+        print('Neutral currents across surfaces ', surface_in, surface_out,
+              ' written to ... ', path + '/' + filename + '_print.csv')
     else:
         logger.error('simulation list is empty')
 
@@ -3327,7 +3339,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
 
-    print('Neutral currents across surfaces ', surface_in, surface_out,' written to ... ', path+'/'+filename+'_print.csv')
+
 
 ###############################################
 

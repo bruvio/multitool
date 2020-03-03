@@ -701,7 +701,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
                     simu = self.simlist[index1][0]
                     label = self.simlist[index1][1]
                     var = ep.data(simu.fullpath, vari).data
-                    var = -np.trim_zeros(var, 'b')
+                    var = np.trim_zeros(var, 'b')
                     simu.contour(var, vari.lower()+'_' + label)
                     # variable = ep.data(simu.fullpath, vari ).data
                     # variable = -np.trim_zeros(variable, 'b')
@@ -721,9 +721,9 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
                 label = self.simlist[index1][1]
                 simu_pb = simu.read_print_file_edge2d()
 
-
-                sim.bar_power_balance(simu_pb, label)
-                plt.show(block=True)
+                if simu_pb:
+                    sim.bar_power_balance(simu_pb, label)
+                    plt.show(block=True)
 
     def handle_print(self):
         if not self.simlist:
