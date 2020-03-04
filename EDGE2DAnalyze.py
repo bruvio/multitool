@@ -166,11 +166,11 @@ class shot:
         self.reload = input_dict['reload']
         self.basefolder = input_dict['base_folder']
         self.installationfolder = input_dict['installation_folder']
-        folder = '/u/'+self.owner + os.sep + self.basefolder+os.sep+self.installationfolder+os.sep
+        folder = '/u/'+self.owner + os.sep + self.basefolder+os.sep+self.installationfolder
         # self.profile_omp= input_dict['omp_profiles']
-        self.profile_omp= folder+ "e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_omp= folder+ "/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OMP_"+self.pulse+'_'+self.conf+'.dat'
         # self.profile_ot= input_dict['ot_profiles']
-        self.profile_ot= folder+"e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
+        self.profile_ot= folder+"/e2d_data/"+self.pulse+"/e2dprofiles_python_new_OT_"+self.pulse+'_'+self.conf+'.dat'
         self.plot_sim = input_dict['plot_sim']
         self.plot_exp = input_dict['plot_exp']
         self.label = input_dict['label']
@@ -226,11 +226,10 @@ class shot:
         self.filename_spectroh_medN = input_dict['filename_spectroh_medN']
         self.filename_spectroh_highN_e2d = input_dict['filename_spectroh_highN_e2d']
         self.filename_spectroh_medN_e2d = input_dict['filename_spectroh_medN_e2d']
-        workfold = 'work/Python/EDGE2D'
         conf = self.conf
         date = conf.split('_')[0]
         seq = (conf.split('_')[1]).split('#')[1]
-        self.sim_1 = sim(str((self.pulse)), str(date), str(seq), workfold)
+        self.sim_1 = sim(str((self.pulse)), str(date), str(seq), folder)
         eproccat = ep.cat;
         self.tranfile = (eproccat(str((self.pulse)), str(date), str(seq),
                                   OWNER=self.sim_user,

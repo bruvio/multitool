@@ -1362,7 +1362,6 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
     dataname = []
     pulse_list = []
     time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    path = "/u/bviola/work/Python/EDGE2D/exp_data"
     fig = plt.figure()
 
     # fig = plt.gcf()
@@ -2240,15 +2239,12 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
 def plot_time_traces_main(nshot, save=False):
     import pandas as pd
     import matplotlib.pyplot as plt
-
+    cwd = os.getcwd()
     for i in range(len(nshot)):
 
         shot = int(nshot[i])
         # init_plotting()
-        # filename='/u/bviola/work/Python/EDGE2D/exp_data/Interp_Params_LID3_'+str(shot)+'_may2018.dat'
-        # filename = '/u/bviola/work/Python/EDGE2D/exp_data/Interp_Params_LID3_' + str(
-        #     shot) + '.dat'
-        filename = '/u/bviola/work/Python/EDGE2D/exp_data/Interp_Params_LID3_' + str(
+        filename = cwd + '/exp_data/Interp_Params_LID3_' + str(
             shot) + '_python.dat'
 
         # Get data
@@ -2635,12 +2631,13 @@ def find_psol(nshot, ntime):
     for i in range(len(nshot)):
 
         shot = int(nshot[i])
+        cwd = os.getcwd()
         time = float(ntime[i])
         delta = 0.5
         # print(shot,time)
         # init_plotting()
         # filename='/u/bviola/work/Python/EDGE2D/exp_data/Interp_Params_LID3_'+str(shot)+'_may2018.dat'
-        filename = '/u/bviola/work/Python/EDGE2D/exp_data/Interp_Params_LID3_' + str(
+        filename = cwd + '/exp_data/Interp_Params_LID3_' + str(
             shot) + '.dat'
 
         # Get data
@@ -3111,6 +3108,7 @@ def Getdata(pulse, dda,dtype,sequence,user):
           'sequence':seq}
 ###############################################
 def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
+    cwd = os.getcwd()
     if diag_json is None:
         diag_json ='diag_list.json'
     else:
@@ -3146,7 +3144,7 @@ def write_interp_data(pulse,diag_json=None, tmin=None,tmax=None):
     names = []
     dataname = []
     time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    path = '/u/bviola/work/Python/EDGE2D/exp_data'
+    path = cwd +'/exp_data'
     filename='Interp_Params_LID3_'+str(pulse)+'_python.dat'
     ncol = 0
 
