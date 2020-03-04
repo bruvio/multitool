@@ -10,79 +10,85 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them
 
+1) You will need to be sure you can use a few Python packages used at JET to download and read data:
+
 ```
-Give examples
+import ppf
+import getdat
+import eproc
 ```
+the code at the time of writing this README file cannot work offile. So those  packages are mandatory.
+
+If you can skip to  )
+
+
+2) You will need to install a few Python packages
+```
+pip install -r requirements.txt --user
+```
+
+3) 
+to install JET Python packages please follow these web pages:
+ for the ppf package:
+https://users.euro-fusion.org/pages/data-ppf-jpf/ppfuserguide/python/PPF.html#_converters
+end of the page tells you what to do in case of errors
+
+for getdat
+
+https://data.jet.uk/guides/jpf/getdat.html
+
+for eproc
+https://users.euro-fusion.org/tfwiki/index.php/EPROC_Python_module
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+to install the tool clone the repository to a convenient location
+```
+git clone  https://github.com/bruvio/multitool.git
 
 ```
-Give the example
+
+After this you should edit the file user_installation_data.json
+
+This file will contain info on where the code is located 
+
+if you cloned the repository in 
+
+
 ```
+/home/username/foldername1/subfolder/repository
+```
+then you should edit the file as follow
 
 And repeat
 
 ```
-until finished
+base folder = home
+
+installation folder =  foldername1/subfolder/repository
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+Once this is done you should be able to run the code.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+The code has a few tests inside the folder
 ```
-Give an example
+./tests
 ```
 
-### And coding style tests
+these tests allow the user to verify that the MainWindow and the Widgets can be launched.
+More tests will be created in the future
 
-Explain what these tests test and why
 
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Bruno Viola** - *Initial work* - [PurpleBooth](https://github.com/bruvio)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
 

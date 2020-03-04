@@ -646,17 +646,36 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
     data = read_jetto_sequence(shot, sequence, dda, owner,
                                ['R', 'NE', 'SDII', 'TE'])
     timesteps = list(ep.timestep(simu.fullpath, ALL_TRANFILES=1))
-    index, dummy = find_peaks(wth['data'], threshold=0.8)
+    index, dummy = find_peaks(wth['data'])
     last_peak_index = index[np.argmax(index)]
-
     value_closest = take_closest(timesteps, wth['t'][last_peak_index])
-
+    peak_selected = wth['t'][last_peak_index]
     tran_index = timesteps.index(value_closest)
     if force_tran:
-        tran_index=tran_index+force_tran
+        tran_index = tran_index + force_tran
+        sleep(1)
     res = simu.read_profiles('omp', tran=tran_index)
 
-    return res, tran_index, data,value_closest
+
+
+    plt.figure()
+    ax1=plt.subplot(2,1,1)
+    plt.plot(wth['t'],wth['data'],label='wth_'+str(sequence))
+    plt.legend(loc='best', prop={'size': 6})
+    plt.plot(wth['t'][index], wth['data'][index], "x")
+    plt.axvline(x=peak_selected, color='r')
+    plt.axvline(x=timesteps[tran_index], color='b')
+    ax2=plt.subplot(2,1,2,sharex=ax1)
+    plt.plot(data['TE']['t'],data['TE']['data'].T[-1],label='TE_'+str(sequence))
+    plt.legend(loc='best', prop={'size': 6})
+    plt.axvline(x=peak_selected,color='r')
+    plt.axvline(x=timesteps[tran_index],color='b')
+    plt.savefig('./figures/' + 'peak_selection'+str(sequence), dpi=300)  #
+    plt.show(block=False)
+    logger.info('Energy peak @ {}s / selected time is {}s'.format(peak_selected,
+                                                                  timesteps[
+                                                                      tran_index]))
+    return res, tran_index, data,timesteps[tran_index]
 
 # def rundec6simulations(allow_write_ppf):
 #         logger = logging.getLogger(__name__)
@@ -962,22 +981,24 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
 #
 #         plt.show(block=False)
 #
-def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,num,allow_write_ppf,allow_plot):
+def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,label,allow_write_ppf,allow_plot,color,numb):
     fname = fname
     if allow_plot:
         plt.figure(num=fname)
         plt.title(fname)
         # print(ne5_t[tran_index])
-        plt.plot(data['R']['data'][tran_index][0:-1], data[label_jetto]['data'][tran_index][0:-1], label=num, color='magenta',
-                 linestyle=':')
+
+        plt.plot(data['R']['data'][tran_index][0:-1], data[label_jetto]['data'][tran_index][0:-1], label=label,
+                 linestyle=':', color=color)
         plt.plot(res['dsrad'][1:] + data['R']['data'][-1][-1], res[label_e2d].yData[1:],
-                 color='magenta', linestyle=':')
+                linestyle=':', color=color)
         plt.xlim(left=3.795, right=max(res['dsrad'] + data['R']['data'][-1][-1]))
+        plt.legend(loc='upper right', prop={'size': 6})
         plt.savefig('./figures/' + fname, format='eps', dpi=300)
         plt.savefig('./figures/' + fname, dpi=300)  #
 
     if allow_write_ppf:
-        name = label_jetto+str(num)
+        name = label_jetto+str(numb)
         if len(name) > 4:
             char2remove = len(name)-4
             name = name.replace(name[:char2remove],'')
@@ -1024,7 +1045,8 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
         sim_6 = sim('84600', 'nov1519', '1', workfold, 'vparail')
         sim_7 = sim('84600', 'dec0519', '1', workfold, 'vparail')
 
-        force_index5 = -1
+        force_index5 = -2
+
 
         res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_1,1569)
         res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, sim_2,1575)
@@ -1055,71 +1077,95 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
                 raise SystemExit
 
         fname = "NE  1e22 7MW"
-        plot_write_merged_sim(shot,fname, data1, res1, 'NE', 'ade',tran_index1, 1,
-                              allow_write_ppf,allow_plot)
+        label = 'NE-7MW'
+        i = 1
+        plot_write_merged_sim(shot,label, data1, res1, 'NE', 'ade',tran_index1, fname,
+                              allow_write_ppf,allow_plot,'blue',i)
         fname = 'NE  225e20 7MW'
-        plot_write_merged_sim(shot,fname, data2, res2, 'NE', 'ade', tran_index2, 2,
-                              allow_write_ppf,allow_plot)
+        i = i+1
+        plot_write_merged_sim(shot,label, data2, res2, 'NE', 'ade', tran_index2, fname,
+                              allow_write_ppf,allow_plot,'green',i)
         fname = 'NE  35e21 7MW'
-        plot_write_merged_sim(shot,fname, data3, res3, 'NE', 'ade', tran_index3, 3,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data3, res3, 'NE', 'ade', tran_index3, fname,
+                              allow_write_ppf,allow_plot,'red',i)
         fname = 'NE  47e21 7MW'
-        plot_write_merged_sim(shot,fname, data4, res4, 'NE', 'ade', tran_index4, 4,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data4, res4, 'NE', 'ade', tran_index4, fname,
+                              allow_write_ppf,allow_plot,'cyan',i)
         fname = 'NE  6e22 7MW'
-        plot_write_merged_sim(shot,fname, data5, res5, 'NE', 'ade', tran_index5, 5,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data5, res5, 'NE', 'ade', tran_index5, fname,
+                              allow_write_ppf,allow_plot,'magenta',i)
         fname = 'NE  225e200 7MW'
-        plot_write_merged_sim(shot,fname, data6, res6, 'NE', 'ade', tran_index6, 6,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data6, res6, 'NE', 'ade', tran_index6, fname,
+                              allow_write_ppf,allow_plot,'yellow',i)
         fname = 'NE  5e21 7MW'
-        plot_write_merged_sim(shot,fname, data7, res7, 'NE', 'ade', tran_index7, 7,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data7, res7, 'NE', 'ade', tran_index7, fname,
+                              allow_write_ppf,allow_plot,'black',i)
         #
         # ###ionization source
         fname = 'ION 1e22 7MW'
-        plot_write_merged_sim(shot,fname, data1, res1, 'SDII', 'asoun', tran_index1, 1,
-                              allow_write_ppf,allow_plot)
+        label = 'ION-7MW'
+        i = 1
+        plot_write_merged_sim(shot,label, data1, res1, 'SDII', 'asoun', tran_index1, fname,
+                              allow_write_ppf,allow_plot,'blue',i)
         fname = 'ION 225e20 7MW'
-        plot_write_merged_sim(shot,fname, data2, res2, 'SDII', 'asoun', tran_index2, 2,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data2, res2, 'SDII', 'asoun', tran_index2, fname,
+                              allow_write_ppf,allow_plot,'green',i)
         fname = 'ION 35e21 7MW'
-        plot_write_merged_sim(shot,fname, data3, res3, 'SDII', 'asoun', tran_index3, 3,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data3, res3, 'SDII', 'asoun', tran_index3, fname,
+                              allow_write_ppf,allow_plot,'red',i)
         fname = 'ION 47e21 7MW'
-        plot_write_merged_sim(shot,fname, data4, res4, 'SDII', 'asoun', tran_index4, 4,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data4, res4, 'SDII', 'asoun', tran_index4, fname,
+                              allow_write_ppf,allow_plot,'cyan',i)
         fname = 'ION 6e22 7MW'
-        plot_write_merged_sim(shot,fname, data5, res5, 'SDII', 'asoun', tran_index5, 5,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data5, res5, 'SDII', 'asoun', tran_index5, fname,
+                              allow_write_ppf,allow_plot,'magenta',i)
         fname = 'ION 225e200 7MW'
-        plot_write_merged_sim(shot,fname, data6, res6, 'SDII', 'asoun', tran_index6, 6,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data6, res6, 'SDII', 'asoun', tran_index6, fname,
+                              allow_write_ppf,allow_plot,'yellow',i)
         fname = 'ION 5e21 7MW'
-        plot_write_merged_sim(shot,fname, data7, res7, 'SDII', 'asoun', tran_index7, 7,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data7, res7, 'SDII', 'asoun', tran_index7, fname,
+                              allow_write_ppf,allow_plot,'black',i)
         ###temperature
         fname = 'TE 1e22 7MW'
-        plot_write_merged_sim(shot,fname, data1, res1, 'TE', 'ate', tran_index1, 1,
-                              allow_write_ppf,allow_plot)
+        label = 'TE-7MW'
+        i = 1
+        plot_write_merged_sim(shot,label, data1, res1, 'TE', 'ate', tran_index1, fname,
+                              allow_write_ppf,allow_plot,'blue',i)
         fname = 'TE 225e20 7MW'
-        plot_write_merged_sim(shot,fname, data2, res2, 'TE', 'ate', tran_index2, 2,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data2, res2, 'TE', 'ate', tran_index2, fname,
+                              allow_write_ppf,allow_plot,'green',i)
         fname = 'TE 35e21 7MW'
-        plot_write_merged_sim(shot,fname, data3, res3, 'TE', 'ate', tran_index3, 3,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data3, res3, 'TE', 'ate', tran_index3, fname,
+                              allow_write_ppf,allow_plot,'red',i)
         fname = 'TE 47e21 7MW'
-        plot_write_merged_sim(shot,fname, data4, res4, 'TE', 'ate', tran_index4, 4,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data4, res4, 'TE', 'ate', tran_index4, fname,
+                              allow_write_ppf,allow_plot,'cyan',i)
         fname = 'TE 6e22 7MW'
-        plot_write_merged_sim(shot,fname, data5, res5, 'TE', 'ate', tran_index5, 5,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data5, res5, 'TE', 'ate', tran_index5, fname,
+                              allow_write_ppf,allow_plot,'magenta',i)
         fname = 'TE 225e200 7MW'
-        plot_write_merged_sim(shot,fname, data6, res6, 'TE', 'ate', tran_index6, 6,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data6, res6, 'TE', 'ate', tran_index6, fname,
+                              allow_write_ppf,allow_plot,'yellow',i)
         fname = 'TE 5e21 7MW'
-        plot_write_merged_sim(shot,fname, data7, res7, 'TE', 'ate', tran_index7, 7,
-                              allow_write_ppf,allow_plot)
+        i = i + 1
+        plot_write_merged_sim(shot,label, data7, res7, 'TE', 'ate', tran_index7, fname,
+                              allow_write_ppf,allow_plot,'black',i)
         if allow_write_ppf:
 
             err = close_ppf(shot, 'bviola',
@@ -1129,7 +1175,7 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
                 logger.error('failed to close ppf')
                 raise SystemExit
 
-        plt.show(block=True)
+        # plt.show(block=True)
 
 
 def runFebsimulations11MW(allow_write_ppf,allow_plot):
@@ -1155,10 +1201,10 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
     sim_6 = sim('84600', 'dec0419', '1', workfold, 'vparail')
     sim_7 = sim('84600', 'dec0519', '2', workfold, 'vparail')
 
-    force_index4 = -1
-    force_index5 = -1
-    force_index6 = -1
-    force_index7 = -1
+    force_index4 = -2
+    force_index5 = -2
+    force_index6 = -2
+    force_index7 = -2
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, 1570)
@@ -1213,72 +1259,96 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
             raise SystemExit
 
     fname = "NE  1e22 11MW"
-    plot_write_merged_sim(shot,fname, data1, res1, 'NE', 'ade', tran_index1, 1,
-                          allow_write_ppf,allow_plot)
+    label = 'NE-11MW'
+    i = 1
+    plot_write_merged_sim(shot,label, data1, res1, 'NE', 'ade', tran_index1, fname,
+                          allow_write_ppf,allow_plot,'blue',i)
     fname = 'NE  225e20 11MW'
-    plot_write_merged_sim(shot,fname, data2, res2, 'NE', 'ade', tran_index2, 2,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data2, res2, 'NE', 'ade', tran_index2, fname,
+                          allow_write_ppf,allow_plot,'green',i)
     fname = 'NE  35e21 11MW'
-    plot_write_merged_sim(shot,fname, data3, res3, 'NE', 'ade', tran_index3, 3,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data3, res3, 'NE', 'ade', tran_index3, fname,
+                          allow_write_ppf,allow_plot,'red',i)
     fname = 'NE  47e21 11MW'
-    plot_write_merged_sim(shot,fname, data4, res4, 'NE', 'ade', tran_index4, 4,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data4, res4, 'NE', 'ade', tran_index4, fname,
+                          allow_write_ppf,allow_plot,'cyan',i)
     fname = 'NE  6e22 11MW'
-    plot_write_merged_sim(shot,fname, data5, res5, 'NE', 'ade', tran_index5, 5,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data5, res5, 'NE', 'ade', tran_index5, fname,
+                          allow_write_ppf,allow_plot,'magenta',i)
     fname = 'NE  5e21 11MW'
-    plot_write_merged_sim(shot,fname, data6, res6, 'NE', 'ade', tran_index6, 6,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data6, res6, 'NE', 'ade', tran_index6, fname,
+                          allow_write_ppf,allow_plot,'yellow',i)
     fname = 'NE  725e20 11MW'
-    plot_write_merged_sim(shot,fname, data7, res7, 'NE', 'ade', tran_index7, 7,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data7, res7, 'NE', 'ade', tran_index7, fname,
+                          allow_write_ppf,allow_plot,'black',i)
 
     ###ionization source
     fname = 'ION 1e22 11MW'
-    plot_write_merged_sim(shot,fname, data1, res1, 'SDII', 'asoun', tran_index1, 1,
-                          allow_write_ppf,allow_plot)
+    label = 'ION-11MW'
+    i = 1
+    plot_write_merged_sim(shot,label, data1, res1, 'SDII', 'asoun', tran_index1, fname,
+                          allow_write_ppf,allow_plot,'blue',i)
     fname = 'ION 225e20 11MW'
-    plot_write_merged_sim(shot,fname, data2, res2, 'SDII', 'asoun', tran_index2, 2,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data2, res2, 'SDII', 'asoun', tran_index2, fname,
+                          allow_write_ppf,allow_plot,'green',i)
     fname = 'ION 35e21 11MW'
-    plot_write_merged_sim(shot,fname, data3, res3, 'SDII', 'asoun', tran_index3, 3,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data3, res3, 'SDII', 'asoun', tran_index3, fname,
+                          allow_write_ppf,allow_plot,'red',i)
     fname = 'ION 47e21 11MW'
-    plot_write_merged_sim(shot,fname, data4, res4, 'SDII', 'asoun', tran_index4, 4,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data4, res4, 'SDII', 'asoun', tran_index4, fname,
+                          allow_write_ppf,allow_plot,'cyan',i)
     fname = 'ION 6e22 11MW'
-    plot_write_merged_sim(shot,fname, data5, res5, 'SDII', 'asoun', tran_index5, 5,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data5, res5, 'SDII', 'asoun', tran_index5, fname,
+                          allow_write_ppf,allow_plot,'magenta',i)
     fname = 'ION 5e21 11MW'
-    plot_write_merged_sim(shot,fname, data6, res6, 'SDII', 'asoun', tran_index6, 6,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data6, res6, 'SDII', 'asoun', tran_index6, fname,
+                          allow_write_ppf,allow_plot,'yellow',i)
     fname = 'ION 725e20 11MW'
-    plot_write_merged_sim(shot,fname, data7, res7, 'SDII', 'asoun', tran_index7, 7,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data7, res7, 'SDII', 'asoun', tran_index7, fname,
+                          allow_write_ppf,allow_plot,'black',i)
     ###temperature
     fname = 'TE 1e22 11MW'
-    plot_write_merged_sim(shot,fname, data1, res1, 'TE', 'ate', tran_index1, 1,
-                          allow_write_ppf,allow_plot)
+    label = 'TE-11MW'
+    i =  1
+    plot_write_merged_sim(shot,label, data1, res1, 'TE', 'ate', tran_index1, fname,
+                          allow_write_ppf,allow_plot,'blue',i)
     fname = 'TE 225e20 11MW'
-    plot_write_merged_sim(shot,fname, data2, res2, 'TE', 'ate', tran_index2, 2,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data2, res2, 'TE', 'ate', tran_index2, fname,
+                          allow_write_ppf,allow_plot,'green',i)
 
     fname = 'TE 35e21 11MW'
-    plot_write_merged_sim(shot,fname, data3, res3, 'TE', 'ate', tran_index3, 3,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data3, res3, 'TE', 'ate', tran_index3, fname,
+                          allow_write_ppf,allow_plot,'red',i)
     fname = 'TE 47e21 11MW'
-    plot_write_merged_sim(shot,fname, data4, res4, 'TE', 'ate', tran_index4, 4,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data4, res4, 'TE', 'ate', tran_index4, fname,
+                          allow_write_ppf,allow_plot,'cyan',i)
     fname = 'TE 6e22 11MW'
-    plot_write_merged_sim(shot,fname, data5, res5, 'TE', 'ate', tran_index5, 5,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data5, res5, 'TE', 'ate', tran_index5, fname,
+                          allow_write_ppf,allow_plot,'magenta',i)
     fname = 'TE 5e21 11MW'
-    plot_write_merged_sim(shot,fname, data6, res6, 'TE', 'ate', tran_index6, 6,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data6, res6, 'TE', 'ate', tran_index6, fname,
+                          allow_write_ppf,allow_plot,'yellow',i)
     fname = 'TE 725e20 11MW'
-    plot_write_merged_sim(shot,fname, data7, res7, 'TE', 'ate', tran_index7, 7,
-                          allow_write_ppf,allow_plot)
+    i = i + 1
+    plot_write_merged_sim(shot,label, data7, res7, 'TE', 'ate', tran_index7, fname,
+                          allow_write_ppf,allow_plot,'black',i)
     if allow_write_ppf:
 
         err = close_ppf(shot, 'bviola',
@@ -1288,7 +1358,7 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
             logger.error('failed to close ppf')
             raise SystemExit
 
-    plt.show(block=True)
+    # plt.show(block=True)
 
 
 def main():
@@ -1296,7 +1366,7 @@ def main():
     allow_plot = False
     runFebsimulations7MW(allow_write_ppf, allow_plot)
     runFebsimulations11MW(allow_write_ppf, allow_plot)
-
+    plt.show(block=False)
 
 
 if __name__ == "__main__":
