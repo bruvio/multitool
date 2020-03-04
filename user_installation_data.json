@@ -2,9 +2,9 @@
 // last item does need ,
 {
 //this folder is /u/username/base_folder/
-  "base_folder":"work" ,
+  "base_folder":"" ,
 //this folder is /u/username/base_folder/install_folder
-  "install_folder" :"Python/bruvio_tool"
+  "install_folder" :""
 
 
 }

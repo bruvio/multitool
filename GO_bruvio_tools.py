@@ -141,9 +141,6 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
 
-
-
-
             if "USR" in os.environ:
                 logger.debug('USR in env')
                 #self.owner = os.getenv('USR')
@@ -181,6 +178,8 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             self.PathTranfile = None
             logger.info('init DONE!\n')
             self.value = 1
+            if (self.installationfolder == '') & (self.basefolder == ''):
+                logger.error('setup installation folders in \n user_installation_data.json')
         except:
             logger.error('init FAILED!\n')
             self.value = 0
