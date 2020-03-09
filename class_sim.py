@@ -55,7 +55,7 @@ for libname in relative_imports:
 import numpy as np
 from class_geom import geom
 from class_eirene import Eirene
-
+from shutil import copyfile
 import csv
 import stat
 import math
@@ -266,7 +266,7 @@ read_eirene
 
 
 ###############################################
-  def __init__(self,shotIDArg,dateIDArg,seqNumArg, folder,ownerArg=None, codeArg=None, macArg=None, fileArg=None ):
+  def __init__(self,shotIDArg,dateIDArg,seqNumArg, folder,ownerArg=None, codeArg=None, macArg=None, fileArg=None,save=False ):
     if ownerArg is None:
         ownerArg = os.getenv('USR')
     else:
@@ -287,9 +287,20 @@ read_eirene
     pulse=catalogue.shot
     # self.simfolder='/u/'+owner+
 # /u/bviola/cmg/catalog/edge2d/jet
-    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,'seq#',sequence)
+    self.folder=os.path.join(os.sep,'u',owner,'cmg','catalog',code,machine,pulse,date,'seq#'+sequence)
     self.workingdir=folder
     self.initfolder(folder,pulse)
+
+    if save:
+        folder_sim = date+'/seq#'+sequence
+        destination_folder = os.getcwd() + os.sep + 'e2d_data' + os.sep + str(pulse) + os.sep + folder_sim
+        pathlib.Path(destination_folder).mkdir(
+            parents=True,
+            exist_ok=True)
+        for fname in os.listdir(self.folder):
+            if fname.startswith("tran"):
+                copyfile(self.folder+os.sep+fname, destination_folder+os.sep+fname)
+
     self.data = SimpleNamespace()  # dictionary object that contains all data
     
     
