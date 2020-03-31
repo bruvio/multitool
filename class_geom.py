@@ -16,9 +16,8 @@ __status__ = "Testing"
 
 
 
-import sys
+import pdb
 import numpy as np
-import os
 import pathlib
 import logging
 import sys
@@ -121,57 +120,119 @@ class geom:
       self.date           = dateIDArg
       self.seq          =  seqNumArg
       self.fullpath     = "/u/"+self.owner+"/cmg/catalog/"+self.code+"/"+self.machine+"/"+self.shot+"/"+self.date+"/seq#"+self.seq+"/"+self.tfile
+      folder_sim = self.date + '/seq#' + self.seq
+      destination_folder = os.getcwd() + os.sep + 'e2d_data' + os.sep + str(
+          self.shot) + os.sep + folder_sim + os.sep + 'tran'
+
       if os.path.isfile(self.fullpath):
-          rxpoint = eproc.data(self.fullpath, 'RPX', ALL_TRANFILES=0)
-          zxpoint = eproc.data(self.fullpath, 'ZPX', ALL_TRANFILES=0)
-          rsp = eproc.data(self.fullpath, 'RSEPX', ALL_TRANFILES=0)
-          zsp = eproc.data(self.fullpath, 'ZSEPX', ALL_TRANFILES=0)
-          rmesh = eproc.data(self.fullpath, 'RMESH', ALL_TRANFILES=0)
-          zmesh = eproc.data(self.fullpath, 'ZMESH', ALL_TRANFILES=0)
+          try:
+              rxpoint = eproc.data(self.fullpath, 'RPX', ALL_TRANFILES=0)
+              zxpoint = eproc.data(self.fullpath, 'ZPX', ALL_TRANFILES=0)
+              rsp = eproc.data(self.fullpath, 'RSEPX', ALL_TRANFILES=0)
+              zsp = eproc.data(self.fullpath, 'ZSEPX', ALL_TRANFILES=0)
+              rmesh = eproc.data(self.fullpath, 'RMESH', ALL_TRANFILES=0)
+              zmesh = eproc.data(self.fullpath, 'ZMESH', ALL_TRANFILES=0)
 
-          self.rxp=rxpoint.data[0]
-          self.zxp=zxpoint.data[0]
-          self.npts_s=rsp.nPts
-          # self.rsep=rsp.data[0:self.npts_s]
-          # self.zsep=zsp.data[0:self.npts_s]
-          self.rsep = np.around(rsp.data[0:self.npts_s], 4)
-          self.zsep = np.around(zsp.data[0:self.npts_s], 4)
-          self.RHS_row=0
-          self.non_div_row=0
-          self.LHS_row=0
-          locr=np.equal(self.rsep , self.rxp).nonzero()[0]
-          locz=np.equal(self.zsep , self.zxp).nonzero()[0]
-          # locr=self.rsep[self.rsep == self.rxp]
-          # locz=self.zsep[self.zsep == self.zxp]
-          #print(locr,locz)
-          if ((locr[0] == locz[0]) and locr[1] == locz[1]):
-              loc=locr
-              self.RHS_row=int(loc[0]-1)
-              self.non_div_row=int(loc[1]-loc[0]-1)
-              self.LHS_row=int(self.npts_s-loc[1]-2)
+              self.rxp=rxpoint.data[0]
+              self.zxp=zxpoint.data[0]
+              self.npts_s=rsp.nPts
+              # self.rsep=rsp.data[0:self.npts_s]
+              # self.zsep=zsp.data[0:self.npts_s]
+              self.rsep = np.around(rsp.data[0:self.npts_s], 4)
+              self.zsep = np.around(zsp.data[0:self.npts_s], 4)
+              self.RHS_row=0
+              self.non_div_row=0
+              self.LHS_row=0
+              locr=np.equal(self.rsep , self.rxp).nonzero()[0]
+              locz=np.equal(self.zsep , self.zxp).nonzero()[0]
+              # locr=self.rsep[self.rsep == self.rxp]
+              # locz=self.zsep[self.zsep == self.zxp]
+              #print(locr,locz)
+              if ((locr[0] == locz[0]) and locr[1] == locz[1]):
+                  loc=locr
+                  self.RHS_row=int(loc[0]-1)
+                  self.non_div_row=int(loc[1]-loc[0]-1)
+                  self.LHS_row=int(self.npts_s-loc[1]-2)
 
-          #print(self.RHS_row,self.non_div_row,self.LHS_row)
-          self.npts_m=int(rmesh.nPts)
-          #print(self.npts_m)
+              #print(self.RHS_row,self.non_div_row,self.LHS_row)
+              self.npts_m=int(rmesh.nPts)
+              #print(self.npts_m)
 
-          self.rme=rmesh.data[0:self.npts_m]
-          self.zme=zmesh.data[0:self.npts_m]
-          #print(self.rme,self.zme)
-          #locc=self.zme[self.zme > self.zxp]
-          locc=np.greater(self.zme, self.zxp).nonzero()[0]
-          #print(locc)
-          self.core_ring=int(locc[0]/(self.non_div_row + 2)-1)
-          ind=locc[0]
-          ver=0
-          while ver==0:
-              ind=ind+self.RHS_row+1+self.non_div_row+1+self.LHS_row+1
-              sep_t=self.rsep[0]+(self.zme[ind]-self.zsep[0])/(self.zsep[1]-self.zsep[0])*(self.rsep[1]-self.rsep[0])
-              if (self.rme[ind] > sep_t):
-                  ver=0
-              else:
-                  ver=1
-          self.sol_ring=int((ind-locc[0])/(self.RHS_row+1+self.non_div_row+1+self.LHS_row+1)-1)
-          self.pr_ring=int((self.npts_m-ind)/(self.RHS_row+1+self.LHS_row+1)-1)
+              self.rme=rmesh.data[0:self.npts_m]
+              self.zme=zmesh.data[0:self.npts_m]
+              #print(self.rme,self.zme)
+              #locc=self.zme[self.zme > self.zxp]
+              locc=np.greater(self.zme, self.zxp).nonzero()[0]
+              #print(locc)
+              self.core_ring=int(locc[0]/(self.non_div_row + 2)-1)
+              ind=locc[0]
+              ver=0
+              while ver==0:
+                  ind=ind+self.RHS_row+1+self.non_div_row+1+self.LHS_row+1
+                  sep_t=self.rsep[0]+(self.zme[ind]-self.zsep[0])/(self.zsep[1]-self.zsep[0])*(self.rsep[1]-self.rsep[0])
+                  if (self.rme[ind] > sep_t):
+                      ver=0
+                  else:
+                      ver=1
+              self.sol_ring=int((ind-locc[0])/(self.RHS_row+1+self.non_div_row+1+self.LHS_row+1)-1)
+              self.pr_ring=int((self.npts_m-ind)/(self.RHS_row+1+self.LHS_row+1)-1)
+          except:
+              raise SystemExit('Unable to read %s file ' % self.fullpath )
+      elif os.path.isfile(destination_folder):
+          try:
+              rxpoint = eproc.data(destination_folder, 'RPX', ALL_TRANFILES=0)
+              zxpoint = eproc.data(destination_folder, 'ZPX', ALL_TRANFILES=0)
+              rsp = eproc.data(destination_folder, 'RSEPX', ALL_TRANFILES=0)
+              zsp = eproc.data(destination_folder, 'ZSEPX', ALL_TRANFILES=0)
+              rmesh = eproc.data(destination_folder, 'RMESH', ALL_TRANFILES=0)
+              zmesh = eproc.data(destination_folder, 'ZMESH', ALL_TRANFILES=0)
+
+              self.rxp=rxpoint.data[0]
+              self.zxp=zxpoint.data[0]
+              self.npts_s=rsp.nPts
+              # self.rsep=rsp.data[0:self.npts_s]
+              # self.zsep=zsp.data[0:self.npts_s]
+              self.rsep = np.around(rsp.data[0:self.npts_s], 4)
+              self.zsep = np.around(zsp.data[0:self.npts_s], 4)
+              self.RHS_row=0
+              self.non_div_row=0
+              self.LHS_row=0
+              locr=np.equal(self.rsep , self.rxp).nonzero()[0]
+              locz=np.equal(self.zsep , self.zxp).nonzero()[0]
+              # locr=self.rsep[self.rsep == self.rxp]
+              # locz=self.zsep[self.zsep == self.zxp]
+              #print(locr,locz)
+              if ((locr[0] == locz[0]) and locr[1] == locz[1]):
+                  loc=locr
+                  self.RHS_row=int(loc[0]-1)
+                  self.non_div_row=int(loc[1]-loc[0]-1)
+                  self.LHS_row=int(self.npts_s-loc[1]-2)
+
+              #print(self.RHS_row,self.non_div_row,self.LHS_row)
+              self.npts_m=int(rmesh.nPts)
+              #print(self.npts_m)
+
+              self.rme=rmesh.data[0:self.npts_m]
+              self.zme=zmesh.data[0:self.npts_m]
+              #print(self.rme,self.zme)
+              #locc=self.zme[self.zme > self.zxp]
+              locc=np.greater(self.zme, self.zxp).nonzero()[0]
+              #print(locc)
+              self.core_ring=int(locc[0]/(self.non_div_row + 2)-1)
+              ind=locc[0]
+              ver=0
+              while ver==0:
+                  ind=ind+self.RHS_row+1+self.non_div_row+1+self.LHS_row+1
+                  sep_t=self.rsep[0]+(self.zme[ind]-self.zsep[0])/(self.zsep[1]-self.zsep[0])*(self.rsep[1]-self.rsep[0])
+                  if (self.rme[ind] > sep_t):
+                      ver=0
+                  else:
+                      ver=1
+              self.sol_ring=int((ind-locc[0])/(self.RHS_row+1+self.non_div_row+1+self.LHS_row+1)-1)
+              self.pr_ring=int((self.npts_m-ind)/(self.RHS_row+1+self.LHS_row+1)-1)
+          except:
+              raise SystemExit('Unable to read %s file ' % self.fullpath)
+
       else:
           raise SystemExit('Unable to open %s file does not exist' % self.fullpath )
 

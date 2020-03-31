@@ -1022,8 +1022,8 @@ def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,l
         
 def runFebsimulations7MW(allow_write_ppf,allow_plot):
         logger = logging.getLogger(__name__)
-        EDGE2dfold = '/work/bviola/Python/EDGE2D/e2d_data'
-        workfold = 'work/Python/EDGE2D'
+        # EDGE2dfold = '/work/bviola/Python/EDGE2D/e2d_data'
+        workfold = 'work/Python/bruvio_tool'
 
         plt.close('all')
 
@@ -1037,13 +1037,14 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
         sim_number =7
 
 
-        sim_1 = sim('84600', 'nov1219', '1', workfold, 'vparail')
-        sim_2 = sim('84600', 'nov1419', '2', workfold, 'vparail')
-        sim_3 = sim('84600', 'nov1519', '2', workfold, 'vparail')
-        sim_4 = sim('84600', 'nov1319', '1', workfold, 'vparail')
-        sim_5 = sim('84600', 'nov1619', '1', workfold, 'vparail')
-        sim_6 = sim('84600', 'nov1519', '1', workfold, 'vparail')
-        sim_7 = sim('84600', 'dec0519', '1', workfold, 'vparail')
+        sim_1 = sim('84600', 'nov1219', '1', workfold, 'vparail',save=True)
+        pdb.set_trace()
+        sim_2 = sim('84600', 'nov1419', '2', workfold, 'vparail',save=True)
+        sim_3 = sim('84600', 'nov1519', '2', workfold, 'vparail',save=True)
+        sim_4 = sim('84600', 'nov1319', '1', workfold, 'vparail',save=True)
+        sim_5 = sim('84600', 'nov1619', '1', workfold, 'vparail',save=True)
+        sim_6 = sim('84600', 'nov1519', '1', workfold, 'vparail',save=True)
+        sim_7 = sim('84600', 'dec0519', '1', workfold, 'vparail',save=True)
 
         force_index5 = -2
 
@@ -1180,8 +1181,7 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
 
 def runFebsimulations11MW(allow_write_ppf,allow_plot):
     logger = logging.getLogger(__name__)
-    EDGE2dfold = '/work/bviola/Python/EDGE2D/e2d_data'
-    workfold = 'work/Python/EDGE2D'
+    workfold = 'work/Python/bruvio_tool'
 
 
     plt.close('all')
@@ -1362,10 +1362,10 @@ def runFebsimulations11MW(allow_write_ppf,allow_plot):
 
 
 def main():
-    allow_write_ppf = True
+    allow_write_ppf = False
     allow_plot = False
     runFebsimulations7MW(allow_write_ppf, allow_plot)
-    runFebsimulations11MW(allow_write_ppf, allow_plot)
+    # runFebsimulations11MW(allow_write_ppf, allow_plot)
     plt.show(block=False)
 
 
