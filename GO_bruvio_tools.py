@@ -1854,7 +1854,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
         # print(dictionary[0],var, loc)
         # for i,j in enumerate(dictionary):
         #     print(i,j)
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'
         os.chdir(folder)
         # print(os.curdir)
         # print(dictionary[0])
@@ -1911,17 +1911,17 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def checkstateJSON(self, button):
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'
         if button.isChecked() == True:
             if button.text() == "edit JSON1":
 
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS1))
-                subprocess.Popen('atom {}'.format(folder+'/'+self.JSONSS1), shell=True)
+                subprocess.Popen('atom {}'.format(folder+self.JSONSS1), shell=True)
 
                 self.ui_edge2d.edit_JSON1.setChecked(False)
             if button.text() == "edit JSON2":
                 # os.system('kate {}'.format(self.edge2dfold+'/'+self.JSONSS2))
-                subprocess.Popen('atom {}'.format(folder+'/'+self.JSONSS2), shell=True)
+                subprocess.Popen('atom {}'.format(folder+self.JSONSS2), shell=True)
                 self.ui_edge2d.edit_JSON2.setChecked(False)
 
             if button.isChecked() == True:
@@ -1935,7 +1935,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def handle_selectjson1(self):
-        folder = self.homefold + os.sep+ self.basefolder+os.sep+ self.installationfolder
+        folder = self.homefold + os.sep+ self.basefolder+os.sep+ self.installationfolder+os.sep+'input_files'
         self.JSONSS1, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
         if not self.JSONSS1=='':
             self.JSONSS1 = os.path.basename(self.JSONSS1)
@@ -1946,7 +1946,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             return self.JSONSS1
 
     def handle_selectjson2(self):
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'
         self.JSONSS2, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
         if not self.JSONSS2=='':
             self.JSONSS2 = os.path.basename(self.JSONSS2)

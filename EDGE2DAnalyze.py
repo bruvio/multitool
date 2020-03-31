@@ -3775,5 +3775,5 @@ class shot:
 
         fname = var + '_' + loc + '_comparison'
         plt.figure(num=fname)
-        plt.savefig('./figures/' + fname+'_'+pulse1.label, format='eps', dpi=300)
-        plt.savefig('./figures/' + fname+'_'+pulse1.label, dpi=300)  #
+        plt.savefig('../figures/' + fname+'_'+pulse1.label, format='eps', dpi=300)
+        plt.savefig('../figures/' + fname+'_'+pulse1.label, dpi=300)  #

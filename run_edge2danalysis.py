@@ -11,7 +11,7 @@ import os.path
 
 
 def run_edge2danalysis(input_dict_str1,input_dict_str2=None):
-    input_dict = read_json(input_dict_str1)
+    input_dict = read_json('./input_files/'+input_dict_str1)
 
     # os.remove('temp.json')
 
@@ -44,7 +44,7 @@ def run_edge2danalysis(input_dict_str1,input_dict_str2=None):
         try:
             logging.info('second input JSON %s',str(input_dict_str2))
 
-            input_dict2 = read_json(input_dict_str2)
+            input_dict2 = read_json('./input_files/'+input_dict_str2)
 
 
             pulse2 = shot(input_dict2)
@@ -138,7 +138,7 @@ if __name__=='__main__':
     # Handle the input arguments
     # input_dict_file1 = args.input_dict1
     # input_dict_file2 = args.input_dict2
-    if os.path.isfile(args.input_dict1):
+    if os.path.isfile('./input_files/'+args.input_dict1):
         logger.info('Found input dictionary: %s', args.input_dict1)
         run_edge2danalysis(args.input_dict1,args.input_dict2)
         logging.info('FINISHED')
