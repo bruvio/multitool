@@ -3,28 +3,20 @@ pipeline {
     stages {
          stage ('Install_Requirements') {
             steps {
-                sh """
+                sh '''
                     echo ${SHELL}
                     [ -d venv ] && rm -rf venv
-                    #virtualenv --python=python3.7 venv
+                    #virtualenv --python=python2.7 venv
                     virtualenv venv
                     #. venv/bin/activate
                     export PATH=${VIRTUAL_ENV}/bin:${PATH}
                     pip install --upgrade pip
-                    pip install -r requirements.txt
+                    pip install -r requirements.txt -r dev-requirements.txt
                     make clean
-                """
+                '''
             }
         }
-#        stage('build') {
-#            steps {
-#                withEnv(["HOME=${env.WORKSPACE}"]) {
-#                                    sh 'python --version'
-#                                    sh 'pip install '    
-#                                    sh 'pip install --user -r requirements.txt'
-#            }
-#        }
-#    }
+
         stage('test') {
       steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
