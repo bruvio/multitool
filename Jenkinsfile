@@ -1,12 +1,12 @@
 pipeline {
     agent { docker { image 'python:3.7.0' } }
     stages {
-      
+
         stage('build') {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
-                                    sh 'python -m pip install --upgrade pip'    
+                                    sh 'pip install --upgrade pip'    
                                     sh 'pip install --user -r requirements.txt'
             }
         }
