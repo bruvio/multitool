@@ -5,7 +5,7 @@ pipeline {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
-                                    sh 'pip install --upgrade pip'
+                                    sh 'python -m pip install --upgrade pip'
                                     sh 'pip install --user -r requirements.txt'
             }
         }
@@ -17,8 +17,8 @@ pipeline {
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
           python tests/test.py
-          python -m coverage run tests/test.py
-          python -m coverage report tests/test.py
+#          python -m coverage run tests/test.py
+#          python -m coverage report tests/test.py
 #          python -m coverage report -m *.py
 #          python -m coverage html -d tests/test-reports/html *.py
                   '''
