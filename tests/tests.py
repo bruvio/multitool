@@ -56,18 +56,21 @@ class ProjectTests(unittest.TestCase):
         app = QApplication(sys.argv)
         MainWindow = bruvio_tool()
         result = MainWindow.handle_readdata_button()
+        # print(result)
         assert result == 1
 
     def test_run_magssurf(self):
         app = QApplication(sys.argv)
         MainWindow = bruvio_tool()
         result = MainWindow.handle_magsurf_button()
+        # print(result)
         assert result == 1
-
+    #
     def test_eqdsk(self):
         app = QApplication(sys.argv)
         MainWindow = bruvio_tool()
         result = MainWindow.handle_eqdsk_button()
+        # print(result)
         assert result == 1
 
     ########################
