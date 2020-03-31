@@ -1,22 +1,16 @@
 pipeline {
     agent { docker { image 'python:3.7.0' } }
     stages {
-         stage ('Install_Requirements') {
+      
+        stage('build') {
             steps {
-                sh '''
-                    echo ${SHELL}
-                    [ -d venv ] && rm -rf venv
-                    #virtualenv --python=python2.7 venv
-                    virtualenv venv
-                    #. venv/bin/activate
-                    export PATH=${VIRTUAL_ENV}/bin:${PATH}
-                    pip install --upgrade pip
-                    pip install -r requirements.txt -r dev-requirements.txt
-                    make clean
-                '''
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                                    sh 'python --version'
+                                    sh 'python -m pip install --upgrade pip'    
+                                    sh 'pip install --user -r requirements.txt'
             }
         }
-
+    }
         stage('test') {
       steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
