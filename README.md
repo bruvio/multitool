@@ -84,7 +84,7 @@ More tests will be created in the future
 
 ## Authors
 
-* **Bruno Viola** - *Initial work* - [PurpleBooth](https://github.com/bruvio)
+* **Bruno Viola** - *Initial work* - [bruvio](https://github.com/bruvio)
 
 
 
