@@ -6,8 +6,6 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
 
-                                    sh 'python -m pip install --upgrade pip'
-
                                     sh 'pip install --user -r requirements.txt'
             }
         }
