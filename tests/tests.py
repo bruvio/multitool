@@ -46,32 +46,32 @@ class ProjectTests(unittest.TestCase):
         print('initialization value', MainWindow.value)
         assert MainWindow.value == 1
 
-    def test_run_edg2d(self):
-        app = QApplication(sys.argv)
-        MainWindow = bruvio_tool()
-        result = MainWindow.handle_edge2d_button()
-        assert result == 1
-
-    def test_run_plot_data(self):
-        app = QApplication(sys.argv)
-        MainWindow = bruvio_tool()
-        result = MainWindow.handle_readdata_button()
-        # print(result)
-        assert result == 1
-
-    def test_run_magssurf(self):
-        app = QApplication(sys.argv)
-        MainWindow = bruvio_tool()
-        result = MainWindow.handle_magsurf_button()
-        # print(result)
-        assert result == 1
+    # def test_run_edg2d(self):
+    #     app = QApplication(sys.argv)
+    #     MainWindow = bruvio_tool()
+    #     result = MainWindow.handle_edge2d_button()
+    #     assert result == 1
     #
-    def test_eqdsk(self):
-        app = QApplication(sys.argv)
-        MainWindow = bruvio_tool()
-        result = MainWindow.handle_eqdsk_button()
-        # print(result)
-        assert result == 1
+    # def test_run_plot_data(self):
+    #     app = QApplication(sys.argv)
+    #     MainWindow = bruvio_tool()
+    #     result = MainWindow.handle_readdata_button()
+    #     # print(result)
+    #     assert result == 1
+    #
+    # def test_run_magssurf(self):
+    #     app = QApplication(sys.argv)
+    #     MainWindow = bruvio_tool()
+    #     result = MainWindow.handle_magsurf_button()
+    #     # print(result)
+    #     assert result == 1
+    # #
+    # def test_eqdsk(self):
+    #     app = QApplication(sys.argv)
+    #     MainWindow = bruvio_tool()
+    #     result = MainWindow.handle_eqdsk_button()
+    #     # print(result)
+    #     assert result == 1
 
     ########################
     #### helper methods ####
