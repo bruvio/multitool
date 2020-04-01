@@ -31,7 +31,7 @@ pipeline {
             python jenkins_test.py
 
         '''
-      }}
+      }} 
     }
   }
 }
