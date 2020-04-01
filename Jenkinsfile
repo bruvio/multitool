@@ -10,8 +10,8 @@ pipeline {
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
-//                                    sh 'python -m pip install --upgrade pip'
-//                                    sh 'pip install --user -r requirements.txt'
+                                    sh 'python -m pip install --upgrade pip --user'
+                                    sh 'pip install --user -r requirements.txt --user'
             }}
     }
     stage('Test environment') {
