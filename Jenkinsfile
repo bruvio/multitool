@@ -40,15 +40,9 @@ pipeline {
         '''
       }}
     }
-      stages {
-    stage('CleanUp') {
-      steps {
-        cleanWs()
-      }
-    }
   }
 }
-}
+
 
 //script {
 //                    sh 'virtualenv env -p python3.5'
