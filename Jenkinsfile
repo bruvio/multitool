@@ -27,9 +27,16 @@ pipeline {
       steps {
         sh '''
             echo "This is start $(pwd)"
-            python tests/test.py
+
         '''
       }
-    }
+      post {
+        always {
+          
+            cleanWs()
+        
+        }
+      }  
+    } 
   }
 }
