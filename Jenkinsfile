@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
-                sh '''pip install --upgrade pip
+                sh '''python -m pip install --upgrade pip
                       pip install -r requirements.txt
                     '''
             }}
@@ -17,7 +17,7 @@ pipeline {
     stage('Test environment') {
             steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''
-                      pip list
+                      python -m pip list
                       which pip
                       which python
                     '''
