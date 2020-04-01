@@ -10,6 +10,8 @@ pipeline {
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
+                                    sh 'virtualenv env -p python3.7'
+                                    sh '. env/bin/activate'
                                     sh 'python -m pip install --upgrade pip --user'
                                     sh 'pip install --user -r requirements.txt --user'
             }}
@@ -31,9 +33,16 @@ pipeline {
             python jenkins_test.py
 
         '''
-      }} 
+      }}
     }
   }
 }
 
 
+//script {
+//                    sh 'virtualenv env -p python3.5'
+//                    sh '. env/bin/activate'
+//                    sh "env/bin/pip install -r requirements/private.txt"
+//                    sh "env/bin/pip install -r requirements/${env.ENVIRONMENT}.txt"
+//                    sh 'env/bin/python3.5 manage.py test --pattern="test_*.py'
+//                }
