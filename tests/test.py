@@ -41,9 +41,10 @@ class ProjectTests(unittest.TestCase):
 
     def test_run_init(self):
         # pdb.set_trace()
-        app = QApplication(sys.argv)
-        MainWindow = bruvio_tool()
-        print('initialization value', MainWindow.value)
+        # app = QApplication(sys.argv)
+        # MainWindow = bruvio_tool()
+        # print('initialization value', MainWindow.value)
+        print('initialization value')
         assert MainWindow.value == 1
 
     # def test_run_edg2d(self):
