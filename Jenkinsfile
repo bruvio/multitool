@@ -39,6 +39,13 @@ pipeline {
 
         '''
       }}
+            post {
+
+            cleanWs()
+        
+        }
+        } 
+      }
     }
   }
 }
