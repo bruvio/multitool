@@ -7,8 +7,8 @@ pipeline {
         timestamps()
     }
   stages {
-    stage('Build environment') {withEnv(["HOME=${env.WORKSPACE}"]) {
-                  steps {
+    stage('Build environment') {
+                  steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''python -m pip install --user --upgrade pip
                       python -m pip install -r requirements.txt --user
                    '''
