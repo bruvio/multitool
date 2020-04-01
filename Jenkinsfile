@@ -17,7 +17,7 @@ pipeline {
           #!/bin/bash
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
-          python tests/test.py
+//          python tests/test.py
 // #          python -m coverage run tests/tests.py
 // #          python -m coverage report tests/test.py
 // #          python -m coverage report -m *.py
