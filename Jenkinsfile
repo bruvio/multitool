@@ -17,7 +17,6 @@ pipeline {
                                     sh 'python --version'
                                     sh 'python -m pip install --upgrade pip --user'
                                     sh 'ls'
-                                    sh 'echo "This is start $(pwd)"'
                                     sh 'pip install --user -r requirements.txt --user'
             }}
     }
