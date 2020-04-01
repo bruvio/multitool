@@ -2,11 +2,11 @@ pipeline {
     agent { docker { image 'python:3.7.1' } }
 
     stages {
-//        stage('Checkout') {
-//          steps {
-//              checkout scm
-//                }
-//        }
+        stage('Checkout') {
+          steps {
+              checkout scm
+                }
+        }
         stage('build') {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
