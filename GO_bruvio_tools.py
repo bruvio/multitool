@@ -205,9 +205,12 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             self.ui_plotdata = Ui_plotdata_window()
             self.ui_plotdata.setupUi(self.window_plotdata)
             self.window_plotdata.show()
-
-            initpulse = ppf.pdmsht()
-            initpulse2 = initpulse -1
+            try:
+                initpulse = ppf.pdmsht()
+                initpulse2 = initpulse -1
+            except:
+                logger.error('failed to get last pulse')
+                initpulse = 92121
 
             self.ui_plotdata.textEdit_pulselist.setText(str(initpulse))
             # self.ui_plotdata.textEdit_colorlist.setText('black')
@@ -396,7 +399,12 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             self.magsurf_window.addToolBar(toolBar)
 
             #
-            initpulse = ppf.pdmsht()
+            try:
+                initpulse = ppf.pdmsht()
+            except:
+                logger.error('failed to get last pulse')
+                initpulse = 92121
+
             self.ui_magsurf.JPNedit.setText(str(initpulse))
             self.ui_magsurf.timeEdit.setText('50')  # s
             self.ui_magsurf.stepPsiEdit.setText('0.1') # V/s
@@ -752,6 +760,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
     def handle_print(self):
         if not self.simlist:
             logger.error('choose a simulation first')
+            return 0
         else:
             self.targetfilename = self.ui_edge2d.lineEdit_var_4.text()
             # for index1 in range(0, len(self.simlist)):
@@ -764,6 +773,8 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             sim.write_print2file(self.simlist, folder+'/e2d_data', self.targetfilename)
 
             logger.info('done')
+
+            return 1
 
     def handle_profiles(self):
         if not self.simlist:
