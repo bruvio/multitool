@@ -18,16 +18,16 @@ pipeline {
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
           python tests/test.py
-#          python -m coverage run tests/tests.py
-#          python -m coverage report tests/test.py
-#          python -m coverage report -m *.py
-#          python -m coverage html -d tests/test-reports/html *.py
+// #          python -m coverage run tests/tests.py
+// #          python -m coverage report tests/test.py
+// #          python -m coverage report -m *.py
+// #          python -m coverage html -d tests/test-reports/html *.py
                   '''
       }}
       post {
         always {withEnv(["HOME=${env.WORKSPACE}"]) {
           junit allowEmptyResults: true, testResults: '**/test-reports/*.xml'
-            cleanWs()
+//             cleanWs()
         
       }} 
     }
