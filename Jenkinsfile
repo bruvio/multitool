@@ -1,5 +1,5 @@
 pipeline {
-      agent { docker { image 'python:3.7.1' } }
+      agent { docker { image 'python:3.7.1' args '--user 0:0'} }
     options {
         skipDefaultCheckout(true)
         // Keep the 10 most recent builds
@@ -9,15 +9,15 @@ pipeline {
   stages {
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
-                sh '''pip install --user --upgrade pip
-                      pip install -r requirements.txt --user
+                sh '''python -m pip install --user --upgrade pip
+                      python -m pip install -r requirements.txt --user
                    '''
             }}
     }
     stage('Test environment') {
             steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''
-                      pip list
+                      python -m pip list
                       which pip
                       which python
                       python --version
@@ -35,7 +35,7 @@ pipeline {
       post {
         always {
           
-            cleanWs()
+            cleanup { cleanWs() }
         
         }
       }  
