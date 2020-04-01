@@ -8,28 +8,28 @@ pipeline {
     }
   stages {
     stage('Build environment') {
-                  steps {
+                  steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''pip install --upgrade pip
                       pip install -r requirements.txt
                     '''
-            }
+            }}
     }
     stage('Test environment') {
-            steps {
+            steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''
                       pip list
                       which pip
                       which python
                     '''
-            }
+            }}
         }
     stage('test') {
-      steps {
+      steps {withEnv(["HOME=${env.WORKSPACE}"]) {
         sh '''
             echo "This is start $(pwd)"
 
         '''
-      }
+      }}
       post {
         always {
           
