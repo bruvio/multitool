@@ -7,6 +7,11 @@ pipeline {
         timestamps()
     }
   stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                                     sh 'python --version'
