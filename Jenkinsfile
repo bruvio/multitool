@@ -39,7 +39,10 @@ pipeline {
 
         '''
       }}
-      post {
+    }
+      stages {
+    stage('Checkout') {
+      steps {
         cleanWs()
       }
     }
