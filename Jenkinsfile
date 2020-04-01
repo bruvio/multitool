@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Build environment') {
                   steps {withEnv(["HOME=${env.WORKSPACE}"]) {
-                sh '''python -m pip install --upgrade pip
+                sh '''pip install --upgrade pip
                       pip install -r requirements.txt
                     '''
             }}
@@ -17,9 +17,10 @@ pipeline {
     stage('Test environment') {
             steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''
-                      python -m pip list
+                      pip list
                       which pip
                       which python
+                      python --version
                     '''
             }}
         }
@@ -27,6 +28,7 @@ pipeline {
       steps {withEnv(["HOME=${env.WORKSPACE}"]) {
         sh '''
             echo "This is start $(pwd)"
+            python jenkins_test.py
 
         '''
       }}
@@ -40,3 +42,5 @@ pipeline {
     } 
   }
 }
+
+
