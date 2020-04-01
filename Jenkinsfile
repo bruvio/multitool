@@ -48,7 +48,7 @@ pipeline {
     }
   }
 }
-
+}
 
 //script {
 //                    sh 'virtualenv env -p python3.5'
