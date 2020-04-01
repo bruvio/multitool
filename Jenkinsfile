@@ -1,5 +1,5 @@
 pipeline {
-      agent { docker { image 'python:3.7.1' args '--user 0:0'} }
+      agent { docker { image 'python:3.7.1' } }
     options {
         skipDefaultCheckout(true)
         // Keep the 10 most recent builds
@@ -25,13 +25,13 @@ pipeline {
             }
         }
     stage('test') {
-      steps {withEnv(["HOME=${env.WORKSPACE}"]) {
+      steps {
         sh '''
             echo "This is start $(pwd)"
             python jenkins_test.py
 
         '''
-      }}
+      }
       post {
         always {
           
