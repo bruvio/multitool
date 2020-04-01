@@ -22,11 +22,8 @@ pipeline {
           #!/bin/bash
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
-          python tests/tests.py
-          python -m coverage run tests/tests.py
-          python -m coverage report tests/tests.py
-          python -m coverage report -m *.py
-          python -m coverage html -d tests/test-reports/html *.py
+          python jenkins_test.py
+
                   '''
          }
         }
@@ -41,3 +38,8 @@ pipeline {
 }
 }
 }
+//          python tests/tests.py
+//          python -m coverage run tests/tests.py
+//          python -m coverage report tests/tests.py
+//          python -m coverage report -m *.py
+//          python -m coverage html -d tests/test-reports/html *.py
