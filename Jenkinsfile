@@ -41,7 +41,7 @@ pipeline {
       }}
     }
       stages {
-    stage('Checkout') {
+    stage('CleanUp') {
       steps {
         cleanWs()
       }
