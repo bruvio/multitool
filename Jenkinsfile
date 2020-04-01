@@ -7,31 +7,31 @@ pipeline {
         timestamps()
     }
   stages {
-    stage('Build environment') {
+    stage('Build environment') {withEnv(["HOME=${env.WORKSPACE}"]) {
                   steps {
                 sh '''python -m pip install --user --upgrade pip
                       python -m pip install -r requirements.txt --user
                    '''
-            }
+            }}
     }
     stage('Test environment') {
-            steps {
+            steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh '''
                       python -m pip list
                       which pip
                       which python
                       python --version
                     '''
-            }
+            }}
         }
     stage('test') {
-      steps {
+      steps {withEnv(["HOME=${env.WORKSPACE}"]) {
         sh '''
             echo "This is start $(pwd)"
             python jenkins_test.py
 
         '''
-      }
+      }}
       post {
         always {
           
