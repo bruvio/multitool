@@ -8,21 +8,21 @@ pipeline {
     }
   stages {
     stage('Build environment') {
-                  steps {withEnv(["HOME=${env.WORKSPACE}"]) {
+                  steps {
                 sh '''python -m pip install --user --upgrade pip
                       python -m pip install -r requirements.txt --user
                    '''
-            }}
+            }
     }
     stage('Test environment') {
-            steps {withEnv(["HOME=${env.WORKSPACE}"]) {
+            steps {
                 sh '''
                       python -m pip list
                       which pip
                       which python
                       python --version
                     '''
-            }}
+            }
         }
     stage('test') {
       steps {withEnv(["HOME=${env.WORKSPACE}"]) {
