@@ -13,7 +13,7 @@ pipeline {
                 sh script:'''
                                 #/bin/bash
                                   pip install virtualenv --user
-
+                                  python -m venv python
                                   # Get an unique venv folder to using *inside* workspace
                                   VENV=".local"
 
@@ -24,7 +24,7 @@ pipeline {
                                   PS1="${PS1:-}" source "$VENV/bin/activate"
 
 
-                                    sh pip install --user -r requirements.txt
+                                  pip install --user -r requirements.txt
                                     '''
 
             }
@@ -38,14 +38,14 @@ pipeline {
           python jenkins_test.py
 
                   '''
-
+         }
         }
       post {
-        always {
+        always {withEnv(["HOME=${env.WORKSPACE}"]) {
             junit allowEmptyResults: true, testResults: '**/test-reports/*.xml'
 //            cleanWs()
         
-
+        }
         } 
       }
 }
