@@ -10,9 +10,22 @@ pipeline {
         stage('build') {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                                    sh 'python --version'
-                                    sh 'python -m pip install --upgrade pip --user'
-                                    sh 'pip install --user -r requirements.txt'
+                sh script:'''
+                                #/bin/bash
+                                  set -euox pipefail
+
+                                  # Get an unique venv folder to using *inside* workspace
+                                  VENV=".venv-$BUILD_NUMBER"
+
+                                  # Initialize new venv
+                                  virtualenv "$VENV"
+
+                                  # Update pip
+                                  PS1="${PS1:-}" source "$VENV/bin/activate"
+
+                                   
+                                    sh pip install --user -r requirements.txt
+                                    '''
                 }
             }
         }
@@ -30,7 +43,7 @@ pipeline {
       post {
         always {withEnv(["HOME=${env.WORKSPACE}"]) {
             junit allowEmptyResults: true, testResults: '**/test-reports/*.xml'
-            cleanWs()
+//            cleanWs()
         
         }
         } 
