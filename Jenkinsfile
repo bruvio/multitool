@@ -9,7 +9,7 @@ pipeline {
         }
         stage('build') {
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
+
                 sh script:'''
                                 #/bin/bash
                                   pip install virtualenv --user
@@ -26,11 +26,11 @@ pipeline {
 
                                     sh pip install --user -r requirements.txt
                                     '''
-                }
+
             }
         }
         stage('test') {
-          steps {withEnv(["HOME=${env.WORKSPACE}"]) {
+          steps {
                 sh script:'''
           #!/bin/bash
           echo "This is start $(pwd)"
@@ -38,14 +38,14 @@ pipeline {
           python jenkins_test.py
 
                   '''
-         }
+
         }
       post {
-        always {withEnv(["HOME=${env.WORKSPACE}"]) {
+        always {
             junit allowEmptyResults: true, testResults: '**/test-reports/*.xml'
 //            cleanWs()
         
-        }
+
         } 
       }
 }
