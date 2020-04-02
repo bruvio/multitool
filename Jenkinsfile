@@ -15,7 +15,7 @@ pipeline {
                                   pip install virtualenv --user
 
                                   # Get an unique venv folder to using *inside* workspace
-                                  VENV=".venv-$BUILD_NUMBER"
+                                  VENV=".local
 
                                   # Initialize new venv
                                   virtualenv "$VENV"
