@@ -12,7 +12,7 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
                                 #/bin/bash
-                                  pip install virtualenv
+                                  pip install virtualenv --user
 
                                   # Get an unique venv folder to using *inside* workspace
                                   VENV=".venv-$BUILD_NUMBER"
