@@ -28,13 +28,10 @@ pipeline {
           steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
           #!/bin/bash
-          sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev
           export PATH="$WORKSPACE/.local/bin:$PATH"
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
           python jenkins_test.py
-          python tests/tests.py
 
                   '''
          }
@@ -50,7 +47,7 @@ pipeline {
 }
 }
 }
-
+//          python tests/tests.py
 //          python -m coverage run tests/tests.py
 //          python -m coverage report tests/tests.py
 //          python -m coverage report -m *.py
