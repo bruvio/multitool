@@ -9,11 +9,11 @@ pipeline {
         }
         stage('build') {
             steps {
-
+                withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
                                 #/bin/bash
                                   pip install virtualenv --user
-                                  python -m venv python
+
                                   # Get an unique venv folder to using *inside* workspace
                                   VENV=".local"
 
@@ -26,11 +26,11 @@ pipeline {
 
                                   pip install --user -r requirements.txt
                                     '''
-
+                }
             }
         }
         stage('test') {
-          steps {
+          steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
           #!/bin/bash
           echo "This is start $(pwd)"
