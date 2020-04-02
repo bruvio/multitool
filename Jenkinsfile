@@ -18,6 +18,7 @@ pipeline {
                                   VENV="$HOME/.local"
 
                                   # Initialize new venv
+                                  echo "virtualenv $VENV"
                                   virtualenv "$VENV"
 
                                   # Update pip
