@@ -13,7 +13,7 @@ pipeline {
                 sh script:'''
                                 #/bin/bash
                                   python --version
-                                  python -m pip install --upgrade pip
+                                  python -m pip install --upgrade pip --user
                                   ls
                                   pip install --user -r requirements.txt
                                     '''
