@@ -21,7 +21,7 @@ pipeline {
                                   virtualenv "$VENV"
 
                                   # Update pip
-                                  PS1="${PS1:-}" source "$VENV/bin/activate"
+                                  source "$VENV/bin/activate"
 
 
                                   pip install --user -r requirements.txt
