@@ -12,7 +12,7 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
                                 #/bin/bash
-                                  set -euox pipefail
+                                  pip install virtualenv
 
                                   # Get an unique venv folder to using *inside* workspace
                                   VENV=".venv-$BUILD_NUMBER"
@@ -23,7 +23,7 @@ pipeline {
                                   # Update pip
                                   PS1="${PS1:-}" source "$VENV/bin/activate"
 
-                                   
+
                                     sh pip install --user -r requirements.txt
                                     '''
                 }
