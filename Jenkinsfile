@@ -20,7 +20,7 @@ pipeline {
                                   python -m pip install --upgrade pip --user
                                   ls
                                   pip install --user -r requirements.txt
-                                  export PATH="WORKSPACE/.local/bin:$PATH"
+                                  export PATH="$WORKSPACE/.local/bin:$PATH"
                                     '''
 
             }
@@ -30,7 +30,7 @@ pipeline {
                 sh script:'''
           #!/bin/bash
           echo "WORKSPACE is: $WORKSPACE"
-          export PATH="WORKSPACE/.local/bin:$PATH"
+          export PATH="$WORKSPACE/.local/bin:$PATH"
           echo "we are in $(pwd)"
           python jenkins_test.py
 
