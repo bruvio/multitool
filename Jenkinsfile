@@ -21,6 +21,7 @@ pipeline {
                                   virtualenv "$VENV"
 
                                   # Update pip
+                                  echo "activate virtualenv"
                                   source "$VENV/bin/activate"
 
 
