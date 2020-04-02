@@ -12,21 +12,10 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
                                 #/bin/bash
-                                  pip install virtualenv --verbose --user
-
-                                  # Get an unique venv folder to using *inside* workspace
-                                  VENV="$HOME/.local"
-
-                                  # Initialize new venv
-                                  echo "virtualenv $VENV"
-                                  virtualenv "$VENV"
-
-                                  # Update pip
-                                  echo "activate virtualenv"
-                                  source "$VENV/bin/activate"
-
-
-                                  pip install -r requirements.txt --user
+                                  python --version
+                                  python -m pip install --upgrade pip
+                                  ls
+                                  pip install --user -r requirements.txt
                                     '''
                 }
             }
