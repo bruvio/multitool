@@ -28,6 +28,8 @@ pipeline {
           steps {withEnv(["HOME=${env.WORKSPACE}"]) {
                 sh script:'''
           #!/bin/bash
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev
           export PATH="$WORKSPACE/.local/bin:$PATH"
           echo "This is start $(pwd)"
           echo "This is $(pwd)"
