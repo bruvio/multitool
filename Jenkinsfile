@@ -1,6 +1,9 @@
 pipeline {
     agent { docker { image 'python:3.7.1' } }
-
+      environment {
+    WORKSPACE = "${env.WORKSPACE}"
+    PATH = "${env.PATH}"
+    }
     stages {
         stage('Checkout') {
           steps {
@@ -9,19 +12,21 @@ pipeline {
         }
         stage('build') {
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
+
                 sh script:'''
                                 #/bin/bash
+                                echo "WORKSPACE is: $WORKSPACE"
+                                echo "PATH is: $PATH"
                                   python --version
                                   python -m pip install --upgrade pip --user
                                   ls
                                   pip install --user -r requirements.txt
                                     '''
-                }
+
             }
         }
         stage('test') {
-          steps {withEnv(["HOME=${env.WORKSPACE}"]) {
+          steps {
                 sh script:'''
           #!/bin/bash
           echo "This is start $(pwd)"
@@ -29,14 +34,14 @@ pipeline {
           python jenkins_test.py
 
                   '''
-         }
+
         }
       post {
-        always {withEnv(["HOME=${env.WORKSPACE}"]) {
+        always {
             junit allowEmptyResults: true, testResults: '**/test-reports/*.xml'
 //            cleanWs()
         
-        }
+        
         } 
       }
 }
