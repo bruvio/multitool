@@ -1004,20 +1004,20 @@ def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,l
             name = name.replace(name[:char2remove],'')
         write_err, itref_written = write_ppf(shot, 'edg2',
                                          name,
-                                         np.concatenate([data[label_jetto]['data'][tran_index],
+                                         np.concatenate([data[label_jetto]['data'][tran_index][0:-1],
                                                          res[label_e2d].yData[
-                                                         0:]]),
-                                         time=np.concatenate([data['R']['data'][tran_index],
-                                                              res['dsrad'][0:] +
+                                                         1:]]),
+                                         time=np.concatenate([data['R']['data'][tran_index][0:-1],
+                                                              res['dsrad'][1:] +
                                                               data['R']['data'][-1][-1]]),
-                                         status=np.concatenate([data['R']['data'][tran_index],
-                                                                res['dsrad'][0:] +
+                                         status=np.concatenate([data['R']['data'][tran_index][0:-1],
+                                                                res['dsrad'][1:] +
                                                                 data['R']['data'][-1][-1]]),
                                          comment=fname,
                                          unitd=" ", unitt=" ",
                                          itref=-1,
-                                         nt=len(np.concatenate([data['R']['data'][tran_index],
-                                                                res['dsrad'][0:] +
+                                         nt=len(np.concatenate([data['R']['data'][tran_index][0:-1],
+                                                                res['dsrad'][0:-1] +
                                                                 data['R']['data'][-1][-1]])))
         
 def runFebsimulations7MW(allow_write_ppf,allow_plot):
@@ -1382,18 +1382,22 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         sim_5 = sim('96202X', 'jun0520', '1', workfold, 'vparail', save=True)
 
 
+        force_index1 = -2
+        force_index2 = -2
+        force_index3 = -2
+        force_index4 = -2
         force_index5 = -2
 
         res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_1, 445)
+            shot, owner, dda, sim_1, 445,force_tran=force_index1)
         res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_2, 448)
+            shot, owner, dda, sim_2, 448,force_tran=force_index2)
         res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_3, 453)
+            shot, owner, dda, sim_3, 453,force_tran=force_index3)
         res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_4, 454)
+            shot, owner, dda, sim_4, 454,force_tran=force_index4)
         res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_5, 455)
+            shot, owner, dda, sim_5, 455,force_tran=force_index5)
 
 
         sleep(1)
@@ -1530,10 +1534,13 @@ def runJunesimulations(allow_write_ppf, allow_plot):
 
 def main():
     allow_write_ppf = True
+    # allow_write_ppf = False
+    # allow_plot = True
     allow_plot = False
     # runFebsimulations7MW(allow_write_ppf, allow_plot)
     # runFebsimulations11MW(allow_write_ppf, allow_plot)
     runJunesimulations(allow_write_ppf, allow_plot)
+    # plt.show(block=True)
     plt.show(block=False)
 
 
