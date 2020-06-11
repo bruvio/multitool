@@ -19,15 +19,9 @@ import eproc
 ```
 the code at the time of writing this README file cannot work offile. So those  packages are mandatory.
 
-If you can skip to  )
+If you know already you can use please skip to  3)
 
-
-2) You will need to install a few Python packages
-```
-pip install -r requirements.txt --user
-```
-
-3) 
+2) 
 to install JET Python packages please follow these web pages:
  for the ppf package:
 https://users.euro-fusion.org/pages/data-ppf-jpf/ppfuserguide/python/PPF.html#_converters
@@ -39,6 +33,15 @@ https://data.jet.uk/guides/jpf/getdat.html
 
 for eproc
 https://users.euro-fusion.org/tfwiki/index.php/EPROC_Python_module
+
+
+3) You will need to install a few Python packages (possibly inside your virtual enviroment of choice). The code is tested under Python/3.7 so make sure you switch to that before
+
+```
+pip install -r requirements.txt --user
+```
+
+
 
 ### Installing
 
@@ -84,7 +87,7 @@ More tests will be created in the future
 
 ## Authors
 
-* **Bruno Viola** - *Initial work* - [PurpleBooth](https://github.com/bruvio)
+* **Bruno Viola** - *Initial work* - [bruvio](https://github.com/bruvio)
 
 
 

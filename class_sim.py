@@ -1433,7 +1433,7 @@ read_eirene
    
         f.close()
         print('print file written to ... ', path+'/'+filename+'_print.csv')
-
+        return 1
 ###############################################
 
 
