@@ -640,7 +640,7 @@ def read_jetto_sequence(shot,sequence,dda,owner,dtypelist):
         vars()[dict_name][dtype] = vars()[dtype]
     return  vars()[dict_name]
 
-def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence, force_tran=None):
+def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence,allow_plot, force_tran=None):
     dda_time = 'JST'
     wth = read_jetto_data(shot, sequence, 'WTH', dda_time, owner)
     data = read_jetto_sequence(shot, sequence, dda, owner,
@@ -656,22 +656,21 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
         sleep(1)
     res = simu.read_profiles('omp', tran=tran_index)
 
-
-
-    plt.figure()
-    ax1=plt.subplot(2,1,1)
-    plt.plot(wth['t'],wth['data'],label='wth_'+str(sequence))
-    plt.legend(loc='best', prop={'size': 6})
-    plt.plot(wth['t'][index], wth['data'][index], "x")
-    plt.axvline(x=peak_selected, color='r')
-    plt.axvline(x=timesteps[tran_index], color='b')
-    ax2=plt.subplot(2,1,2,sharex=ax1)
-    plt.plot(data['TE']['t'],data['TE']['data'].T[-1],label='TE_'+str(sequence))
-    plt.legend(loc='best', prop={'size': 6})
-    plt.axvline(x=peak_selected,color='r')
-    plt.axvline(x=timesteps[tran_index],color='b')
-    plt.savefig('./figures/' + 'peak_selection'+str(sequence), dpi=300)  #
-    plt.show(block=False)
+    if allow_plot:
+        plt.figure()
+        ax1=plt.subplot(2,1,1)
+        plt.plot(wth['t'],wth['data'],label='wth_'+str(sequence))
+        plt.legend(loc='best', prop={'size': 6})
+        plt.plot(wth['t'][index], wth['data'][index], "x")
+        plt.axvline(x=peak_selected, color='r')
+        plt.axvline(x=timesteps[tran_index], color='b')
+        ax2=plt.subplot(2,1,2,sharex=ax1)
+        plt.plot(data['TE']['t'],data['TE']['data'].T[-1],label='TE_'+str(sequence))
+        plt.legend(loc='best', prop={'size': 6})
+        plt.axvline(x=peak_selected,color='r')
+        plt.axvline(x=timesteps[tran_index],color='b')
+        plt.savefig('./figures/' + 'peak_selection'+str(sequence), dpi=300)  #
+        plt.show(block=False)
     logger.info('Energy peak @ {}s / selected time is {}s'.format(peak_selected,
                                                                   timesteps[
                                                                       tran_index]))
@@ -984,8 +983,8 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
 def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,label,allow_write_ppf,allow_plot,color,numb):
     fname = fname
     if allow_plot:
-        plt.figure(num=fname)
-        plt.title(fname)
+        # plt.figure(num=fname)
+        # plt.title(fname)
         # print(ne5_t[tran_index])
 
         plt.plot(data['R']['data'][tran_index][0:-1], data[label_jetto]['data'][tran_index][0:-1], label=label,
@@ -1380,6 +1379,7 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         sim_3 = sim('96202X', 'jun0420', '1', workfold, 'vparail', save=True)
         sim_4 = sim('96202X', 'jun0420', '2', workfold, 'vparail', save=True)
         sim_5 = sim('96202X', 'jun0520', '1', workfold, 'vparail', save=True)
+        sim_6 = sim('96202X', 'jun1720', '1', workfold, 'vparail', save=True)
 
 
         force_index1 = -2
@@ -1387,18 +1387,20 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         force_index3 = -2
         force_index4 = -2
         force_index5 = -2
+        force_index6 = -1
 
         res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_1, 445,force_tran=force_index1)
+            shot, owner, dda, sim_1, 445,allow_plot,force_tran=force_index1)
         res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_2, 448,force_tran=force_index2)
+            shot, owner, dda, sim_2, 448,allow_plot,force_tran=force_index2)
         res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_3, 453,force_tran=force_index3)
+            shot, owner, dda, sim_3, 453,allow_plot,force_tran=force_index3)
         res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_4, 454,force_tran=force_index4)
+            shot, owner, dda, sim_4, 454,allow_plot,force_tran=force_index4)
         res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(
-            shot, owner, dda, sim_5, 455,force_tran=force_index5)
-
+            shot, owner, dda, sim_5, 455,allow_plot,force_tran=force_index5)
+        res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(
+            shot, owner, dda, sim_6, 464,allow_plot,force_tran=force_index6)
 
         sleep(1)
 
@@ -1412,7 +1414,8 @@ def runJunesimulations(allow_write_ppf, allow_plot):
             sim_4.date + '/' + sim_4.seq + '/' + str(454), time_used4))
         logging.info('time used for simu {} is {}'.format(
             sim_5.date + '/' + sim_5.seq + '/' + str(455), time_used5))
-
+        logging.info('time used for simu {} is {}'.format(
+            sim_6.date + '/' + sim_6.seq + '/' + str(464), time_used6))
 
         if allow_write_ppf:
 
@@ -1421,104 +1424,134 @@ def runJunesimulations(allow_write_ppf, allow_plot):
                 logger.error('failed to open ppf')
                 raise SystemExit
 
-        fname = "NE  75e20"
-        label = "NE  75e20"
+
+        plt.figure('NE')
+        plt.title('NE')
+
+        fname1 = "NE  75e20"
+        label1 = "NE  75e20"
 
         i = 1
-        plot_write_merged_sim(shot, label, data1, res1, 'NE', 'ade',
-                              tran_index1, fname,
+        plot_write_merged_sim(shot, label1, data1, res1, 'NE', 'ade',
+                              tran_index1, fname1,
                               allow_write_ppf, allow_plot, 'blue', i)
-        fname = 'NE  26e21'
-        label = 'NE  26e21'
+        fname2 = 'NE  26e21'
+        label2 = 'NE  26e21'
         i = i + 1
-        plot_write_merged_sim(shot, label, data2, res2, 'NE', 'ade',
-                              tran_index2, fname,
+        plot_write_merged_sim(shot, label2, data2, res2, 'NE', 'ade',
+                              tran_index2, fname2,
                               allow_write_ppf, allow_plot, 'green', i)
-        fname = 'NE  3e22'
-        label = 'NE  3e22'
+        fname3 = 'NE  3e22'
+        label3 = 'NE  3e22'
         i = i + 1
-        plot_write_merged_sim(shot, label, data3, res3, 'NE', 'ade',
-                              tran_index3, fname,
+        plot_write_merged_sim(shot, label3, data3, res3, 'NE', 'ade',
+                              tran_index3, fname3,
                               allow_write_ppf, allow_plot, 'red', i)
-        fname = 'NE  16e21'
-        label = 'NE  16e21'
+        fname4 = 'NE  16e21'
+        label4 = 'NE  16e21'
         i = i + 1
-        plot_write_merged_sim(shot, label, data4, res4, 'NE', 'ade',
-                              tran_index4, fname,
+        plot_write_merged_sim(shot, label4, data4, res4, 'NE', 'ade',
+                              tran_index4, fname4,
                               allow_write_ppf, allow_plot, 'cyan', i)
-        fname = 'NE  16e21 2p'
-        label = 'NE  16e21 2p'
+        fname5 = 'NE  16e21 2p'
+        label5 = 'NE  16e21 2p'
         i = i + 1
-        plot_write_merged_sim(shot, label, data5, res5, 'NE', 'ade',
-                              tran_index5, fname,
+        plot_write_merged_sim(shot, label5, data5, res5, 'NE', 'ade',
+                              tran_index5, fname5,
                               allow_write_ppf, allow_plot, 'magenta', i)
-
+        fname6 = 'NE  3e21A'
+        label6 = 'NE  3e21A'
+        i = i + 1
+        plot_write_merged_sim(shot, label6, data6, res6, 'NE', 'ade',
+                              tran_index6, fname6,
+                              allow_write_ppf, allow_plot, 'black', i)
         #
         # ###ionization source
-        fname = 'ION 75e20'
-        label = 'ION 75e20'
+        plt.figure('ION')
+        plt.title('ION')
+
+        label1 = 'ION 75e20'
 
         i = 1
-        plot_write_merged_sim(shot, label, data1, res1, 'SDII', 'asoun',
-                              tran_index1, fname,
+        plot_write_merged_sim(shot, label1, data1, res1, 'SDII', 'asoun',
+                              tran_index1, fname1,
                               allow_write_ppf, allow_plot, 'blue', i)
-        fname = 'ION 26e21'
-        label = 'ION 26e21'
+
+        label2 = 'ION 26e21'
         i = i + 1
-        plot_write_merged_sim(shot, label, data2, res2, 'SDII', 'asoun',
-                              tran_index2, fname,
+        plot_write_merged_sim(shot, label2, data2, res2, 'SDII', 'asoun',
+                              tran_index2, fname2,
                               allow_write_ppf, allow_plot, 'green', i)
-        fname = 'ION 3e22'
-        label = 'ION 3e22'
+
+        label3 = 'ION 3e22'
         i = i + 1
-        plot_write_merged_sim(shot, label, data3, res3, 'SDII', 'asoun',
-                              tran_index3, fname,
+        plot_write_merged_sim(shot, label3, data3, res3, 'SDII', 'asoun',
+                              tran_index3, fname3,
                               allow_write_ppf, allow_plot, 'red', i)
-        fname = 'ION 16e21'
-        label = 'ION 16e21'
+
+        label4 = 'ION 16e21'
         i = i + 1
-        plot_write_merged_sim(shot, label, data4, res4, 'SDII', 'asoun',
-                              tran_index4, fname,
+        plot_write_merged_sim(shot, label4, data4, res4, 'SDII', 'asoun',
+                              tran_index4, fname4,
                               allow_write_ppf, allow_plot, 'cyan', i)
-        fname = 'ION 16e21 2p'
-        label = 'ION 16e21 2p'
+
+
+        label5 = 'ION 16e21 2p'
         i = i + 1
-        plot_write_merged_sim(shot, label, data5, res5, 'SDII', 'asoun',
-                              tran_index5, fname,
+        plot_write_merged_sim(shot, label5, data5, res5, 'SDII', 'asoun',
+                              tran_index5, fname5,
                               allow_write_ppf, allow_plot, 'magenta', i)
+
+
+        label6 = 'ION  3e21A'
+        i = i + 1
+        plot_write_merged_sim(shot, label6, data6, res6, 'SDII', 'asoun',
+                              tran_index6, fname6,
+                              allow_write_ppf, allow_plot, 'black', i)
 
         ###temperature
-        fname = 'TE 75e20'
-        label = 'TE 75e20'
+        plt.figure('TE')
+        plt.title('TE')
+
+
+        label1 = 'TE 75e20'
         i = 1
-        plot_write_merged_sim(shot, label, data1, res1, 'TE', 'ate',
-                              tran_index1, fname,
+        plot_write_merged_sim(shot, label1, data1, res1, 'TE', 'ate',
+                              tran_index1, fname1,
                               allow_write_ppf, allow_plot, 'blue', i)
-        fname = 'TE 26e21'
-        fname = 'TE 26e21'
+
+        label2 = 'TE 26e21'
 
         i = i + 1
-        plot_write_merged_sim(shot, label, data2, res2, 'TE', 'ate',
-                              tran_index2, fname,
+        plot_write_merged_sim(shot, label2, data2, res2, 'TE', 'ate',
+                              tran_index2, fname2,
                               allow_write_ppf, allow_plot, 'green', i)
-        fname = 'TE 3e22'
-        label = 'TE 3e22'
+
+        label3 = 'TE 3e22'
         i = i + 1
-        plot_write_merged_sim(shot, label, data3, res3, 'TE', 'ate',
-                              tran_index3, fname,
+        plot_write_merged_sim(shot, label3, data3, res3, 'TE', 'ate',
+                              tran_index3, fname3,
                               allow_write_ppf, allow_plot, 'red', i)
-        fname = 'TE 16e21'
-        label = 'TE 16e21'
+
+        label4 = 'TE 16e21'
         i = i + 1
-        plot_write_merged_sim(shot, label, data4, res4, 'TE', 'ate',
-                              tran_index4, fname,
+        plot_write_merged_sim(shot, label4, data4, res4, 'TE', 'ate',
+                              tran_index4, fname4,
                               allow_write_ppf, allow_plot, 'cyan', i)
-        fname = 'TE 16e21 2p'
-        label = 'TE 16e21 2p'
+
+
+        label5 = 'TE 16e21 2p'
         i = i + 1
-        plot_write_merged_sim(shot, label, data5, res5, 'TE', 'ate',
-                              tran_index5, fname,
+        plot_write_merged_sim(shot, label5, data5, res5, 'TE', 'ate',
+                              tran_index5, fname5,
                               allow_write_ppf, allow_plot, 'magenta', i)
+
+
+        label6 = 'TE  3e21A'
+        i = i + 1
+        plot_write_merged_sim(shot, label6, data6, res6, 'TE', 'ate',
+                              tran_index6, fname6,
+                              allow_write_ppf, allow_plot, 'black', i)
 
         if allow_write_ppf:
 
@@ -1532,9 +1565,111 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         # plt.show(block=True)
 
 
+        sim_1.read_eirene(sim_1.fullpath[:-6])
+        sim_2.read_eirene(sim_2.fullpath[:-6])
+        sim_3.read_eirene(sim_3.fullpath[:-6])
+        sim_4.read_eirene(sim_4.fullpath[:-6])
+        sim_5.read_eirene(sim_5.fullpath[:-6])
+        sim_6.read_eirene(sim_6.fullpath[:-6])
+
+        pressure,temperature = sim_1.data.eirene.get_pressure()
+        sim_1.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname1, dpi=300)
+
+        pressure,temperature = sim_2.data.eirene.get_pressure()
+        sim_2.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname2, dpi=300)
+
+
+        pressure,temperature = sim_3.data.eirene.get_pressure()
+        sim_3.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname3, dpi=300)
+
+
+        pressure,temperature = sim_4.data.eirene.get_pressure()
+        sim_4.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname4, dpi=300)
+
+
+        pressure,temperature = sim_5.data.eirene.get_pressure()
+        sim_5.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname5, dpi=300)
+
+        pressure,temperature = sim_6.data.eirene.get_pressure()
+        sim_6.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_pressure_' + fname6, dpi=300)
+
+
+        sim_1.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname1, dpi=300)
+
+        sim_2.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname2, dpi=300)
+
+        sim_3.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname3, dpi=300)
+
+        sim_4.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname4, dpi=300)
+
+        sim_5.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname5, dpi=300)
+
+        sim_6.data.eirene.plot_eirene_vol_data()
+        plt.xlim(2.2, 3)
+        plt.ylim(-1.77, -1.2)
+        plt.savefig('./figures/D2_density_' + fname6, dpi=300)
+
+        sim_1.data.eirene.PLS.names
+        # # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+        sim_1.data.eirene.MOL.names
+        # # Out[13]: {0: 'D2'}
+        sim_1.data.eirene.ATM.names
+        # # Out[14]: {0: 'D', 1: 'Be'}
+        sim_1.data.eirene.ION.names
+        # # Out[15]: {0: 'D2+'}
+        sim_1.data.eirene.plot_eirene_vol_data()
+
+
+
+        #  #test to plot EIRENE PRESSURE AND TEMPERATURE
+        #
+        #
+        #
+                 #
+         #
+         # xv=linspace(2.003,2.547,100)';
+         # yv=-2.3*ones(100,1);
+         #
+         #
+        #
+        # simu.data.eirene.plot_eirene_vol_data(data=pressure,label='Pa')
+
 def main():
-    allow_write_ppf = True
-    # allow_write_ppf = False
+    # allow_write_ppf = True
+    allow_write_ppf = False
     # allow_plot = True
     allow_plot = False
     # runFebsimulations7MW(allow_write_ppf, allow_plot)

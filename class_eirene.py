@@ -1251,7 +1251,7 @@ class Eirene():
 
         if exists:
             data = read_surfaces_file(self.runfolder + 'eirene.surfaces')
-            
+
             self.ESRF_TYPES = np.asarray(data[data.columns[1]])
             self.ESRF_NAMES = np.asarray(data[data.columns[3]])
 
@@ -1273,7 +1273,7 @@ class Eirene():
 
         logger.info( 'reading eirene data done! \n')
 
-        self.create_connected_eirene_surface(1)
+        # self.create_connected_eirene_surface(1)
 
     def create_connected_eirene_surface(self, iselect,atmmol=None):
 
@@ -1866,4 +1866,28 @@ class Eirene():
                 plt.plot(xp, yp, color='blue', marker='o');
 
 
+    def get_pressure(self):
+        # triangnum = simu.data.eirene.geom.trimap.shape[0]
+        mD2 = 2 * 2.01410178 * 1.660538921E-27;  # kg
+        vxD2 = np.asarray(self.MOL.vol_avg_data[2] / 1000 / mD2 /
+                          self.MOL.vol_avg_data[1] / 100);  # m/s
+        vyD2 = np.asarray(self.MOL.vol_avg_data[3] / 1000 / mD2 /
+                          self.MOL.vol_avg_data[1] / 100);  # m/s
+        vzD2 = np.asarray(self.MOL.vol_avg_data[4] / 1000 / mD2 /
+                          self.MOL.vol_avg_data[1] / 100);  # m/s
+        vxD2[np.isnan(vxD2)] = 0;
+        vyD2[np.isnan(vyD2)] = 0;
+        vzD2[np.isnan(vzD2)] = 0;
+
+        pD2 = np.asarray(
+            2 / 3 * (self.MOL.vol_avg_data[5] * 1.6022E-19 * 1E6 -
+                     0.5 * mD2 * self.MOL.vol_avg_data[1] * 1E6 * (
+                                 vxD2 ** 2 + vyD2 ** 2 + vzD2 ** 2)));
+        # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
+        TD2 = np.asarray(
+            pD2 / self.MOL.vol_avg_data[1] / 1E6 / 1.3806488E-23);
+        TD2[np.isnan(TD2)] = 0;
+        pD2[np.isnan(pD2)] = 0;
+
+        return pD2,TD2
 
