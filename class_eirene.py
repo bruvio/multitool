@@ -947,7 +947,9 @@ class Eirene():
                     logger.warning(
                 'Need at least eirene.transfer file version {} to allow surface plotting of EIRENE data'.format(
                     self.transferFileVersion_withSurfaceResolution))
-            break
+                break
+            else:
+                transfer_version = None
 
 
         text = '* nlimps'
@@ -958,15 +960,22 @@ class Eirene():
                 self.nlimps = int(dummy[0])
                 self.nlim = int(dummy[1])
                 self.nsts = int(dummy[2])
-                if transfer_version>= self.transferFileVersion_withSurfaceResolution:
-                    self.nlmps= int(dummy[3])
+                if transfer_version is None:
+                    surface_points=self.nlimps
                     row_to_skip = index + 3
-                    surface_points = self.nlmps
                     break
                 else:
-                    surface_points=self.nlimps
-                    row_to_skip = index + 2
-                    break
+                    if transfer_version>= self.transferFileVersion_withSurfaceResolution:
+                        self.nlmps= int(dummy[3])
+                        row_to_skip = index + 3
+                        surface_points = self.nlmps
+                        break
+                    else:
+                        surface_points=self.nlimps
+                        row_to_skip = index + 2
+                        break
+
+
 
         logger.log(5, row_to_skip)
                 # 5          27        6086
@@ -986,6 +995,7 @@ class Eirene():
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1#
             logger.log(5, row_to_skip)
+            # if transfer_version is not None:
             #dummy2 contains surface average data for the same specie
             try:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
@@ -994,6 +1004,8 @@ class Eirene():
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
+
+
             except:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
                                  nrows=surface_points,
@@ -1001,23 +1013,25 @@ class Eirene():
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
             dummy2.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip +surface_points+ 2
+            row_to_skip = row_to_skip +surface_points+ 3
             logger.log(5, row_to_skip)
 
             #as I loop through species I append this block, creating a big block matrix
 
 
             self.PLS.vol_avg_data.append(dummy1)
+            # if transfer_version is not None:
             self.PLS.surf_avg_data.append(dummy2)
-        # concatenate all data as a big dataframe
+        # concatenate all data as a big dataframe (the first column is just the index)
         self.PLS.vol_avg_data = pd.concat(self.PLS.vol_avg_data, axis=0)#concatenates as row
         self.PLS.vol_avg_data.reset_index(drop=True, inplace=True)
+        # if transfer_version is not None:
         self.PLS.surf_avg_data = pd.concat(self.PLS.surf_avg_data, axis=0)#concatenates as row
         self.PLS.surf_avg_data.reset_index(drop=True, inplace=True)
 
 
-        row_to_skip = row_to_skip +1
-        logger.log(5, row_to_skip)
+
+
 
         # row_to_skip = 30648
         #row to skip should be 30647
@@ -1035,6 +1049,7 @@ class Eirene():
             dummy1.fillna(0, inplace=True)  # converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
+            # if transfer_version is not None:
             try:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
@@ -1042,6 +1057,7 @@ class Eirene():
                                  delim_whitespace=True, header=None,
                                  index_col=False, error_bad_lines=False,
                                  warn_bad_lines=False)
+
             except:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
                                  nrows=surface_points,
@@ -1052,13 +1068,15 @@ class Eirene():
             row_to_skip = row_to_skip +surface_points+ 1
             logger.log(5, row_to_skip)
             self.ATM.vol_avg_data.append(dummy1)
+            # if transfer_version is not None:
             self.ATM.surf_avg_data.append(dummy2)
 
         self.ATM.vol_avg_data = pd.concat(self.ATM.vol_avg_data,
                                           axis=0)  # concatenates as row
         self.ATM.vol_avg_data.reset_index(drop=True, inplace=True)
+        # if transfer_version is not None:
         self.ATM.surf_avg_data = pd.concat(self.ATM.surf_avg_data,
-                                           axis=0)  # concatenates as row
+                                               axis=0)  # concatenates as row
         self.ATM.surf_avg_data.reset_index(drop=True, inplace=True)
 
         row_to_skip = row_to_skip + 1
@@ -1076,6 +1094,7 @@ class Eirene():
             dummy1.fillna(0, inplace=True)#converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
+            # if transfer_version is not None:
             try:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
@@ -1093,13 +1112,15 @@ class Eirene():
             row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.MOL.vol_avg_data.append(dummy1)
+            # if transfer_version is not None:
             self.MOL.surf_avg_data.append(dummy2)
 
         self.MOL.vol_avg_data = pd.concat(self.MOL.vol_avg_data,
                                           axis=0)  # concatenates as row
         self.MOL.vol_avg_data.reset_index(drop=True, inplace=True)
+        # if transfer_version is not None:
         self.MOL.surf_avg_data = pd.concat(self.MOL.surf_avg_data,
-                                           axis=0)  # concatenates as row
+                                               axis=0)  # concatenates as row
         self.MOL.surf_avg_data.reset_index(drop=True, inplace=True)
 
         # row_to_skip = row_to_skip + 1
@@ -1118,6 +1139,7 @@ class Eirene():
             dummy1.fillna(0, inplace=True) #converts nan into 0
             row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
             logger.log(5, row_to_skip)
+            # if transfer_version is not None:
             try:
                 dummy2 = pd.read_csv(self.runfolder + 'eirene.transfer.gz',
                                  compression='gzip', skiprows=row_to_skip,
@@ -1135,13 +1157,15 @@ class Eirene():
             row_to_skip = row_to_skip + surface_points + 2
             logger.log(5, row_to_skip)
             self.ION.vol_avg_data.append(dummy1)
+            # if transfer_version is not None:
             self.ION.surf_avg_data.append(dummy2)
 
         self.ION.vol_avg_data = pd.concat(self.ION.vol_avg_data,
                                           axis=0)  # concatenates as row
         self.ION.vol_avg_data.reset_index(drop=True, inplace=True)
+        # if transfer_version is not None:
         self.ION.surf_avg_data = pd.concat(self.ION.surf_avg_data,
-                                           axis=0)  # concatenates as row
+                                               axis=0)  # concatenates as row
         self.ION.surf_avg_data.reset_index(drop=True, inplace=True)
 
         logger.info('  reading miscellaneous data')
@@ -1880,12 +1904,12 @@ class Eirene():
         vzD2[np.isnan(vzD2)] = 0;
 
         pD2 = np.asarray(
-            2 / 3 * (self.MOL.vol_avg_data[5] * 1.6022E-19 * 1E6 -
-                     0.5 * mD2 * self.MOL.vol_avg_data[1] * 1E6 * (
+            2 / 3 * (self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6 -
+                     0.5 * mD2 * self.MOL.vol_avg_data[0] * 1E6 * (
                                  vxD2 ** 2 + vyD2 ** 2 + vzD2 ** 2)));
         # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
         TD2 = np.asarray(
-            pD2 / self.MOL.vol_avg_data[1] / 1E6 / 1.3806488E-23);
+            pD2 / self.MOL.vol_avg_data[0] / 1E6 / 1.3806488E-23);
         TD2[np.isnan(TD2)] = 0;
         pD2[np.isnan(pD2)] = 0;
 

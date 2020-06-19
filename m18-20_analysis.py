@@ -1382,6 +1382,118 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         sim_6 = sim('96202X', 'jun1720', '1', workfold, 'vparail', save=True)
 
 
+        sim_david = sim('81472', 'jan2215', '1', workfold, 'dmoulton')
+        # pdb.set_trace()
+        sim_1.read_eirene(sim_1.folder+os.sep)
+        sim_2.read_eirene(sim_2.folder+os.sep)
+        sim_3.read_eirene(sim_3.folder+os.sep)
+        sim_4.read_eirene(sim_4.folder+os.sep)
+        sim_5.read_eirene(sim_5.folder+os.sep)
+        sim_6.read_eirene(sim_6.folder+os.sep)
+
+        fname1 = "75e20"
+        fname2 = '26e21'
+        fname3 = '3e22'
+        fname4 = '16e21'
+        fname5 = '16e21 2p'
+        fname6 = '3e21A'
+
+
+        # sim_david.read_eirene(sim_david.fullpath[:-4])
+        # pressure, temperature = sim_david.data.eirene.get_pressure()
+        # sim_david.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        # plt.savefig('./figures/D2_pressure_test_david', dpi=600)
+
+        # pdb.set_trace()
+
+
+        print(sim_1.data.eirene.PLS.names)
+        # # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+        print(sim_1.data.eirene.MOL.names)
+        # # Out[13]: {0: 'D2'}
+        print(sim_1.data.eirene.ATM.names)
+        # # Out[14]: {0: 'D', 1: 'Be'}
+        print(sim_1.data.eirene.ION.names)
+        # # Out[15]: {0: 'D2+'}
+
+
+
+
+
+        pressure,temperature = sim_1.data.eirene.get_pressure()
+        sim_1.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        # plt.xlim(2.2, 3)
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname1, dpi=600)
+
+        pressure,temperature = sim_2.data.eirene.get_pressure()
+        sim_2.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname2, dpi=600)
+
+
+        pressure,temperature = sim_3.data.eirene.get_pressure()
+        sim_3.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname3, dpi=600)
+
+
+        pressure,temperature = sim_4.data.eirene.get_pressure()
+        sim_4.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname4, dpi=600)
+
+
+        pressure,temperature = sim_5.data.eirene.get_pressure()
+        sim_5.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname5, dpi=600)
+
+        pressure,temperature = sim_6.data.eirene.get_pressure()
+        sim_6.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_pressure_' + fname6, dpi=600)
+
+
+        sim_1.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname1, dpi=600)
+
+        sim_2.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname2, dpi=600)
+
+        sim_3.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname3, dpi=600)
+
+        sim_4.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname4, dpi=600)
+
+        sim_5.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname5, dpi=600)
+
+        sim_6.data.eirene.plot_eirene_vol_data()
+        plt.ylim(-5.3, -0.91)
+        plt.tight_layout()
+        plt.savefig('./figures/D2_density_' + fname6, dpi=600)
+
+        # raise SystemExit
+
+
         force_index1 = -2
         force_index2 = -2
         force_index3 = -2
@@ -1428,38 +1540,38 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         plt.figure('NE')
         plt.title('NE')
 
-        fname1 = "NE  75e20"
+
         label1 = "NE  75e20"
 
         i = 1
         plot_write_merged_sim(shot, label1, data1, res1, 'NE', 'ade',
                               tran_index1, fname1,
                               allow_write_ppf, allow_plot, 'blue', i)
-        fname2 = 'NE  26e21'
+
         label2 = 'NE  26e21'
         i = i + 1
         plot_write_merged_sim(shot, label2, data2, res2, 'NE', 'ade',
                               tran_index2, fname2,
                               allow_write_ppf, allow_plot, 'green', i)
-        fname3 = 'NE  3e22'
+
         label3 = 'NE  3e22'
         i = i + 1
         plot_write_merged_sim(shot, label3, data3, res3, 'NE', 'ade',
                               tran_index3, fname3,
                               allow_write_ppf, allow_plot, 'red', i)
-        fname4 = 'NE  16e21'
+
         label4 = 'NE  16e21'
         i = i + 1
         plot_write_merged_sim(shot, label4, data4, res4, 'NE', 'ade',
                               tran_index4, fname4,
                               allow_write_ppf, allow_plot, 'cyan', i)
-        fname5 = 'NE  16e21 2p'
+
         label5 = 'NE  16e21 2p'
         i = i + 1
         plot_write_merged_sim(shot, label5, data5, res5, 'NE', 'ade',
                               tran_index5, fname5,
                               allow_write_ppf, allow_plot, 'magenta', i)
-        fname6 = 'NE  3e21A'
+
         label6 = 'NE  3e21A'
         i = i + 1
         plot_write_merged_sim(shot, label6, data6, res6, 'NE', 'ade',
@@ -1565,92 +1677,9 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         # plt.show(block=True)
 
 
-        sim_1.read_eirene(sim_1.fullpath[:-6])
-        sim_2.read_eirene(sim_2.fullpath[:-6])
-        sim_3.read_eirene(sim_3.fullpath[:-6])
-        sim_4.read_eirene(sim_4.fullpath[:-6])
-        sim_5.read_eirene(sim_5.fullpath[:-6])
-        sim_6.read_eirene(sim_6.fullpath[:-6])
-
-        pressure,temperature = sim_1.data.eirene.get_pressure()
-        sim_1.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname1, dpi=300)
-
-        pressure,temperature = sim_2.data.eirene.get_pressure()
-        sim_2.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname2, dpi=300)
 
 
-        pressure,temperature = sim_3.data.eirene.get_pressure()
-        sim_3.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname3, dpi=300)
 
-
-        pressure,temperature = sim_4.data.eirene.get_pressure()
-        sim_4.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname4, dpi=300)
-
-
-        pressure,temperature = sim_5.data.eirene.get_pressure()
-        sim_5.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname5, dpi=300)
-
-        pressure,temperature = sim_6.data.eirene.get_pressure()
-        sim_6.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_pressure_' + fname6, dpi=300)
-
-
-        sim_1.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname1, dpi=300)
-
-        sim_2.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname2, dpi=300)
-
-        sim_3.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname3, dpi=300)
-
-        sim_4.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname4, dpi=300)
-
-        sim_5.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname5, dpi=300)
-
-        sim_6.data.eirene.plot_eirene_vol_data()
-        plt.xlim(2.2, 3)
-        plt.ylim(-1.77, -1.2)
-        plt.savefig('./figures/D2_density_' + fname6, dpi=300)
-
-        sim_1.data.eirene.PLS.names
-        # # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
-        sim_1.data.eirene.MOL.names
-        # # Out[13]: {0: 'D2'}
-        sim_1.data.eirene.ATM.names
-        # # Out[14]: {0: 'D', 1: 'Be'}
-        sim_1.data.eirene.ION.names
-        # # Out[15]: {0: 'D2+'}
-        sim_1.data.eirene.plot_eirene_vol_data()
 
 
 
