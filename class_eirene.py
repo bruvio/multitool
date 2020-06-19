@@ -1893,6 +1893,8 @@ class Eirene():
     def get_pressure(self):
         # triangnum = simu.data.eirene.geom.trimap.shape[0]
         mD2 = 2 * 2.01410178 * 1.660538921E-27;  # kg
+
+
         vxD2 = np.asarray(self.MOL.vol_avg_data[2] / 1000 / mD2 /
                           self.MOL.vol_avg_data[1] / 100);  # m/s
         vyD2 = np.asarray(self.MOL.vol_avg_data[3] / 1000 / mD2 /
@@ -1907,11 +1909,38 @@ class Eirene():
             2 / 3 * (self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6 -
                      0.5 * mD2 * self.MOL.vol_avg_data[0] * 1E6 * (
                                  vxD2 ** 2 + vyD2 ** 2 + vzD2 ** 2)));
+
+
+        mD =  2.01410178 * 1.660538921E-27;  # kg
+
+
+        vxD = np.asarray(self.ATM.vol_avg_data[2] / 1000 / mD /
+                          self.ATM.vol_avg_data[1] / 100);  # m/s
+        vyD = np.asarray(self.ATM.vol_avg_data[3] / 1000 / mD /
+                          self.ATM.vol_avg_data[1] / 100);  # m/s
+        vzD = np.asarray(self.ATM.vol_avg_data[4] / 1000 / mD /
+                          self.ATM.vol_avg_data[1] / 100);  # m/s
+        vxD[np.isnan(vxD)] = 0;
+        vyD[np.isnan(vyD)] = 0;
+        vzD[np.isnan(vzD)] = 0;
+
+        pD = np.asarray(
+            2 / 3 * (self.ATM.vol_avg_data[6] * 1.6022E-19 * 1E6 -
+                     0.5 * mD * self.ATM.vol_avg_data[0] * 1E6 * (
+                                 vxD ** 2 + vyD ** 2 + vzD ** 2)));
+
+
         # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
         TD2 = np.asarray(
-            pD2 / self.MOL.vol_avg_data[0] / 1E6 / 1.3806488E-23);
+            pD2 / self.MOL.vol_avg_data[1] / 1E6 / 1.3806488E-23);
+
+        TD = np.asarray(
+            pD / self.ATM.vol_avg_data[1] / 1E6 / 1.3806488E-23);
+
+        TD[np.isnan(TD)] = 0;
         TD2[np.isnan(TD2)] = 0;
         pD2[np.isnan(pD2)] = 0;
+        pD[np.isnan(pD)] = 0;
 
-        return pD2,TD2
+        return pD2,pD,TD2,TD
 

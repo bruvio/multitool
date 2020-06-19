@@ -1416,80 +1416,48 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         print(sim_1.data.eirene.ION.names)
         # # Out[15]: {0: 'D2+'}
 
+        sim_list=['sim_1',
+                  'sim_2',
+                  'sim_3',
+                  'sim_4',
+                  'sim_5',
+                  'sim_6',
+                  ]
+        for simu in sim_list:
+            # pdb.set_trace()
+            name = vars()['fname'+(simu[-1])]
+            simul = vars()[simu]
+
+
+            pD2, pD, TD2, TD = simul.data.eirene.get_pressure()
+            simul.data.eirene.plot_eirene_vol_data(data=pD2, label='Pa')
+            # plt.xlim(2.2, 3)
+            plt.ylim(-5.3, -0.91)
+            plt.tight_layout()
+            plt.savefig('./figures/D2_pressure_' + name, dpi=1600)
+            simul.data.eirene.plot_eirene_vol_data(data=pD, label='Pa')
+            # plt.xlim(2.2, 3)
+            plt.ylim(-5.3, -0.91)
+            plt.tight_layout()
+            plt.savefig('./figures/D_pressure_' + name, dpi=1600)
+            total_pressure = pD+pD2
+            simul.data.eirene.plot_eirene_vol_data(data=total_pressure, label='Pa')
+            # plt.xlim(2.2, 3)
+            plt.ylim(-5.3, -0.91)
+            plt.tight_layout()
+            plt.savefig('./figures/total_pressure_' + name, dpi=1600)
+
+            simul.data.eirene.plot_eirene_vol_data()
+            plt.ylim(-5.3, -0.91)
+            plt.tight_layout()
+            plt.savefig('./figures/D2_density_' + name, dpi=1600)
+
+
+        raise SystemExit
 
 
 
 
-        pressure,temperature = sim_1.data.eirene.get_pressure()
-        sim_1.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        # plt.xlim(2.2, 3)
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname1, dpi=600)
-
-        pressure,temperature = sim_2.data.eirene.get_pressure()
-        sim_2.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname2, dpi=600)
-
-
-        pressure,temperature = sim_3.data.eirene.get_pressure()
-        sim_3.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname3, dpi=600)
-
-
-        pressure,temperature = sim_4.data.eirene.get_pressure()
-        sim_4.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname4, dpi=600)
-
-
-        pressure,temperature = sim_5.data.eirene.get_pressure()
-        sim_5.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname5, dpi=600)
-
-        pressure,temperature = sim_6.data.eirene.get_pressure()
-        sim_6.data.eirene.plot_eirene_vol_data(data=pressure, label='Pa')
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_pressure_' + fname6, dpi=600)
-
-
-        sim_1.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname1, dpi=600)
-
-        sim_2.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname2, dpi=600)
-
-        sim_3.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname3, dpi=600)
-
-        sim_4.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname4, dpi=600)
-
-        sim_5.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname5, dpi=600)
-
-        sim_6.data.eirene.plot_eirene_vol_data()
-        plt.ylim(-5.3, -0.91)
-        plt.tight_layout()
-        plt.savefig('./figures/D2_density_' + fname6, dpi=600)
 
         # raise SystemExit
 
