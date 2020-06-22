@@ -1383,7 +1383,21 @@ def runJunesimulations(allow_write_ppf, allow_plot):
 
 
         sim_david = sim('81472', 'jan2215', '1', workfold, 'dmoulton')
+        sim_vsolokha=sim('80295','jun0120','36',workfold,'vsolokha')
+         # / edge2d / jet / 80295 /  / seq  # 36.
+
+
+        # sim_david.read_eirene(sim_david.folder+os.sep)
+        # sim_vsolokha.read_eirene(sim_vsolokha.folder+os.sep)
+        # pD2, pD, TD2, TD = sim_vsolokha.data.eirene.get_pressure()
+        # sim_vsolokha.data.eirene.plot_eirene_vol_data(data=pD2, label='D2 pressure - Pa')
+        # sim_vsolokha.data.eirene.plot_eirene_vol_data(data=pD, label='D pressure - Pa')
+
+        # plt.show(block=True)
         # pdb.set_trace()
+
+
+
         sim_1.read_eirene(sim_1.folder+os.sep)
         sim_2.read_eirene(sim_2.folder+os.sep)
         sim_3.read_eirene(sim_3.folder+os.sep)
@@ -1407,13 +1421,13 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         # pdb.set_trace()
 
 
-        print(sim_1.data.eirene.PLS.names)
+        print('PLS: ',sim_1.data.eirene.PLS.names)
         # # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
-        print(sim_1.data.eirene.MOL.names)
+        print('MOL: ',sim_1.data.eirene.MOL.names)
         # # Out[13]: {0: 'D2'}
-        print(sim_1.data.eirene.ATM.names)
+        print('ATM: ',sim_1.data.eirene.ATM.names)
         # # Out[14]: {0: 'D', 1: 'Be'}
-        print(sim_1.data.eirene.ION.names)
+        print('ION: ',sim_1.data.eirene.ION.names)
         # # Out[15]: {0: 'D2+'}
 
         sim_list=['sim_1',
@@ -1428,31 +1442,77 @@ def runJunesimulations(allow_write_ppf, allow_plot):
             name = vars()['fname'+(simu[-1])]
             simul = vars()[simu]
 
+            logger.info('plotting EIRENE data for {}'.format(simul.folder))
 
-            pD2, pD, TD2, TD = simul.data.eirene.get_pressure()
-            simul.data.eirene.plot_eirene_vol_data(data=pD2, label='Pa')
+
+            pD2, pD, TD2, TD,pD2_total,pD_total = simul.data.eirene.get_pressure()
+            simul.data.eirene.plot_eirene_vol_data(data=pD2, label='D2 pressure - Pa')
+
+            plt.ylim(-5.3, -0.91)
+            plt.tight_layout()
+            plt.savefig('./figures/D2_pressure_large_' + name)
+
+            plt.xlim(2.2, 3)
+            plt.ylim(-1.8, -1.2)
+            plt.tight_layout()
+            plt.savefig('./figures/D2_pressure_divertor' + name)
+
+            # plt.close()
+
+            simul.data.eirene.plot_eirene_vol_data(data=pD, label='D pressure - Pa')
             # plt.xlim(2.2, 3)
             plt.ylim(-5.3, -0.91)
             plt.tight_layout()
-            plt.savefig('./figures/D2_pressure_' + name, dpi=1600)
-            simul.data.eirene.plot_eirene_vol_data(data=pD, label='Pa')
+            plt.savefig('./figures/D_pressure_large_' + name)
+
+            plt.xlim(2.2, 3)
+            plt.ylim(-1.8, -1.2)
+            plt.tight_layout()
+            plt.savefig('./figures/D_pressure_divertor' + name)
+
+            # plt.close()
+
+            total_static_pressure = pD+pD2
+            simul.data.eirene.plot_eirene_vol_data(data=total_static_pressure, label='total static pressure - Pa')
             # plt.xlim(2.2, 3)
             plt.ylim(-5.3, -0.91)
             plt.tight_layout()
-            plt.savefig('./figures/D_pressure_' + name, dpi=1600)
-            total_pressure = pD+pD2
-            simul.data.eirene.plot_eirene_vol_data(data=total_pressure, label='Pa')
+            plt.savefig('./figures/total_static_pressure_large_' + name)
+
+            plt.xlim(2.2, 3)
+            plt.ylim(-1.8, -1.2)
+            plt.tight_layout()
+            plt.savefig('./figures/total_static_pressure_divertor' + name)
+            # plt.close()
+
+
+            total_pressure = pD_total+pD2_total
+            simul.data.eirene.plot_eirene_vol_data(data=total_pressure, label='total pressure - Pa')
             # plt.xlim(2.2, 3)
             plt.ylim(-5.3, -0.91)
             plt.tight_layout()
-            plt.savefig('./figures/total_pressure_' + name, dpi=1600)
+            plt.savefig('./figures/total_pressure_large_' + name)
+
+            plt.xlim(2.2, 3)
+            plt.ylim(-1.8, -1.2)
+            plt.tight_layout()
+            plt.savefig('./figures/total_pressure_divertor' + name)
+            # plt.close()
 
             simul.data.eirene.plot_eirene_vol_data()
             plt.ylim(-5.3, -0.91)
             plt.tight_layout()
-            plt.savefig('./figures/D2_density_' + name, dpi=1600)
+            plt.savefig('./figures/D2_density_large_' + name)
 
+            plt.xlim(2.2, 3)
+            plt.ylim(-1.8, -1.2)
+            plt.tight_layout()
+            plt.savefig('./figures/D2_density_divertor_' + name)
+            # plt.close()
 
+            # pdb.set_trace()
+            plt.close('all')
+            # plt.show(block=True)
         raise SystemExit
 
 

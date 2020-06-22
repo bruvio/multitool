@@ -1891,7 +1891,7 @@ class Eirene():
 
 
     def get_pressure(self):
-        # triangnum = simu.data.eirene.geom.trimap.shape[0]
+        triangnum = self.geom.trimap.shape[0]
         mD2 = 2 * 2.01410178 * 1.660538921E-27;  # kg
 
 
@@ -1907,7 +1907,7 @@ class Eirene():
 
         pD2 = np.asarray(
             2 / 3 * (self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6 -
-                     0.5 * mD2 * self.MOL.vol_avg_data[0] * 1E6 * (
+                     0.5 * mD2 * self.MOL.vol_avg_data[1] * 1E6 * (
                                  vxD2 ** 2 + vyD2 ** 2 + vzD2 ** 2)));
 
 
@@ -1926,11 +1926,13 @@ class Eirene():
 
         pD = np.asarray(
             2 / 3 * (self.ATM.vol_avg_data[6] * 1.6022E-19 * 1E6 -
-                     0.5 * mD * self.ATM.vol_avg_data[0] * 1E6 * (
+                     0.5 * mD * self.ATM.vol_avg_data[1] * 1E6 * (
                                  vxD ** 2 + vyD ** 2 + vzD ** 2)));
 
 
-        # pD2 = 2/3*(0.5*mD2*sim_alexc.data.eirene.MOL.data[1][0:triangnum]*1E6.*(vxD2.^2+vyD2.^2+vzD2.^2));
+        pD2_total = np.asarray(self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6)
+        pD_total = np.asarray(self.ATM.vol_avg_data[6] * 1.6022E-19 * 1E6)
+
         TD2 = np.asarray(
             pD2 / self.MOL.vol_avg_data[1] / 1E6 / 1.3806488E-23);
 
@@ -1942,5 +1944,5 @@ class Eirene():
         pD2[np.isnan(pD2)] = 0;
         pD[np.isnan(pD)] = 0;
 
-        return pD2,pD,TD2,TD
+        return pD2,pD,TD2,TD,pD2_total,pD_total
 
