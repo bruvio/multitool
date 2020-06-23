@@ -1405,6 +1405,8 @@ def runJunesimulations(allow_write_ppf, allow_plot):
         sim_5.read_eirene(sim_5.folder+os.sep)
         sim_6.read_eirene(sim_6.folder+os.sep)
 
+
+
         fname1 = "75e20"
         fname2 = '26e21'
         fname3 = '3e22'
@@ -1437,6 +1439,26 @@ def runJunesimulations(allow_write_ppf, allow_plot):
                   'sim_5',
                   'sim_6',
                   ]
+
+        for simu in sim_list:
+            name = vars()['fname'+(simu[-1])]
+            simul = vars()[simu]
+
+            logger.info('plotting Electron pressure data for {}'.format(simul.folder))
+            pressure_profile, r = simul.pressure_profile()
+
+            plt.figure(num=name)
+            # if self.plot_exp == "True":
+            plt.scatter(r, pressure_profile,
+                        label=name)
+            fxlabel = '$R - R_{sep,LFS-mp}\quad  m$'
+            fylabel = 'Pa'
+            plt.xlabel(fxlabel)
+            plt.ylabel(fylabel)
+            plt.savefig('./figures/Pe_profile' + name)
+            plt.close()
+
+
         for simu in sim_list:
             # pdb.set_trace()
             name = vars()['fname'+(simu[-1])]

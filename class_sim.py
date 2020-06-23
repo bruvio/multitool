@@ -302,8 +302,8 @@ read_eirene
                 copyfile(self.folder+os.sep+fname, destination_folder+os.sep+fname)
 
     self.data = SimpleNamespace()  # dictionary object that contains all data
-    
-    
+
+
     self.data.eirene = {}
 
 
@@ -1429,8 +1429,8 @@ read_eirene
             #print(simu)
             result=simu.read_print_file_edge2d()
             writer.writerow(result.values())
-        
-   
+
+
         f.close()
         print('print file written to ... ', path+'/'+filename+'_print.csv')
         return 1
@@ -2024,10 +2024,10 @@ read_eirene
     #       sqe= self.read_data('SQEZRAD',ExtraInput)['data']
     #     except:
     #       sqe=0
-        
-        
-        
-        
+
+
+
+
     hra=(hra*dve)
     if (np.sum(sqe)) ==0 :
 
@@ -3189,7 +3189,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
     """	pro write_eirene_neutcur,edge2d_cases,targetfilename, $
             surface_in, surface_out
-          
+
 
     """
       # ; set constants
@@ -3360,7 +3360,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
     extracting data related to the pumping surfaces
 
     returns a file containing
-    total 
+    total
     atom and molecules incident and reemiteed fluxes
     """
     cwd=os.getcwd()
@@ -3557,7 +3557,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
       #simu=simu_list[0]
       #result=simu.eirene_pumpcur()
     ncol=20
-      
+
       # ;ofile='eirene_neutcur_sep.dat'
       # ;targetfilename
     time=strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -3584,7 +3584,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
         'I_tot_inc','I_tot_rem','I_tot_pump'])
     with open(path+'/'+filename+'_pump.csv', 'a') as f:  # Just use 'w' mode in 3.x
       writer = csv.writer(f, delimiter='\t')
-      for index1 in range(0,len(simu_list)):      
+      for index1 in range(0,len(simu_list)):
         simu=simu_list[index1][0]
         ##print(simu['name'])
         # ExtraInput=simu_list[index1][1]
@@ -3650,7 +3650,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
     usage:
 
-    
+
     if you want to set upper and lower bound to normalize the contour plot, use:
   simu.contour('LFE',var,'prad'+str(index1),upperbound=8e6)
 
@@ -3714,14 +3714,14 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
     sep=[r_sep,z_sep]
     mesh=[rmesh,zmesh]
     max_jj=self.npts_m
-    for ii in range(0,max_jj-1):      
+    for ii in range(0,max_jj-1):
         for jj in range(ii+1,max_jj):
             if (rmesh[jj]==rmesh[ii]) & (zmesh[jj]==zmesh[ii]):
                 #print(jj)
                 rmesh[jj]= 0
                 zmesh[jj]=0
-      
-    #find_indices(zmesh, lambda e: e == 0)    
+
+    #find_indices(zmesh, lambda e: e == 0)
 # and removing duplicate points
     rmesh_new = np.delete(rmesh, find_indices(rmesh, lambda e: e == 0))
     zmesh_new = np.delete(zmesh, find_indices(zmesh, lambda e: e == 0))
@@ -3748,12 +3748,12 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
     k=0
     ind=list()
-#removing duplicate point in rmesh 
+#removing duplicate point in rmesh
     for ii in list(range(0,len(rvert_cent))):
         for jj in list(range(0,len(rmesh_new))):
           dist=sqrt((rmesh_new[jj]-rvert_cent[ii])**2+(zmesh_new[jj]-zvert_cent[ii])**2)
           #print(dist)
-          if dist==0.0:      
+          if dist==0.0:
             ind.append(jj)
             k=k+1
 
@@ -3854,14 +3854,14 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
     plt.savefig('./figures/'+fname,  dpi=600) #
 
 
-  @staticmethod  
+  @staticmethod
   def execute_makeppf(simu_list,path,outfile):
     with open(path+'/'+outfile, 'w') as f_out:
         f_out.write('#!/bin/bash\n\n')
         for index1 in range(0,len(simu_list)):
           simu=simu_list[index1][0]
           f_out.write('echo {}\n'.format(simu.shot))
-          batch_command = 'mkppf -c/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/cntl -g/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/geomfile1.txt -d/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/ddafile1.txt -o{} edge2d {} {} {} aaro_pb5_temp jsimpson\n'.format((simu.owner),int(simu.shot),(simu.date), int(simu.seq))  
+          batch_command = 'mkppf -c/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/cntl -g/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/geomfile1.txt -d/home/jsimpson/eproc/input_files_mkppf_git/bviola_pb5_issue/ddafile1.txt -o{} edge2d {} {} {} aaro_pb5_temp jsimpson\n'.format((simu.owner),int(simu.shot),(simu.date), int(simu.seq))
           f_out.write(batch_command)
     f_out.close()
     st = os.stat(path+'/'+outfile)
@@ -4104,7 +4104,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
   def calc_lambda_q(power_flux):
         #qiflxd
         #qeflxd
-        
+
       # set npts
       #    power_flux['xData'] = (power_flux['xData'])[0:power_flux['npts']]
       #    power_flux.yData = (power_flux.yData)[0:power_flux['npts']]
@@ -4606,8 +4606,8 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
     %          MOL           = Same for molecules.
     %          ION           = Same for test ions.
     %          MISC          = Same for miscelaneous.
-      :param path: 
-      :return: 
+      :param path:
+      :return:
       """
       self.data.eirene=Eirene(path)
       logger.log(5,dir(self.data.eirene))
@@ -4619,7 +4619,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
 
-    
+
 
 
 
@@ -4678,7 +4678,7 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
               simu.contour(var, 'Prad_' + label, upperbound=upper,
                            label='MW/m^3')
 
-          
+
   @staticmethod
   def bar_power_balance(pb,label):
       import pandas as pd
@@ -4784,5 +4784,20 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
           # df.plot(kind='bar', stacked=True)
         
 
+
+  def pressure_profile(self):
+
+      ne = ep.row(self.fullpath, 'DENEL', 'OT')
+      te = ep.row(self.fullpath, 'TEVE', 'OT')
+      npts = len(ne.xData)
+      dsrad = ne.xData[0:npts]
+      # pdb.set_trace()
+      from scipy.constants import elementary_charge
+      from scipy.constants import Boltzmann
+
+      pe = [a * b * Boltzmann  for a, b in zip(te.yData, ne.yData)]
+
+      # pe = (te.yData*1.3806488E-23*1e6*ne.yData)
+      return pe,dsrad
 
 
