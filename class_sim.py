@@ -4786,7 +4786,10 @@ printf,lun4,format='(A)',' psi_omp dsrad_omp dsrad_face_omp  ds_omp r_omp z_omp 
 
 
   def pressure_profile(self):
-
+      """
+      electron pressure at outer target
+      :return:
+      """
       ne = ep.row(self.fullpath, 'DENEL', 'OT')
       te = ep.row(self.fullpath, 'TEVE', 'OT')
       npts = len(ne.xData)

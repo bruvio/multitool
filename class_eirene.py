@@ -1297,7 +1297,9 @@ class Eirene():
 
         logger.info( 'reading eirene data done! \n')
 
-        # self.create_connected_eirene_surface(1)
+        self.create_connected_eirene_surface(1)
+        self.assemble_eirene_surfaces( 0, 1)
+
 
     def create_connected_eirene_surface(self, iselect,atmmol=None):
 
@@ -1330,7 +1332,7 @@ class Eirene():
         surface_name = self.ESRF_NAMES[isrf]
 
         # poly = lonarr(NLMPGS,2)
-
+        poly = np.zeros((2,self.NLMPGS),dtype=int)
         poly_sfidx = np.zeros(self.NLMPGS,dtype=int)
         npoly = 0
         x = []
@@ -1341,15 +1343,18 @@ class Eirene():
                 iside = ESRF_ISIDE[i] - 1
                 ip1 = iside
                 ip2 = ip1 + 1
-                if ip2 > 2: ip2=ip2-3
+                if ip2 > 2:
+                    ip2=ip2-3
+                poly[0,npoly] = self.geom.trimap[itria, ip1]
+                poly[1,npoly] = self.geom.trimap[itria, ip2]
 
-                x.append(self.geom.trimap[itria, ip1])
-                y.append(self.geom.trimap[itria, ip2])
+                # x.append(self.geom.trimap[itria, ip1])
+                # y.append(self.geom.trimap[itria, ip2])
 
                 poly_sfidx[npoly] = i
                 npoly = npoly+1
 
-        poly=np.stack([x,y])
+        # poly=np.stack([x,y])
         npoly_size = poly.shape[1]
 
         logger.log(5, "Found {} polygons for this surface".format(npoly))
@@ -1361,8 +1366,9 @@ class Eirene():
 
         #
         npoly_group = 0
-        poly_group_x = np.zeros(npoly,dtype=int)
-        poly_group_y = np.zeros(npoly,dtype=int)
+        poly_group = np.zeros((2, npoly), dtype=int)
+        # poly_group_x = np.zeros(npoly,dtype=int)
+        # poly_group_y = np.zeros(npoly,dtype=int)
         #
         tip = 0
         tail = 0
@@ -1376,42 +1382,50 @@ class Eirene():
         # self.plot_eirene_grid()
         # plt.plot(poly[0],poly[1],'b')
         # plt.show()
+
+
         while piece_left:
             # logger.log(5,"Current tip: {} {} {} {}".format(tip,poly_idx[tip], poly[0][poly_idx[tip]], poly[1][poly_idx[tip]]))
             # logger.log(5,"Current tail: {} {} {} {}".format(tail,poly_idx[tail], poly[0][poly_idx[tail]], poly[1][poly_idx[tail]]))
 
             piece_added = False  # false
             for i in range(0, npoly):
-                # logger.log(5," i= {}".format(i))
+                logger.log(5," i= {}".format(i))
+                logger.log(5," poly_added[i]= {}".format(poly_added[i]))
                 if not poly_added[i]:
                     # ;          found poly piece which is not yet added
-                    logger.log(5,"Checking poly {} {} {}: ".format(i,poly[0][i],poly[1][i]))
+                    logger.log(5,"Checking poly {} {} {} {}: ".format(i,poly[0][i],poly[1][i],tail))
                     if (poly[1][poly_idx[tail]] == poly[0][i]):
         #
 
                         # poly_idx = np.append(poly_idx, 1)
-                        poly_idx[tail] = i
                         tail = tail + 1
+                        poly_idx[tail] = i
+
                         poly_added[i]=True  # mark poly piece to be already added
 
                         piece_added = True  # remember that a piece was added
                     elif poly[1][poly_idx[tail]] == poly[1][i]:
         # #             switch order of points in poly
                         idummy = poly[0][i]
+                        print(idummy)
                         poly[0][i] = poly[1][i]
                         poly[1][i] = idummy
 
         # #             add poly piece to tail
-
-                        poly_idx[tail] = i
                         tail = tail + 1
+                        poly_idx[tail] = i
+
                         poly_added[i] = True  # mark poly piece to be already added
 
                         piece_added = True  # remember that a piece was added
-                    elif poly[0][poly_idx[tail]] == poly[1][i]:
+                    elif poly[0][poly_idx[tip]] == poly[1][i]:
         # #             shift polygon upwards
-                        for j in range(tail, tip):
-                            poly_idx[j + 1] = poly_idx[j]
+                        e1 = poly_idx[-1]
+                        for ii, e2 in enumerate(poly_idx):
+                            poly_idx[ii], e1 = e1, e2
+        #                 for j in range(tail, tip,-1):
+        #                     poly_idx[j + 1] = poly_idx[j]
 
         # #             add poly piece to tip
                         tail = tail + 1
@@ -1420,14 +1434,18 @@ class Eirene():
 
                         poly_added[i] = True   # mark poly piece to be already added
                         piece_added = True  # remember that a piece was added
-                    elif poly[0][poly_idx[tail]] == poly[0][i]:
+                    elif poly[0][poly_idx[tip]] == poly[0][i]:
         # #             switch order of points in poly
                         idummy = poly[0][i]
                         poly[0][i] = poly[1][i]
                         poly[1][i] = idummy
                     #             shift polygon upwards
-                        for j in range(tail, tip):
-                            poly_idx[j + 1] = poly_idx[j]
+
+                        e1 = poly_idx[-1]
+                        for ii, e2 in enumerate(poly_idx):
+                            poly_idx[ii], e1 = e1, e2
+                        # for j in range(tail, tip,-1):
+                        #     poly_idx[j + 1] = poly_idx[j]
 
             # #             add poly piece to tip
                         tail = tail + 1
@@ -1435,11 +1453,17 @@ class Eirene():
                         poly_idx[tip] = i
                         poly_added[i] = True   # mark poly piece to be already added
                         piece_added = True  # remember that a piece was added
+
+                logger.log(5,"i {}".format(i))
+                logger.log(5,"tail {} \n".format(tail))
+                logger.log(5,"poly_idx {} \n".format(poly_idx))
+
+
             if not piece_added:
         # #       No piece was added so the poly group is finished
         # #       add new poly group
-                poly_group_x[npoly_group] = tip
-                poly_group_y[npoly_group] = tail
+                poly_group[0,npoly_group] = tip
+                poly_group[1,npoly_group] = tail
                 npoly_group = npoly_group + 1
                 logger.log(5,"Polygon indices in group {}".format(npoly_group))
 
@@ -1450,13 +1474,13 @@ class Eirene():
                     if not poly_added[j]:
                         piece_left = True
                         tip = tail + 1
-
-                        poly_idx[tail] = j
                         tail = tail + 1
-                        poly_added[i] = True   # mark poly piece to be already added
+                        poly_idx[tail] = j
+
+                        poly_added[j] = True   # mark poly piece to be already added
                         break
 
-        poly_group = np.stack([poly_group_x, poly_group_y])
+        # poly_group = np.stack([poly_group_x, poly_group_y])
         self.surface_npoly_group = npoly_group
         # surface_poly_group = lonarr(npoly_group, 2)
         self.surface_poly_group = [poly_group[0][0:npoly_group],poly_group[1][0:npoly_group]]
@@ -1475,35 +1499,46 @@ class Eirene():
             # for j in range(self.surface_poly_group[0][i] ,  self.surface_poly_group[1][i] ):
             #     logger.log(5,"{} {} {} {}".format( j, self.surface_poly_idx[j], poly[0][poly_idx[j]], poly[1][poly_idx[j]]))
 
-        print('surface_npoly_group',self.surface_npoly_group)
-        print('surface_poly_group',self.surface_poly_group)
-        print('surface_npoly',self.surface_npoly)
-        print('surface_poly',self.surface_poly)
-        print('surface_poly_idx',self.surface_poly_idx)
-        print('surface_poly_sfidx',self.surface_poly_sfidx)
+        logger.log(5,'surface_npoly_group {}'.format(self.surface_npoly_group))
+        logger.log(5,'surface_poly_group {}'.format(self.surface_poly_group))
+        logger.log(5,'surface_npoly {}'.format(self.surface_npoly))
+        logger.log(5,'surface_poly {}'.format(self.surface_poly))
+        logger.log(5,'surface_poly_idx {}'.format(self.surface_poly_idx))
+        logger.log(5,'surface_poly_sfidx {}'.format(self.surface_poly_sfidx))
+
+
+
+
 
     def assemble_eirene_surfaces(self,group,iselect):
 
         isrf = self.nlim + iselect
         surface_number = isrf + 1
 
-        logger.info("assembling surface group {} for surface {}".format(group+1),self.ESRF_NAMES[isrf])
+        logger.info("assembling surface group {} for surface '{}'".format((group+1),self.ESRF_NAMES[isrf]))
 
         npolygon = self.surface_poly_group[1][group] - self.surface_poly_group[0][group] + 1
         logger.log(5, "Surface group has {} polygons".format(npolygon))
         # surface_polygon = dblarr(npolygon,4)
         self.surface_polygon_sfidx = np.zeros(npolygon)
-
+        surface_polygon_x1 = []
+        surface_polygon_y1 = []
+        surface_polygon_x2 = []
+        surface_polygon_y2 = []
         for i in range(0,npolygon):
-            idx = surface_poly_group[0][group]+i
-            surface_polygon_x1.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[0][idx]]])
-            surface_polygon_y1.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[0][idx]]])
-            surface_polygon_x2.append(self.geom.xv[self.surface_poly[self.surface_poly_idx[1][idx]]])
-            surface_polygon_y2.append(self.geom.yv[self.surface_poly[self.surface_poly_idx[1][idx]]])
+            idx = self.surface_poly_group[0][group]+i
+            surface_polygon_x1.append(self.geom.xv[self.surface_poly[0][self.surface_poly_idx[idx]]])
+            surface_polygon_y1.append(self.geom.yv[self.surface_poly[0][self.surface_poly_idx[idx]]])
+            surface_polygon_x2.append(self.geom.xv[self.surface_poly[1][self.surface_poly_idx[idx]]])
+            surface_polygon_y2.append(self.geom.yv[self.surface_poly[1][self.surface_poly_idx[idx]]])
 
-            self.surface_polygon_sfidx[i]=surface_poly_sfidx[self.surface_poly_idx[idx]]
+            self.surface_polygon_sfidx[i]=int(self.surface_poly_sfidx[self.surface_poly_idx[idx]])
 
         self.surface_polygon= np.stack([surface_polygon_x1,surface_polygon_y1,surface_polygon_x2,surface_polygon_y2])
+
+        logger.log(5, "surface_polygon {}".format(self.surface_polygon))
+        logger.log(5, "surface_polygon_sfidx {}".format(self.surface_polygon_sfidx))
+
 
 
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
@@ -1905,6 +1940,7 @@ class Eirene():
         vyD2[np.isnan(vyD2)] = 0;
         vzD2[np.isnan(vzD2)] = 0;
 
+        # static pressure
         pD2 = np.asarray(
             2 / 3 * (self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6 -
                      0.5 * mD2 * self.MOL.vol_avg_data[1] * 1E6 * (
@@ -1929,10 +1965,11 @@ class Eirene():
                      0.5 * mD * self.ATM.vol_avg_data[1] * 1E6 * (
                                  vxD ** 2 + vyD ** 2 + vzD ** 2)));
 
-
+        # total pressure using energy
         pD2_total = np.asarray(self.MOL.vol_avg_data[6] * 1.6022E-19 * 1E6)
         pD_total = np.asarray(self.ATM.vol_avg_data[6] * 1.6022E-19 * 1E6)
 
+        #deriving temperature
         TD2 = np.asarray(
             pD2 / self.MOL.vol_avg_data[1] / 1E6 / 1.3806488E-23);
 

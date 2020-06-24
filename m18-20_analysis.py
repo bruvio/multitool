@@ -1399,6 +1399,8 @@ def runJunesimulations(allow_write_ppf, allow_plot):
 
 
         sim_1.read_eirene(sim_1.folder+os.sep)
+        pdb.set_trace()
+
         sim_2.read_eirene(sim_2.folder+os.sep)
         sim_3.read_eirene(sim_3.folder+os.sep)
         sim_4.read_eirene(sim_4.folder+os.sep)

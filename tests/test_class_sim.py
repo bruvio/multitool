@@ -14,7 +14,7 @@ __status__ = "Testing"
 # __credits__ = [""]
 # -*- coding: utf-8 -*-
 # from importlib import reload
-import logging
+
 import logging
 logger = logging.getLogger(__name__)
 import sys
@@ -24,7 +24,7 @@ from importlib import import_module
 
 
 
-libnames = ['ppf']
+libnames = ['eproc','ppf']
 relative_imports = []
 
 
@@ -582,10 +582,10 @@ if __name__ == "__main__":
     simlist = []
     simlist.append([sim_hfe_Nrad0, 'first'])
 
-    sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
+    # sim.write_edge2d_profiles1(simlist, 'e2dprofiles_python')
 
 
-    pdb.set_trace()
+    # pdb.set_trace()
     # sim_hfe_Nrad1 = sim('92123', 'aug1717', '6', workfold)
     #
     # sim_lfe_Nrad0 = sim('92121', 'aug1717', '3', workfold)
