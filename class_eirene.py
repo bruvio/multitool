@@ -1300,6 +1300,7 @@ class Eirene():
         self.create_connected_eirene_surface(1)
         self.assemble_eirene_surfaces( 0, 1)
 
+        self.create_surface_start_end_poly()
 
     def create_connected_eirene_surface(self, iselect,atmmol=None):
 
@@ -1308,20 +1309,20 @@ class Eirene():
             return
 
         if atmmol =='atm':
-            ESRF_SAREA = self.ESRF_SAREA_atom
-            ESRF_ITRIA = self.ESRF_ITRIA_atom
-            ESRF_ISIDE = self.ESRF_ISIDE_atom
-            ESRF_ISURF = self.ESRF_ISURF_atom
+            self.ESRF_SAREA = self.ESRF_SAREA_atom
+            self.ESRF_ITRIA = self.ESRF_ITRIA_atom
+            self.ESRF_ISIDE = self.ESRF_ISIDE_atom
+            self.ESRF_ISURF = self.ESRF_ISURF_atom
         elif atmmol =='mol':
-            ESRF_SAREA = self.ESRF_SAREA_mol
-            ESRF_ITRIA = self.ESRF_ITRIA_mol
-            ESRF_ISIDE = self.ESRF_ISIDE_mol
-            ESRF_ISURF = self.ESRF_ISURF_mol
+            self.ESRF_SAREA = self.ESRF_SAREA_mol
+            self.ESRF_ITRIA = self.ESRF_ITRIA_mol
+            self.ESRF_ISIDE = self.ESRF_ISIDE_mol
+            self.ESRF_ISURF = self.ESRF_ISURF_mol
         else:
-            ESRF_SAREA = self.ESRF_SAREA_mol
-            ESRF_ITRIA = self.ESRF_ITRIA_mol
-            ESRF_ISIDE = self.ESRF_ISIDE_mol
-            ESRF_ISURF = self.ESRF_ISURF_mol
+            self.ESRF_SAREA = self.ESRF_SAREA_mol
+            self.ESRF_ITRIA = self.ESRF_ITRIA_mol
+            self.ESRF_ISIDE = self.ESRF_ISIDE_mol
+            self.ESRF_ISURF = self.ESRF_ISURF_mol
 
 
         isrf = self.nlim + iselect
@@ -1338,9 +1339,9 @@ class Eirene():
         x = []
         y = []
         for i in range(0, self.NLMPGS):
-            if ESRF_ISURF[i] == isrf+1:
-                itria = ESRF_ITRIA[i] - 1
-                iside = ESRF_ISIDE[i] - 1
+            if self.ESRF_ISURF[i] == isrf+1:
+                itria = self.ESRF_ITRIA[i] - 1
+                iside = self.ESRF_ISIDE[i] - 1
                 ip1 = iside
                 ip2 = ip1 + 1
                 if ip2 > 2:
@@ -1539,6 +1540,75 @@ class Eirene():
         logger.log(5, "surface_polygon {}".format(self.surface_polygon))
         logger.log(5, "surface_polygon_sfidx {}".format(self.surface_polygon_sfidx))
 
+
+    def create_surface_start_end_poly(self):
+# Get max min coordinates of all surfaces
+        Rmax = -1e30
+        Rmin = +1e30
+        Zmax = -1e30
+        Zmin = +1e30
+        for i in range(0, self.NLMPGS):
+            if self.ESRF_ISURF[i] > 0:
+                itria = self.ESRF_ITRIA[i] - 1
+                iside = self.ESRF_ISIDE[i] - 1
+                ip1 = iside
+                ip2 = ip1 + 1
+                if ip2 > 2:
+                    ip2=ip2-3
+                if itria > 0:
+                    Rmax = max([Rmax, self.geom.xv[self.geom.trimap[itria, ip1]]])
+                    Rmin = min([Rmin, self.geom.xv[self.geom.trimap[itria, ip1]]])
+                    Zmax = max([Zmax, self.geom.yv[self.geom.trimap[itria, ip1]]])
+                    Zmin = min([Zmin, self.geom.yv[self.geom.trimap[itria, ip1]]])
+
+
+        sizeR = Rmin - Rmax
+        sizeZ = Zmin - Zmax
+
+        marker_size = np.sqrt(sizeR ** 2 + sizeZ ** 2) * 0.01
+
+        # ; start marker
+
+
+        self.surface_polygon_start = np.zeros(([2,4]))
+        dRpoly = self.surface_polygon[2][0] - self.surface_polygon[0][0]
+        dZpoly = self.surface_polygon[3][0] - self.surface_polygon[1][0]
+        leng = np.sqrt(dRpoly ** 2 + dZpoly ** 2)
+        dRpoly = dRpoly / leng
+        dZpoly = dZpoly / leng
+        dRperp = -dZpoly
+        dZperp = dRpoly
+
+
+        self.surface_polygon_start[0, 0] = self.surface_polygon[0][0]
+        self.surface_polygon_start[0, 1] = self.surface_polygon[1][0]
+        self.surface_polygon_start[0, 2] = self.surface_polygon[0][0] + marker_size * dRperp
+        self.surface_polygon_start[0, 3] = self.surface_polygon[1][0] + marker_size * dZperp
+        self.surface_polygon_start[1, 0] = self.surface_polygon[0][0] + 0.5 * marker_size * dRperp
+        self.surface_polygon_start[1, 1] = self.surface_polygon[1][0] + 0.5 * marker_size * dZperp
+        self.surface_polygon_start[1, 2] = self.surface_polygon[0][0] + 0.5 * marker_size * dRperp + marker_size * dRpoly
+        self.surface_polygon_start[1, 3] = self.surface_polygon[1][0] + 0.5 * marker_size * dZperp + marker_size * dZpoly
+
+        # ; end  marker
+        self.surface_polygon_end = np.zeros(([2,4]))
+        # a = size(self.surface_polygon)
+        idx = self.surface_polygon.shape[1] - 1
+        dRpoly = self.surface_polygon[2][idx] - self.surface_polygon[0][idx]
+        dZpoly = self.surface_polygon[3][idx]  - self.surface_polygon[1][idx]
+        leng = np.sqrt(dRpoly ** 2 + dZpoly ** 2)
+        dRpoly = dRpoly / leng
+        dZpoly = dZpoly / leng
+        dRperp = dZpoly
+        dZperp = -dRpoly
+
+        self.surface_polygon_end[0, 0] = self.surface_polygon[2][idx]
+        self.surface_polygon_end[0, 1] = self.surface_polygon[3][idx]
+        self.surface_polygon_end[0, 2] = self.surface_polygon[2][idx] + marker_size * dRperp
+        self.surface_polygon_end[0, 3] = self.surface_polygon[3][idx] + marker_size * dZperp
+        self.surface_polygon_end[1, 0] = self.surface_polygon[2][idx] + 0.5 * marker_size * dRperp
+        self.surface_polygon_end[1, 1] = self.surface_polygon[3][idx] + 0.5 * marker_size * dZperp
+        self.surface_polygon_end[1, 2] = self.surface_polygon[2][idx] + 0.5 * marker_size * dRperp - marker_size * dRpoly
+        self.surface_polygon_end[1, 3] = self.surface_polygon[3][idx] + 0.5 * marker_size * dZperp - marker_size * dZpoly
 
 
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
