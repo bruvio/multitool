@@ -690,10 +690,57 @@ if __name__ == "__main__":
 
     # simu.read_eirene(simu.fullpath[:-6])
     simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
+
+    simu.data.eirene.create_connected_eirene_surface(2)
+    simu.data.eirene.assemble_eirene_surfaces(0, 2)
+
+    simu.data.eirene.create_surface_start_end_poly()
+
+    # plt.figure()
+    simu.data.eirene.plot_eirene_grid()
+
+    GM = (math.sqrt(5) - 1) / 2
+    W = 8
+    H = GM * W
+    SIZE = (W, H)
+
+    from shapely.geometry.polygon import LinearRing
+
+    ring1 = LinearRing(
+        [(simu.data.eirene.surface_polygon_start[0][0], simu.data.eirene.surface_polygon_start[0][1]),
+         (simu.data.eirene.surface_polygon_start[0][2],
+          simu.data.eirene.surface_polygon_start[0][3]),
+         (simu.data.eirene.surface_polygon_start[1][0],
+          simu.data.eirene.surface_polygon_start[1][1]),
+         (simu.data.eirene.surface_polygon_start[1][2],
+          simu.data.eirene.surface_polygon_start[1][3])])
+    ring2 = LinearRing(
+        [(simu.data.eirene.surface_polygon_end[0][0], simu.data.eirene.surface_polygon_end[0][1]),
+         (simu.data.eirene.surface_polygon_end[0][2],
+          simu.data.eirene.surface_polygon_end[0][3]),
+         (simu.data.eirene.surface_polygon_end[1][0],
+          simu.data.eirene.surface_polygon_end[1][1]),
+         (simu.data.eirene.surface_polygon_end[1][2],
+          simu.data.eirene.surface_polygon_end[1][3])])
+    x, y = ring1.xy
+    plt.plot(x, y, 'o', color=simu.data.eirene.BLUE, zorder=1, alpha=1)
+    x, y = ring2.xy
+    plt.plot(x, y, 'o', color=simu.data.eirene.GREEN, zorder=1, alpha=1)
+
+    plt.plot(simu.data.eirene.surface_polygon[0], simu.data.eirene.surface_polygon[1], 'rx')
+    # plt.plot(self.surface_polygon[1], self.surface_polygon[3], 'bo') #axial symmetric surface
+    plt.plot(simu.data.eirene.r_ves, simu.data.eirene.z_ves, 'x', color=simu.data.eirene.BLACK, zorder=1, alpha=1)
+    print('test')
+
+
+
+
+
+
     # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')
 
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-    simu.data.eirene.plot_eirene_vol_data()
+    # simu.data.eirene.plot_eirene_vol_data()
    #
    #
     # simu.data.eirene.plot_eirene_vol_data(data='MOL')

@@ -71,6 +71,17 @@ class Eirene():
     """
     
     def __init__(self,folder):
+
+
+        #defyning a few colors
+
+        self.BLUE = '#6699cc'
+        self.GRAY = '#999999'
+        self.DARKGRAY = '#333333'
+        self.YELLOW = '#ffcc33'
+        self.GREEN = '#339933'
+        self.RED = '#ff3333'
+        self.BLACK = '#000000'
         #default setting for EIRENE outputs (may change in the future)
 
         #folder containing eirene files (can be the catalog folder or run folder)
@@ -540,6 +551,33 @@ class Eirene():
         self.geom.puff = read_puff_file(self.runfolder + 'puff.dat')
 
 ###################################
+
+        with open("../exp_data/vessel_JET_csv.txt", "rt") as f:
+            reader = csv.reader(f, delimiter=";")
+            next(reader)
+            # col = list(zip(*reader))[1]
+            csv_dic = []
+
+            for row in reader:
+                csv_dic.append(row)
+            # print(csv_dic)
+            col1 = []
+            col2 = []
+
+            for row in csv_dic:
+                col1.append(row[0])
+                col2.append(row[1])
+            dummy = np.array(col1)
+            # print(dummy)
+            dummy2 = np.array(col2)
+            dummy2 = [float(i) for i in dummy2]
+            self.z_ves = -np.asarray(dummy2)
+            dummy = [float(i) for i in dummy]
+            self.r_ves = np.asarray(dummy)
+
+        BoundCoordTuple = list(zip(self.r_ves, self.z_ves))
+        self.VesselpolygonBound = Polygon(BoundCoordTuple)
+
         #start reading informations
         logger.info( 'collecting information from eirene.input file \n')
         with open(self.runfolder + 'eirene.input') as f:
@@ -1297,13 +1335,10 @@ class Eirene():
 
         logger.info( 'reading eirene data done! \n')
 
-        self.create_connected_eirene_surface(1)
-        self.assemble_eirene_surfaces( 0, 1)
 
-        self.create_surface_start_end_poly()
 
-    def create_connected_eirene_surface(self, iselect,atmmol=None):
 
+    def get_surface_name(self,iselect,atmmol=None):
         if iselect >9:
             logger.error('Surface number must be <9')
             return
@@ -1327,11 +1362,22 @@ class Eirene():
 
         isrf = self.nlim + iselect
         surface_number = isrf + 1
-        logger.log(5,
-                   "creating connected polygon groups for surface {}, EIRENE surface number= {}".format(
-                       self.ESRF_NAMES[isrf], surface_number))
+
         surface_name = self.ESRF_NAMES[isrf]
 
+        logger.info(
+                   "surface {}, EIRENE surface number= {}".format(
+                       surface_name, surface_number))
+
+        return isrf,surface_name,surface_number
+
+
+    def create_connected_eirene_surface(self, iselect,atmmol=None):
+
+        isrf, surface_name, surface_number = self.get_surface_name(iselect,atmmol)
+        logger.log(5,
+                   "creating connected polygon groups for surface {}, EIRENE surface number= {}".format(
+                       surface_name, surface_number))
         # poly = lonarr(NLMPGS,2)
         poly = np.zeros((2,self.NLMPGS),dtype=int)
         poly_sfidx = np.zeros(self.NLMPGS,dtype=int)
