@@ -5,6 +5,7 @@ __version__ = "0.1"
 import logging
 logger = logging.getLogger(__name__)
 import sys
+import struct
 import os
 from importlib import import_module
 
@@ -236,8 +237,162 @@ def read_surfaces_file(filename):
 
     return data
 
+def read_trimap_file(filename):
+    dummy = np.genfromtxt(filename, skip_header=1,dtype=int)
+    # dummy2 = dummy
+    dummy1 = dummy[:,1]
+    dummy2 = dummy[:,2]
+    dummy3 = dummy[:,3]
+
+    # dummy = np.subtract(dummy,1)
+
+    return dummy1,dummy2,dummy3
+
+def load_eiri_geo_data(filename):
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            if ' #NP,IOPEN,NXW,NC,NROW,JPRGT,JPLFT,NVES,NVESM,NPOLYP' in str(line):
+                index = index + 1
+                dummy = lines[index].split()
+                npo,iopen,nxw,nc,nr,jprgt,jplft,nves,nvesm,npolyp = [int(x) for x in dummy]
+                index = index + 2
+                dummy = lines[index].split()
+                mc,mr,ni2d,nj2d,idummy,idummy,idummy = [int(x) for x in dummy]
+                break
+
+    crings = iopen-1
+    srings = nxw-iopen+1
+    crows = jplft - jprgt +1
+    srows = nr
+    prows = nr-crows
+    prowsot = jprgt -1
+    prowsit = nr - jplft
+    prings = ( npo -(crows+1)*crings - srows*srings) / prows
+    nleft = max([prings-1, crings-1])
+
+#looking for tag
+    tag = '# KORPG   '
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+
+            if tag in str(line):
+                # storing line
+                index = index + 1
+                break
+    korpg = []
+    while len(korpg) < npo:
+        dummy = lines[index].split()
+        for elem in dummy:
+            # elem = float(elem)
+            korpg.append(elem)
+        index = index + 1
+    korpg1 = [int(i,16) for i in korpg] # reading HEX value base 16
+
+    # looking for tag
+    tag = '# IKOR   '
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+
+            if tag in str(line):
+                # storing line
+                index = index + 1
+                break
+    ikor = []
+    while len(ikor) < mc*(mr+1):
+        dummy = lines[index].split()
+        for elem in dummy:
+            # elem = float(elem)
+            ikor.append(elem)
+        index = index + 1
+    ikor1 = [int(i, 16) for i in ikor]
 
 
+#looking for tag
+    tag = '# JKOR   '
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+
+            if tag in str(line):
+                # storing line
+                index = index + 1
+                break
+    jkor = []
+    while len(jkor) < mc*(mr+1):
+        dummy = lines[index].split()
+        for elem in dummy:
+            jkor.append(elem)
+        index = index + 1
+    jkor1 = [int(i, 16) for i in jkor]
+
+#looking for tag
+    tag = '# RVERTP   '
+    rdummy = []
+    rvertp = np.zeros((npolyp,5))
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            # storing line
+            if tag in str(line):
+                index = index + 1
+                break
+
+    while len(rdummy) < npolyp*5:
+        dummy = [lines[index][i:i+16] for i in range(0, len(lines[index]),16)] #reading line and splitting HEX every 16 digits
+        # dummy = lines[index].split()
+        for [value] in struct.iter_unpack('>d', bytes.fromhex(lines[index][:-1])): #converting each 16 digits to double
+                rdummy.append(value)
+        index = index + 1
+
+    rvertp = np.zeros((5,npolyp))
+    for j in range(1, npolyp + 1):
+        for i in range(1,6):
+
+            rvertp[i-1,j-1] = float(rdummy[(i-1)*npolyp + j-1])
+
+    rvertp = rvertp.T
+
+
+#looking for tag
+    tag = '# ZVERTP   '
+    zdummy = []
+    zvertp = np.zeros((npolyp,5))
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            # storing line
+            if tag in str(line):
+                index = index + 1
+                break
+
+    while len(zdummy) < npolyp*5:
+        dummy = [lines[index][i:i+16] for i in range(0, len(lines[index]),16)] #reading line and splitting HEX every 16 digits
+        # dummy = lines[index].split()
+        for [value] in struct.iter_unpack('>d', bytes.fromhex(lines[index][:-1])): #converting each 16 digits to double
+                zdummy.append(value)
+        index = index + 1
+
+    zvertp = np.zeros((5,npolyp))
+    for j in range(1, npolyp + 1):
+        for i in range(1,6):
+            zvertp[i-1,j-1] = -1.0* float(zdummy[(i-1)*npolyp + j-1])
+
+    zvertp = zvertp.T
+
+
+
+    ne2ddata = 0
+    for i in range(0,npo):
+        if (korpg1[i] > 0) :
+            ne2ddata = ne2ddata+1
+
+    print('')
+
+
+    return npo, ne2ddata, KORPG, RVERTP, ZVERTP, IKOR, JKOR
 
 def read_elemente_file(filename):
     dummy = np.genfromtxt(filename, skip_header=1,dtype=int)

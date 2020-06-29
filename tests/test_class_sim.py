@@ -734,6 +734,16 @@ if __name__ == "__main__":
 
 
 
+    print(simu.data.eirene.PLS.names)
+    # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+    print(simu.data.eirene.MOL.names)
+    # Out[13]: {0: 'D2'}
+    print(simu.data.eirene.ATM.names)
+    # Out[14]: {0: 'D', 1: 'Be'}
+    print(simu.data.eirene.ION.names)
+    # Out[15]: {0: 'D2+'}
+
+    simu.data.eirene.get_eirene_surface_data(data='PLS',var=0,species=0)
 
 
 

@@ -131,7 +131,7 @@ class Eirene():
         self.geom = SimpleNamespace()
         self.geom.xv = []
         self.geom.yv = []
-        self.geom.trimap = []
+        self.geom.Elements = []
         self.geom.verts = []
         self.geom.pump = []
         self.geom.pump = []
@@ -541,7 +541,13 @@ class Eirene():
         self.geom.xv, self.geom.yv,z= read_npco_file(self.runfolder+'eirene.npco_char')
         #reads triangles map and vertices
         logger.info( 'reading eirene.elemente file \n')
-        self.geom.trimap,self.geom.verts = read_elemente_file(self.runfolder+'eirene.elemente')
+        self.geom.Elements,self.geom.verts = read_elemente_file(self.runfolder+'eirene.elemente')
+        logger.info( 'reading eirene.trimap file \n')
+        self.geom.trimap,self.geom.trimap_1,self.geom.trimap_2 = read_trimap_file(self.runfolder+'eirene.trimap')
+
+        logger.info('reading e2deir.dat file \n')
+        self.npo, self.ne2ddata, self.KORPG, self.RVERTP, self.ZVERTP, self.IKOR, self.JKOR = load_eiri_geo_data(
+            self.runfolder + 'e2deir.dat')
 
         #reads pump (only for standard EIRENE files)
         logger.info( 'reading eirene pump file \n')
@@ -1021,17 +1027,17 @@ class Eirene():
         for i in range(0, self.npls):
             #READING DATA AS A BLOCK
             try:
-                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             except:
                 dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
-                                     nrows=self.geom.trimap.shape[0],
+                                     nrows=self.geom.Elements.shape[0],
                                      delim_whitespace=True, header=None,
                                      index_col=False, error_bad_lines=False,
                                      warn_bad_lines=False)
             #dummy1 contains all volumetric average data for a species (has NPLSdataname column +1, the index)
             # dummy1[dummy1.columns[11]]
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip +self.geom.trimap.shape[0]+1#
+            row_to_skip = row_to_skip +self.geom.Elements.shape[0]+1#
             logger.log(5, row_to_skip)
             # if transfer_version is not None:
             #dummy2 contains surface average data for the same specie
@@ -1076,16 +1082,16 @@ class Eirene():
         logger.info(' reading neutral atom data')
         for i in range(0,self.natm):
             try:
-                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             except:
                 dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
-                                     nrows=self.geom.trimap.shape[0],
+                                     nrows=self.geom.Elements.shape[0],
                                      delim_whitespace=True, header=None,
                                      index_col=False, error_bad_lines=False,
                                      warn_bad_lines=False)
                 # 36730
             dummy1.fillna(0, inplace=True)  # converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            row_to_skip = row_to_skip + self.geom.Elements.shape[0] + 1
             logger.log(5, row_to_skip)
             # if transfer_version is not None:
             try:
@@ -1122,15 +1128,15 @@ class Eirene():
         logger.info(' reading neutral molecules data')
         for i in range(0,self.nmol):
             try:
-                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             except:
                 dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
-                                     nrows=self.geom.trimap.shape[0],
+                                     nrows=self.geom.Elements.shape[0],
                                      delim_whitespace=True, header=None,
                                      index_col=False, error_bad_lines=False,
                                      warn_bad_lines=False)
             dummy1.fillna(0, inplace=True)#converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            row_to_skip = row_to_skip + self.geom.Elements.shape[0] + 1
             logger.log(5, row_to_skip)
             # if transfer_version is not None:
             try:
@@ -1167,15 +1173,15 @@ class Eirene():
         logger.info('  reading test ions data')
         for i in range(0,self.nion):
             try:
-                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+                dummy1=pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
             except:
                 dummy1 = pd.read_csv(self.runfolder + 'eirene.transfer', skiprows=row_to_skip,
-                                     nrows=self.geom.trimap.shape[0],
+                                     nrows=self.geom.Elements.shape[0],
                                      delim_whitespace=True, header=None,
                                      index_col=False, error_bad_lines=False,
                                      warn_bad_lines=False)
             dummy1.fillna(0, inplace=True) #converts nan into 0
-            row_to_skip = row_to_skip + self.geom.trimap.shape[0] + 1
+            row_to_skip = row_to_skip + self.geom.Elements.shape[0] + 1
             logger.log(5, row_to_skip)
             # if transfer_version is not None:
             try:
@@ -1208,11 +1214,11 @@ class Eirene():
 
         logger.info('  reading miscellaneous data')
         try:
-            self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
+            self.MISC.vol_avg_data = pd.read_csv(self.runfolder + 'eirene.transfer.gz', compression='gzip' , skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],delim_whitespace=True, header=None,index_col=False, error_bad_lines=False, warn_bad_lines=False)
         except:
             self.MISC.vol_avg_data = pd.read_csv(
                 self.runfolder + 'eirene.transfer',
-                skiprows=row_to_skip, nrows=self.geom.trimap.shape[0],
+                skiprows=row_to_skip, nrows=self.geom.Elements.shape[0],
                 delim_whitespace=True, header=None, index_col=False,
                 error_bad_lines=False, warn_bad_lines=False)
         self.MISC.vol_avg_data.reset_index(drop=True, inplace=True)
@@ -1324,12 +1330,13 @@ class Eirene():
 
 ###################################
         logger.info(' reading geometrical info \n')
-        sh = ep.data(self.runfolder + 'tran', 'SH').data
-        self.sh = np.trim_zeros(sh, 'b')
-        hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
-        self.hrho = np.trim_zeros(hrho, 'b')
-        rmesh = ep.data(self.runfolder + 'tran', 'RMESH').data
-        self.rmesh = np.trim_zeros(rmesh, 'b')
+        self.sh = ep.data(self.runfolder + 'tran', 'SH').data
+        # self.sh = np.trim_zeros(sh, 'b')
+        self.hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
+        # self.hrho = np.trim_zeros(hrho, 'b')
+        self.rmesh = ep.data(self.runfolder + 'tran', 'RMESH').data
+        # self.rmesh = np.trim_zeros(ls
+        # , 'b')
 
 ###################################
 
@@ -1392,11 +1399,11 @@ class Eirene():
                 ip2 = ip1 + 1
                 if ip2 > 2:
                     ip2=ip2-3
-                poly[0,npoly] = self.geom.trimap[itria, ip1]
-                poly[1,npoly] = self.geom.trimap[itria, ip2]
+                poly[0,npoly] = self.geom.Elements[itria, ip1]
+                poly[1,npoly] = self.geom.Elements[itria, ip2]
 
-                # x.append(self.geom.trimap[itria, ip1])
-                # y.append(self.geom.trimap[itria, ip2])
+                # x.append(self.geom.Elements[itria, ip1])
+                # y.append(self.geom.Elements[itria, ip2])
 
                 poly_sfidx[npoly] = i
                 npoly = npoly+1
@@ -1567,7 +1574,7 @@ class Eirene():
         npolygon = self.surface_poly_group[1][group] - self.surface_poly_group[0][group] + 1
         logger.log(5, "Surface group has {} polygons".format(npolygon))
         # surface_polygon = dblarr(npolygon,4)
-        self.surface_polygon_sfidx = np.zeros(npolygon)
+        self.surface_polygon_sfidx = np.zeros(npolygon,dtype=int)
         surface_polygon_x1 = []
         surface_polygon_y1 = []
         surface_polygon_x2 = []
@@ -1602,10 +1609,10 @@ class Eirene():
                 if ip2 > 2:
                     ip2=ip2-3
                 if itria > 0:
-                    Rmax = max([Rmax, self.geom.xv[self.geom.trimap[itria, ip1]]])
-                    Rmin = min([Rmin, self.geom.xv[self.geom.trimap[itria, ip1]]])
-                    Zmax = max([Zmax, self.geom.yv[self.geom.trimap[itria, ip1]]])
-                    Zmin = min([Zmin, self.geom.yv[self.geom.trimap[itria, ip1]]])
+                    Rmax = max([Rmax, self.geom.xv[self.geom.Elements[itria, ip1]]])
+                    Rmin = min([Rmin, self.geom.xv[self.geom.Elements[itria, ip1]]])
+                    Zmax = max([Zmax, self.geom.yv[self.geom.Elements[itria, ip1]]])
+                    Zmin = min([Zmin, self.geom.yv[self.geom.Elements[itria, ip1]]])
 
 
         sizeR = Rmin - Rmax
@@ -1657,6 +1664,123 @@ class Eirene():
         self.surface_polygon_end[1, 3] = self.surface_polygon[3][idx] + 0.5 * marker_size * dZperp - marker_size * dZpoly
 
 
+    def get_eirene_surface_data(self,data=None,species=None,var=None):
+        if species is None:
+            species = 0
+        else:
+            species = species
+
+        if var is None:
+            var = 0
+        else:
+            var = var
+        # number of triangles in the mesh, i.e. number of data points
+        triangnum = self.NLMPGS
+        if data is None:
+            # accessing data inside the block matrix
+            data = self.MOL.surf_avg_data[
+                   triangnum * (species):(species + 1) * triangnum]
+            data = data[data.columns[1]]
+            label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
+        elif data == 'PLS':
+            data = self.PLS.surf_avg_data[
+                   triangnum * (species):(species + 1) * triangnum]
+            data = data[data.columns[1]]
+            label = self.PLS.names[species] + ' - ' + self.PLS.SurfunitName[var]
+        elif data == "MOL":
+            data = self.MOL.surf_avg_data[
+                   triangnum * (species):(species + 1) * triangnum]
+            data = data[data.columns[1]]
+            label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
+        elif data == "ATM":
+            data = self.ATM.surf_avg_data[
+                   triangnum * (species):(species + 1) * triangnum]
+            data = data[data.columns[1]]
+            label = self.ATM.names[species] + ' - ' + self.ATM.SurfunitName[var]
+        elif isinstance(data, np.ndarray):
+            data = data[triangnum * (species):(species + 1) * triangnum]
+            label = label
+        # elif isinstance(data,pd.Series):
+        #     var = data[triangnum*(species):(species+1)*triangnum-1]
+        #     label = label
+        elif isinstance(data, pd.DataFrame):
+            # if input data is the whole dataframe use species and var to determine which block of the matrix to use for plotting
+
+            data = data[triangnum * (species):(species + 1) * triangnum]
+            data = data[data.columns[var + 1]]
+            label = label
+        else:
+            logger.error('choose between MOL/ATM \n')
+            return
+
+
+        surface_ndata = self.surface_polygon.shape[1]
+
+
+        surface_data_x = np.zeros(surface_ndata)
+        surface_data_y = np.zeros(surface_ndata)
+        surface_data_dx = np.zeros(surface_ndata)
+        surface_data_p = np.zeros((surface_ndata, 2))
+        surface_data_area = np.zeros(surface_ndata)
+        surface_data_itria = np.zeros(surface_ndata,dtype=int)
+        surface_data_iside = np.zeros(surface_ndata,dtype=int)
+        #
+        for i in range(0, surface_ndata):
+            surface_data_dx[i] = np.sqrt(
+                (self.surface_polygon[2][i] - self.surface_polygon[0][i]) ** 2 +
+            ((self.surface_polygon[3][i] - self.surface_polygon[1][i]) ** 2) )
+            surface_data_p[i][0] = 0.5 * (
+                    self.surface_polygon[0][i] + self.surface_polygon[2][i])
+            surface_data_p[i][1] = 0.5 * (
+                    self.surface_polygon[1][i] + self.surface_polygon[3][i])
+            surface_data_y[i] = data[self.surface_polygon_sfidx[i]]
+            surface_data_area[i] = self.ESRF_SAREA[self.surface_polygon_sfidx[i]]
+            surface_data_itria[i] = self.ESRF_ITRIA[self.surface_polygon_sfidx[i]]
+            surface_data_iside[i] = self.ESRF_ISIDE[self.surface_polygon_sfidx[i]]
+
+        #
+        #
+        # # ; create surface   with segment edges acording to EDGE2D grid
+        surface_polygon_e2d = np.zeros((4,surface_ndata))
+        surface_polygon_e2d[0][0] = self.surface_polygon[0][0]
+        surface_polygon_e2d[1][0] = self.surface_polygon[1][0]
+        surface_polygon_e2d[2][surface_ndata - 1] = self.surface_polygon[2][
+            surface_ndata - 1]
+        surface_polygon_e2d[3][surface_ndata - 1] = self.surface_polygon[3][
+            surface_ndata - 1]
+        for i in range(0, surface_ndata-1):
+            px = 0.5 * (surface_data_p[i][0] + surface_data_p[i+1][0])
+            py = 0.5 * (surface_data_p[i][1] + surface_data_p[i+1][1])
+            surface_polygon_e2d[2][i] = px
+            surface_polygon_e2d[3][i] = py
+            surface_polygon_e2d[0][i + 1] = px
+            surface_polygon_e2d[1][i + 1] = py
+
+        surface_data_e2d_p = np.zeros((surface_ndata, 2))
+        surface_data_e2d_dx = np.zeros(surface_ndata)
+        surface_data_e2d_area = np.zeros(surface_ndata)
+        for i in range(0, surface_ndata):
+            surface_data_e2d_dx[i] = np.sqrt(
+                (surface_polygon_e2d[2][i] - surface_polygon_e2d[0][i]) ** 2 +
+            ((surface_polygon_e2d[3][i] - surface_polygon_e2d[1][i]) ** 2) )
+            surface_data_e2d_p[0] = 0.5 * (
+                        surface_polygon_e2d[0][i] + surface_polygon_e2d[2][i])
+            surface_data_e2d_p[i][1] = 0.5 * (
+                        surface_polygon_e2d[1][i] + surface_polygon_e2d[3][i])
+            # ;     surface_data_e2d_area[i] = 1.0e4 * 2.0 *!PI * surface_data_e2d_p[i, 0] *
+            #                                                surface_data_e2d_dx[i]$
+            # ; / EIR_TRI_SH[surface_data_itria[i]]
+            surface_data_e2d_area[i] = 1.0e4 * 2.0 *np.pi * self.rmesh[surface_data_itria[i]]*self.hrho[surface_data_itria[i]]*self.sh[surface_data_itria[i]]
+
+
+        surface_data_x[0] = 0.
+        for i in range (1, surface_ndata):
+            surface_data_x[i] = surface_data_x[i - 1] + 0.5* surface_data_dx[i - 1] + 0.5* surface_data_dx[i]
+
+        self.surface_data_e2d_area = surface_data_e2d_area
+        self.surface_data_x = surface_data_x
+
+
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """
         function that allow contour plots of EIRENE data
@@ -1700,20 +1824,24 @@ class Eirene():
         else:
             var=var
 #number of triangles in the mesh, i.e. number of data points
-        triangnum = self.geom.trimap.shape[0]
+        triangnum = self.geom.Elements.shape[0]
         if data is None:
             #accessing data inside the block matrix
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
+            label = self.MOL.names[species] +' - '+ self.MOL.VolunitName[var]
+        elif data == "PLS":
+            data = self.PLS.vol_avg_data[triangnum*(species):(species+1)*triangnum]
+            data = data[data.columns[1]]
+            label = self.PLS.names[species] +' - '+ self.PLS.VolunitName[var]
         elif data == "MOL":
             data = self.MOL.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.MOL.names[0] +' - '+ self.MOL.VolunitName[0]
+            label = self.MOL.names[species] +' - '+ self.MOL.VolunitName[var]
         elif data == "ATM":
             data = self.ATM.vol_avg_data[triangnum*(species):(species+1)*triangnum]
             data = data[data.columns[1]]
-            label = self.ATM.names[0] +' - '+ self.ATM.VolunitName[0]
+            label = self.ATM.names[species] +' - '+ self.ATM.VolunitName[var]
         elif isinstance(data,np.ndarray):
             data = data[triangnum*(species):(species+1)*triangnum]
             label = label
@@ -1732,8 +1860,8 @@ class Eirene():
 
         logger.log(5,'plotting {} data volume avg data \n'.format(label))
         # plt.figure()
-        # x = [self.geom.xv[i] for i in self.geom.trimap]
-        # y = [self.geom.yv[i] for i in self.geom.trimap]
+        # x = [self.geom.xv[i] for i in self.geom.Elements]
+        # y = [self.geom.yv[i] for i in self.geom.Elements]
         #
         # plt.tricontourf(x,y,self.MOL.vol_avg_data)
         # plt.show()
@@ -1742,13 +1870,13 @@ class Eirene():
         #getting coordinates of the triangles and creating arrays that describe polygons
         logger.log(5,"collecting coordinates of triangles \n")
         x = [self.geom.xv[i] for i in
-             self.geom.trimap]
+             self.geom.Elements]
         y = [self.geom.yv[i] for i in
-             self.geom.trimap]
+             self.geom.Elements]
 
         # matplotlib.pyplot.tricontourf(x, y, sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data)
 
-        # plt.tricontourf(sim_hfe_Nrad0.vol_avg_data.eirene.geom.xv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.yv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.trimap,sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data[1])
+        # plt.tricontourf(sim_hfe_Nrad0.vol_avg_data.eirene.geom.xv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.yv,sim_hfe_Nrad0.vol_avg_data.eirene.geom.Elements,sim_hfe_Nrad0.vol_avg_data.eirene.MOL.vol_avg_data[1])
 
 
         if lowerbound is None:
@@ -1976,9 +2104,9 @@ class Eirene():
         else:
             self.geom.puff = read_puff_file(self.runfolder + 'puff.dat', alternativefile=pufffile)
         x = [self.geom.xv[i] for i in
-             self.geom.trimap]
+             self.geom.Elements]
         y = [self.geom.yv[i] for i in
-             self.geom.trimap]
+             self.geom.Elements]
 
         x1 = []
         x2 = []
@@ -2042,7 +2170,7 @@ class Eirene():
 
 
     def get_pressure(self):
-        triangnum = self.geom.trimap.shape[0]
+        triangnum = self.geom.Elements.shape[0]
         mD2 = 2 * 2.01410178 * 1.660538921E-27;  # kg
 
 
