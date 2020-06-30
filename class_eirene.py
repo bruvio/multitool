@@ -1329,14 +1329,20 @@ class Eirene():
 
 
 ###################################
-        logger.info(' reading geometrical info \n')
-        self.sh = ep.data(self.runfolder + 'tran', 'SH').data
-        # self.sh = np.trim_zeros(sh, 'b')
-        self.hrho = ep.data(self.runfolder + 'tran', 'HRHO').data
-        # self.hrho = np.trim_zeros(hrho, 'b')
-        self.rmesh = ep.data(self.runfolder + 'tran', 'RMESH').data
+        logger.info(' reading EIRENE geometrical info \n')
+        # self.sh = ep.data(self.runfolder + 'tran', ' SH ').data
+        # # self.sh = np.trim_zeros(sh, 'b')
+        # self.hrho = ep.data(self.runfolder + 'tran', ' HRHO ' ).data
+        # # self.hrho = np.trim_zeros(hrho, 'b')
+        # self.rmesh = ep.data(self.runfolder + 'tran', ' RMESH ').data
         # self.rmesh = np.trim_zeros(ls
         # , 'b')
+
+        self.sh,self.sh_title = load_eiri_signal(self.npo, self.runfolder+'e2deir.dat', ' SH ')
+        self.hrho,self.hrho_title = load_eiri_signal(self.npo, self.runfolder+'e2deir.dat', ' HRHO ')
+        self.rmesh,self.rmesh_title = load_eiri_signal(self.npo, self.runfolder+'e2deir.dat', ' RMESH ')
+
+        pdb.set_trace()
 
 ###################################
 

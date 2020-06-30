@@ -55,7 +55,7 @@ import argparse
 import platform
 from logging.handlers import RotatingFileHandler
 from logging import handlers
-from custom_formatters import MyFormatter,QPlainTextEditLogger,HTMLFormatter
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -65,6 +65,8 @@ import numpy as np
 import math
 import csv
 import pathlib
+sys.path.append('../')
+from custom_formatters import MyFormatter,QPlainTextEditLogger,HTMLFormatter
 from class_sim import sim
 from class_sim import Getdata
 from class_sim import initread

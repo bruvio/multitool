@@ -389,10 +389,59 @@ def load_eiri_geo_data(filename):
         if (korpg1[i] > 0) :
             ne2ddata = ne2ddata+1
 
-    print('')
 
 
-    return npo, ne2ddata, KORPG, RVERTP, ZVERTP, IKOR, JKOR
+
+    return npo, ne2ddata, korpg1, rvertp, zvertp, ikor1, jkor1
+
+
+
+
+def load_eiri_signal(npo,filename, name):
+    logger.log(5, "Loading signal: '" + name + "'...")
+
+    idummy = npo
+    eiri_data = []
+
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            # storing line
+            if name in str(line):
+                index = index + 1
+                break
+
+    info_data= lines[index-1].split()
+    eiri_title = info_data[-1]
+
+    data_type = info_data[2]
+    if data_type.startswith('R'):
+        while len(eiri_data) < npo:
+            dummy = [lines[index][i:i+16] for i in range(0, len(lines[index]),16)] #reading line and splitting HEX every 16 digits
+            # dummy = lines[index].split()
+            for [value] in struct.iter_unpack('>d', bytes.fromhex(lines[index][:-1])): #converting each 16 digits to double
+                eiri_data.append(value)
+            index = index + 1
+
+    elif data_type.startswith('I'):
+        while len(eiri_data) < npo:
+            dummy = lines[index].split()
+            for elem in dummy:
+                eiri_data.append(elem)
+            index = index + 1
+
+        eiri_data = [int(i, 16) for i in eiri_data]
+
+
+
+    return eiri_data,eiri_title
+
+
+
+
+
+
+
 
 def read_elemente_file(filename):
     dummy = np.genfromtxt(filename, skip_header=1,dtype=int)
