@@ -436,7 +436,13 @@ def load_eiri_signal(npo,filename, name):
 
     return eiri_data,eiri_title
 
-
+def transform_eiri_data(signal,geom):
+        output = np.zeros(len(geom.Elements))
+        for i in range(0,len(geom.Elements)):
+            if (geom.trimap[i] > 0):
+                k = geom.trimap[i]-1
+                output[i] = signal[k]
+        return output
 
 
 

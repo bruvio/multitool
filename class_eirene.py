@@ -17,6 +17,10 @@ from class_geom import geom
 
 import sys
 import os
+import warnings
+
+warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from importlib import import_module
 libnames = ['eproc']
 
@@ -1342,9 +1346,12 @@ class Eirene():
         self.hrho,self.hrho_title = load_eiri_signal(self.npo, self.runfolder+'e2deir.dat', ' HRHO ')
         self.rmesh,self.rmesh_title = load_eiri_signal(self.npo, self.runfolder+'e2deir.dat', ' RMESH ')
 
-        pdb.set_trace()
+        self.EIR_TRI_SH = transform_eiri_data(self.sh,self.geom)
+        self.EIR_TRI_HRHO = transform_eiri_data(self.hrho,self.geom)
+        self.EIR_TRI_RMESH = transform_eiri_data(self.rmesh,self.geom)
 
-###################################
+
+            ###################################
 
         logger.info( 'reading eirene data done! \n')
 
@@ -1579,7 +1586,7 @@ class Eirene():
 
         npolygon = self.surface_poly_group[1][group] - self.surface_poly_group[0][group] + 1
         logger.log(5, "Surface group has {} polygons".format(npolygon))
-        # surface_polygon = dblarr(npolygon,4)
+
         self.surface_polygon_sfidx = np.zeros(npolygon,dtype=int)
         surface_polygon_x1 = []
         surface_polygon_y1 = []
@@ -1688,21 +1695,31 @@ class Eirene():
                    triangnum * (species):(species + 1) * triangnum]
             data = data[data.columns[1]]
             label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
-        elif data == 'PLS':
+            title = self.MOL.SurfdataName[var]
+        elif data.lower() == 'pls':
             data = self.PLS.surf_avg_data[
                    triangnum * (species):(species + 1) * triangnum]
             data = data[data.columns[1]]
             label = self.PLS.names[species] + ' - ' + self.PLS.SurfunitName[var]
-        elif data == "MOL":
+            title = self.PLS.SurfdataName[var]
+            logger.info('loading surface BULK IONS data')
+            logger.info('loading {} data - {}'.format(self.PLS.names[species],title))
+        elif data.lower() == "mol":
             data = self.MOL.surf_avg_data[
                    triangnum * (species):(species + 1) * triangnum]
             data = data[data.columns[1]]
             label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
-        elif data == "ATM":
+            title = self.MOL.SurfdataName[var]
+            logger.info('loading surface MOLECULES data')
+            logger.info('loading {} data - {}'.format(self.MOL.names[species],title))
+        elif data.lower() == "atm":
             data = self.ATM.surf_avg_data[
                    triangnum * (species):(species + 1) * triangnum]
             data = data[data.columns[1]]
             label = self.ATM.names[species] + ' - ' + self.ATM.SurfunitName[var]
+            title = self.ATM.SurfdataName[var]
+            logger.info('loading surface ATOM data ')
+            logger.info('loading {} data - {}'.format(self.ATM.names[species],title))
         elif isinstance(data, np.ndarray):
             data = data[triangnum * (species):(species + 1) * triangnum]
             label = label
@@ -1776,7 +1793,7 @@ class Eirene():
             # ;     surface_data_e2d_area[i] = 1.0e4 * 2.0 *!PI * surface_data_e2d_p[i, 0] *
             #                                                surface_data_e2d_dx[i]$
             # ; / EIR_TRI_SH[surface_data_itria[i]]
-            surface_data_e2d_area[i] = 1.0e4 * 2.0 *np.pi * self.rmesh[surface_data_itria[i]]*self.hrho[surface_data_itria[i]]*self.sh[surface_data_itria[i]]
+            surface_data_e2d_area[i] = 1.0e4 * 2.0 *np.pi * self.EIR_TRI_RMESH[surface_data_itria[i]]*self.EIR_TRI_HRHO[surface_data_itria[i]]*self.EIR_TRI_SH[surface_data_itria[i]]
 
 
         surface_data_x[0] = 0.
@@ -1784,8 +1801,150 @@ class Eirene():
             surface_data_x[i] = surface_data_x[i - 1] + 0.5* surface_data_dx[i - 1] + 0.5* surface_data_dx[i]
 
         self.surface_data_e2d_area = surface_data_e2d_area
-        self.surface_data_x = surface_data_x
+        self.surface_data_area = surface_data_area
 
+        self.surface_data_x = surface_data_x
+        self.surface_data_y = surface_data_y
+        self.surface_flux_data_e2d_y = surface_data_y / surface_data_e2d_area
+        self.surface_flux_data_y = surface_data_y / surface_data_area
+
+
+
+    def get_data_names(self,data=None):
+        if data.lower()=='pls':
+            logger.info('BULK IONS list {} \n'.format(self.PLS.names))
+        if data.lower()=='mol':
+            logger.info('MOLECULES list {} \n'.format(self.MOL.names))
+        if data.lower()=='atm':
+            logger.info('ATOMS list {} \n'.format(self.ATM.names))
+        if data.lower()=='ion':
+            logger.info('IONS list {} \n'.format(self.ION.names))
+        # print(simu.data.eirene.PLS.names)
+        # # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
+        # print(simu.data.eirene.MOL.names)
+        # # Out[13]: {0: 'D2'}
+        # print(simu.data.eirene.ATM.names)
+        # # Out[14]: {0: 'D', 1: 'Be'}
+        # print(simu.data.eirene.ION.names)
+        # # Out[15]: {0: 'D2+'}
+
+    def plot_eirere_surf_data(self,data = None, species = None, var = None):
+        if species is None:
+            species = 0
+        else:
+            species = species
+
+        if var is None:
+            var = 0
+        else:
+            var = var
+        # number of triangles in the mesh, i.e. number of data points
+        triangnum = self.NLMPGS
+        if data is None:
+            # accessing data inside the block matrix
+            label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
+            title = self.MOL.SurfdataName[var]
+            logger.info(
+                'plotting {} data - {}'.format(self.MOL.names[species], title))
+        elif data.lower() == 'pls':
+            label = self.PLS.names[species] + ' - ' + self.PLS.SurfunitName[var]
+            title = self.PLS.SurfdataName[var]
+            logger.info(
+                'plotting {} data - {}'.format(self.PLS.names[species], title))
+        elif data.lower() == "mol":
+            label = self.MOL.names[species] + ' - ' + self.MOL.SurfunitName[var]
+            title = self.MOL.SurfdataName[var]
+            logger.info(
+                'plotting {} data - {}'.format(self.MOL.names[species], title))
+        elif data.lower() == "atm":
+            label = self.ATM.names[species] + ' - ' + self.ATM.SurfunitName[var]
+            title = self.ATM.SurfdataName[var]
+            logger.info(
+                'plotting {} data - {}'.format(self.ATM.names[species], title))
+        # elif isinstance(data, np.ndarray):
+        #     data = data[triangnum * (species):(species + 1) * triangnum]
+        #     label = label
+        # elif isinstance(data,pd.Series):
+        #     var = data[triangnum*(species):(species+1)*triangnum-1]
+        #     label = label
+        # elif isinstance(data, pd.DataFrame):
+        # # if input data is the whole dataframe use species and var to determine which block of the matrix to use for plotting
+        #
+        # data = data[triangnum * (species):(species + 1) * triangnum]
+        # data = data[data.columns[var + 1]]
+        # label = label
+        else:
+            logger.error('choose between MOL/ATM \n')
+
+
+
+
+        plt.figure()
+        figtitle = label.split()[0] + label.split()[1] + title
+        logger.info('plotting {}'.format(figtitle))
+        plt.plot(self.surface_data_x,self.surface_data_y)
+        xlabel('Distance along the surface [m]')
+        ylabel(label.split()[-1])
+        plt.title(figtitle)
+
+        plt.figure()
+        figtitle = label.split()[0] + label.split()[1] + title
+        logger.info('flux density selected {} ((based on eirene triangle segments))'.format(figtitle))
+        plt.plot(self.surface_data_x,self.surface_flux_data_y)
+        xlabel('Distance along the surface [m]')
+        ylabel(label.split()[-1] + '/cm^2')
+
+        plt.title(figtitle)
+
+        plt.figure()
+        figtitle = label.split()[0] + label.split()[1] + title
+        logger.info('flux density selected {} (based on reconstructed edge2d grid segments)'.format(figtitle))
+        plt.plot(self.surface_data_x,self.surface_flux_data_e2d_y)
+        xlabel('Distance along the surface [m]')
+        ylabel(label.split()[-1] + '/cm^2')
+        plt.title(figtitle)
+
+        plt.show()
+
+
+    def plot_eirene_surface(self):
+        GM = (math.sqrt(5) - 1) / 2
+        W = 8
+        H = GM * W
+        SIZE = (W, H)
+
+        from shapely.geometry.polygon import LinearRing
+        logging.disable(logging.CRITICAL)
+        ring1 = LinearRing(
+            [(self.surface_polygon_start[0][0],
+              self.surface_polygon_start[0][1]),
+             (self.surface_polygon_start[0][2],
+              self.surface_polygon_start[0][3]),
+             (self.surface_polygon_start[1][0],
+              self.surface_polygon_start[1][1]),
+             (self.surface_polygon_start[1][2],
+              self.surface_polygon_start[1][3])])
+        ring2 = LinearRing(
+            [(self.surface_polygon_end[0][0],
+              self.surface_polygon_end[0][1]),
+             (self.surface_polygon_end[0][2],
+              self.surface_polygon_end[0][3]),
+             (self.surface_polygon_end[1][0],
+              self.surface_polygon_end[1][1]),
+             (self.surface_polygon_end[1][2],
+              self.surface_polygon_end[1][3])])
+        x, y = ring1.xy
+        plt.plot(x, y, 'o', color=self.YELLOW, zorder=1, alpha=1)
+        x, y = ring2.xy
+        plt.plot(x, y, 'o', color=self.GREEN, zorder=1, alpha=1)
+
+        plt.plot(self.surface_polygon[0],
+                 self.surface_polygon[1], 'rx')
+        # plt.plot(self.surface_polygon[1], self.surface_polygon[3], 'bo') #axial symmetric surface
+        plt.plot(self.r_ves, self.z_ves, 'x',
+                 color=self.BLACK, zorder=1, alpha=1)
+
+        logging.disable(logging.NOTSET)
 
     def plot_eirene_vol_data(self,data=None,species=None,var=None, lowerbound=None,upperbound=None,label=None):
         """

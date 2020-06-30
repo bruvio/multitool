@@ -144,7 +144,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run CORMAT_py')
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
-                             " 3: Error, 4: Debug Plus; \n default level is INFO", default=4)
+                             " 3: Error, 4: Debug Plus; \n default level is INFO", default=0)
     parser.add_argument("-doc", "--documentation", type=str,
                         help="Make documentation. yes/no", default='no')
 
@@ -693,6 +693,10 @@ if __name__ == "__main__":
     # simu.read_eirene(simu.fullpath[:-6])
     simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
 
+    for i in range(0,9):
+        simu.data.eirene.get_surface_name(i)
+
+
     simu.data.eirene.create_connected_eirene_surface(2)
     simu.data.eirene.assemble_eirene_surfaces(0, 2)
 
@@ -701,54 +705,21 @@ if __name__ == "__main__":
     # plt.figure()
     simu.data.eirene.plot_eirene_grid()
 
-    GM = (math.sqrt(5) - 1) / 2
-    W = 8
-    H = GM * W
-    SIZE = (W, H)
-
-    from shapely.geometry.polygon import LinearRing
-
-    ring1 = LinearRing(
-        [(simu.data.eirene.surface_polygon_start[0][0], simu.data.eirene.surface_polygon_start[0][1]),
-         (simu.data.eirene.surface_polygon_start[0][2],
-          simu.data.eirene.surface_polygon_start[0][3]),
-         (simu.data.eirene.surface_polygon_start[1][0],
-          simu.data.eirene.surface_polygon_start[1][1]),
-         (simu.data.eirene.surface_polygon_start[1][2],
-          simu.data.eirene.surface_polygon_start[1][3])])
-    ring2 = LinearRing(
-        [(simu.data.eirene.surface_polygon_end[0][0], simu.data.eirene.surface_polygon_end[0][1]),
-         (simu.data.eirene.surface_polygon_end[0][2],
-          simu.data.eirene.surface_polygon_end[0][3]),
-         (simu.data.eirene.surface_polygon_end[1][0],
-          simu.data.eirene.surface_polygon_end[1][1]),
-         (simu.data.eirene.surface_polygon_end[1][2],
-          simu.data.eirene.surface_polygon_end[1][3])])
-    x, y = ring1.xy
-    plt.plot(x, y, 'o', color=simu.data.eirene.BLUE, zorder=1, alpha=1)
-    x, y = ring2.xy
-    plt.plot(x, y, 'o', color=simu.data.eirene.GREEN, zorder=1, alpha=1)
-
-    plt.plot(simu.data.eirene.surface_polygon[0], simu.data.eirene.surface_polygon[1], 'rx')
-    # plt.plot(self.surface_polygon[1], self.surface_polygon[3], 'bo') #axial symmetric surface
-    plt.plot(simu.data.eirene.r_ves, simu.data.eirene.z_ves, 'x', color=simu.data.eirene.BLACK, zorder=1, alpha=1)
-    print('test')
+    simu.data.eirene.plot_eirene_surface()
 
 
 
-    print(simu.data.eirene.PLS.names)
-    # Out[12]: {0: 'D+', 1: 'Be1+', 2: 'Be2+', 3: 'Be3+', 4: 'Be4+'}
-    print(simu.data.eirene.MOL.names)
-    # Out[13]: {0: 'D2'}
-    print(simu.data.eirene.ATM.names)
-    # Out[14]: {0: 'D', 1: 'Be'}
-    print(simu.data.eirene.ION.names)
-    # Out[15]: {0: 'D2+'}
+
+    simu.data.eirene.get_data_names(data='PLS')
+    simu.data.eirene.get_data_names(data='MOl')
+    simu.data.eirene.get_data_names(data='atm')
+    simu.data.eirene.get_data_names(data='ion')
 
     simu.data.eirene.get_eirene_surface_data(data='PLS',var=0,species=0)
 
+    simu.data.eirene.plot_eirere_surf_data(data='PLS',var=0,species=0)
 
-
+    raise SystemExit
     # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')
 
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
