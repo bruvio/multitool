@@ -55,7 +55,7 @@ import argparse
 import platform
 from logging.handlers import RotatingFileHandler
 from logging import handlers
-from custom_formatters import MyFormatter,QPlainTextEditLogger,HTMLFormatter
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -65,6 +65,8 @@ import numpy as np
 import math
 import csv
 import pathlib
+sys.path.append('../')
+from custom_formatters import MyFormatter,QPlainTextEditLogger,HTMLFormatter
 from class_sim import sim
 from class_sim import Getdata
 from class_sim import initread
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run CORMAT_py')
     parser.add_argument("-d", "--debug", type=int,
                         help="Debug level. 0: Info, 1: Warning, 2: Debug,"
-                             " 3: Error, 4: Debug Plus; \n default level is INFO", default=4)
+                             " 3: Error, 4: Debug Plus; \n default level is INFO", default=0)
     parser.add_argument("-doc", "--documentation", type=str,
                         help="Make documentation. yes/no", default='no')
 
@@ -690,10 +692,38 @@ if __name__ == "__main__":
 
     # simu.read_eirene(simu.fullpath[:-6])
     simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
+
+    for i in range(0,9):
+        simu.data.eirene.get_surface_name(i)
+
+
+    simu.data.eirene.create_connected_eirene_surface(2)
+    simu.data.eirene.assemble_eirene_surfaces(0, 2)
+
+    simu.data.eirene.create_surface_start_end_poly()
+
+    # plt.figure()
+    simu.data.eirene.plot_eirene_grid()
+
+    simu.data.eirene.plot_eirene_surface()
+
+
+
+
+    simu.data.eirene.get_data_names(data='PLS')
+    simu.data.eirene.get_data_names(data='MOl')
+    simu.data.eirene.get_data_names(data='atm')
+    simu.data.eirene.get_data_names(data='ion')
+
+    simu.data.eirene.get_eirene_surface_data(data='PLS',var=0,species=0)
+
+    simu.data.eirene.plot_eirere_surf_data(data='PLS',var=0,species=0)
+
+    raise SystemExit
     # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')
 
     # simu.read_eirene('/home/alexc/cmg/catalog/edge2d/jet/84727/nov1015/seq#1/')
-    simu.data.eirene.plot_eirene_vol_data()
+    # simu.data.eirene.plot_eirene_vol_data()
    #
    #
     # simu.data.eirene.plot_eirene_vol_data(data='MOL')
