@@ -1,0 +1,270 @@
+{
+    "irow": "11",
+    "markersize": "1",
+    "ppf": {
+        "JETPPF/HRTX/NEVL": [
+            "14",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI/PTOT/1": [
+            "54",
+            ".",
+            ":"
+        ],
+        "JETPPF/MAGN/BVAC": [
+            "46",
+            ".",
+            ":"
+        ],
+        "JETPPF/XCS/TIU/1": [
+            "18",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTX/TMAX": [
+            "49",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/NEVL": [
+            "8",
+            ".",
+            ":"
+        ],
+        "JETPPF/TIN/RNT": [
+            "38",
+            ".",
+            ":"
+        ],
+        "JETPPF/EFIT/WDIA": [
+            "20",
+            ".",
+            ":"
+        ],
+        "JETPPF/BOLO/TOPI": [
+            "36",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/NMAX": [
+            "9",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTS/TE/3": [
+            "44",
+            ".",
+            ":"
+        ],
+        "chain1/HE/HEI": [
+            "23",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTX/NE0": [
+            "10",
+            ".",
+            ":"
+        ],
+        "JETPPF/EFIT/BVAC": [
+            "13",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTX/TEVL": [
+            "41",
+            ".",
+            ":"
+        ],
+        "JETPPF/ICRH/PTOT/1": [
+            "52",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/TE0": [
+            "39",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTX/NMAX": [
+            "15",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDR/TE/3": [
+            "45",
+            ".",
+            ":"
+        ],
+        "JETPPF/XCS/TI/1": [
+            "16",
+            ".",
+            ":"
+        ],
+        "JETPPF/KS3/ZEFH": [
+            "1",
+            ".",
+            ":"
+        ],
+        "JETPPF/KS3B/HTHD/1": [
+            "11",
+            ".",
+            ":"
+        ],
+        "JETPPF/HRTX/TE0": [
+            "40",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/TMAX": [
+            "47",
+            ".",
+            ":"
+        ],
+        "JETPPF/XCS/TIL/1": [
+            "17",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/TEVL": [
+            "12",
+            ".",
+            ":"
+        ],
+        "JETPPF/KS3/ZEFV": [
+            "2",
+            ".",
+            ":"
+        ],
+        "JETPPF/XCS/BHE": [
+            "22",
+            ".",
+            ":"
+        ],
+        "JETPPF/EDG8/TBEO": [
+            "26",
+            ".",
+            ":"
+        ],
+        "JETPPF/LIDX/NE0": [
+            "7",
+            ".",
+            ":"
+        ],
+        "chain1/HE/HEIZ": [
+            "24",
+            ".",
+            ":"
+        ],
+        "JETPPF/XCS/STAT": [
+            "19",
+            ".",
+            ":"
+        ],
+        "JETPPF/EFIT/BTNM": [
+            "55",
+            ".",
+            ":"
+        ],
+        "JETPPF/SCAL/H98Y/1": [
+            "6",
+            ".",
+            ":"
+        ],
+        "JETPPF/SCAL/PRAD": [
+            "37",
+            ".",
+            ":"
+        ],
+        "edelabie/KT5B/CHE": [
+            "25",
+            ".",
+            ":"
+        ],
+        "JETPPF/MAGN/IPLA": [
+            "48",
+            ".",
+            ":"
+        ],
+        "JETPPF/KG1V/LID3/1": [
+            "53",
+            ".",
+            ":"
+        ],
+        "JETPPF/ECM1/TMAX": [
+            "51",
+            ".",
+            ":"
+        ]
+    },
+    "linewidth": "0.5",
+    "icolumn": "5",
+    "jpf": {
+        "de/Y8C-TRIG1<IN": [
+            "28",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT1A<FST": [
+            "30",
+            ".",
+            ":"
+        ],
+        "de/Y8C-TRIG2<IN": [
+            "29",
+            ".",
+            ":"
+        ],
+        "de/SPI-VFVA<FST": [
+            "3",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT1C<FST": [
+            "32",
+            ".",
+            ":"
+        ],
+        "de/SPI-VFVC<FST": [
+            "5",
+            ".",
+            ":"
+        ],
+        "de/DMV3-TRIG<CTS": [
+            "27",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT2C<FST": [
+            "35",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT2A<FST": [
+            "33",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT2B<FST": [
+            "34",
+            ".",
+            ":"
+        ],
+        "de/Y8C-GPT1B<FST": [
+            "31",
+            ".",
+            ":"
+        ],
+        "de/SPI-VFVB<FST": [
+            "4",
+            ".",
+            ":"
+        ],
+        "pf/PTN-DSRPT<PFP?DATA=CAL": [
+            "21",
+            ".",
+            ":"
+        ]
+    }
+}

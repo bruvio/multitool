@@ -446,7 +446,39 @@ def transform_eiri_data(signal,geom):
 
 
 
+def extract_jetdsp_signals(filename):
+    tag = 'URL'
+    jpf_signal_list = []
+    ppf_signal_list = []
+    with open(filename) as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
 
+            if tag in str(line):
+                # storing line
+                signal = line.split()[1]
+                signal_type = signal.split('/')[0]
+                if signal_type.lower() =='ppf':
+                    DDA = signal.split('/')[1]
+                    DTYPE = signal.split('/')[2]
+                    ppf_signal_list.append(DDA+'/'+DTYPE)
+                if signal_type.lower() =='jpf':
+                    SUBSYSTEM = signal.split('/')[1]
+                    DTYPE = signal.split('/')[2]
+                    jpf_signal_list.append(SUBSYSTEM+'/'+DTYPE)
+
+    dictionary = {}
+    dictionary['ppf'] = ppf_signal_list
+    dictionary['jpf'] = jpf_signal_list
+
+
+                # break
+    return jpf_signal_list,ppf_signal_list,dictionary
+    jpf_signal_list, ppf_signal_list, dictionary = extract_jetdsp_signals(
+        '/home/bviola/.jetdsp/StandardSets/MainParameters_7.jss')
+    import json
+    with open("/u/bviola/work/Python/bruvio_tool/MainParameters_7_converted","w") as f:
+        json.dump(dictionary,f)
 
 
 def read_elemente_file(filename):
@@ -1608,8 +1640,17 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                         ppf.ppfuid(user, "r")
                         dda = node.split("/")[1]
                         dtype = node.split("/")[2]
-
-                        # logger.debug('reading data %s ', key + '_' + dda + '_' + dtype)
+                        if dtype == 'NMAX':
+                            print('here')
+                        try:
+                            no_x = node.split("/")[3]
+                        except:
+                            no_x = 0
+                        try:
+                            no_t = node.split("/")[4]
+                        except:
+                            no_t = 0
+                            # logger.debug('reading data %s ', key + '_' + dda + '_' + dtype)
 
                         data_name = "data_" + key + "_" + dda + "_" + dtype
                         time_name = "t_data_" + key + "_" + dda + "_" + dtype
@@ -1641,6 +1682,13 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                             no_x=0,
                             no_t=0,
                         )
+                        if int(no_x) in x:
+                            logger.info('slicing at x = {}'.format(no_x))
+                            data=np.reshape(vars()[data_name],(len(vars()[time_name]),len(x))).T[list(x).index(int(no_x))]
+                        else:
+                            logger.info('slicing at x = {}'.format(x[0]))
+                            data=np.reshape(vars()[data_name],(len(vars()[time_name]),len(x))).T[list(x).index((x[0]))]
+
                         if ier == 0:
                             logger.info(
                                 "\n read data %s ",
@@ -1703,7 +1751,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                             else:
                                 plt.plot(
                                     vars()[time_name],
-                                    vars()[data_name],
+                                    data,
                                     label=str(pulse) + " " + node,
                                     marker=marker,
                                     linestyle=linestyle,
@@ -1859,8 +1907,9 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
             t = Toggle(fig)
             fig.canvas.mpl_connect("button_press_event", t.toggle)
             # fig.canvas.mpl_connect("key_press_event", t.toggle)
+            fig.tight_layout()
             plt.show(block=True)
-    # fig.tight_layout()
+
 
     # leave plt.show() outside
         else:
