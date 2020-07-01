@@ -1682,12 +1682,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                             no_x=0,
                             no_t=0,
                         )
-                        if int(no_x) in x:
-                            logger.info('slicing at x = {}'.format(no_x))
-                            data=np.reshape(vars()[data_name],(len(vars()[time_name]),len(x))).T[list(x).index(int(no_x))]
-                        else:
-                            logger.info('slicing at x = {}'.format(x[0]))
-                            data=np.reshape(vars()[data_name],(len(vars()[time_name]),len(x))).T[list(x).index((x[0]))]
+
 
                         if ier == 0:
                             logger.info(
@@ -1699,6 +1694,17 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                                 + dtype
                                 + " seq {} ".format(str(seq)),
                             )
+
+                            if int(no_x) in x:
+                                logger.info('slicing at x = {}'.format(no_x))
+                                data = np.reshape(vars()[data_name], (
+                                len(vars()[time_name]), len(x))).T[
+                                    list(x).index(int(no_x))]
+                            else:
+                                logger.info('slicing at x = {}'.format(x[0]))
+                                data = np.reshape(vars()[data_name], (
+                                len(vars()[time_name]), len(x))).T[
+                                    list(x).index((x[0]))]
 
                             if default == True:
                                 indexSubPlot = indexSubPlot + 1
