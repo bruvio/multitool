@@ -1,0 +1,29 @@
+{
+  "jpf": {},
+  "icolumn": "1",
+  "markersize": "1",
+  "linewidth": "0.5",
+  "irow": "4",
+  "ppf": {
+    "JETPPF/TIN/RNT/1:10": [
+      "1",
+      ".",
+      ":"
+    ],
+    "JETPPF/SCAL/H98Y/1:10": [
+      "2",
+      ".",
+      ":"
+    ],
+    "JETPPF/SCAL/PIN": [
+      "4",
+      ".",
+      ":"
+    ],
+    "JETPPF/EFIT/BTNM": [
+      "3",
+      ".",
+      ":"
+    ]
+  }
+}

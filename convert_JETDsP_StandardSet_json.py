@@ -32,18 +32,20 @@ def extract_jetdsp_signals(filename):
 
 
 
+
                     ppf_signal_list.append(DDA+'/'+DTYPE)
                     number +=1
-                    dictionary['ppf'][uid+'/'+DDA+'/'+DTYPE] = [str(number), ".", ":"]
+                    dictionary['ppf'][uid+'/'+DDA+'/'+DTYPE] = (str(number), ".", ":")
                 if signal_type.lower() =='jpf':
                     SUBSYSTEM = signal[1]
                     DTYPE = signal[2]
                     jpf_signal_list.append(SUBSYSTEM+'/'+DTYPE)
                     number += 1
-                    dictionary['jpf'][SUBSYSTEM + '/' + DTYPE] = [str(number), ".", ":"]
+                    dictionary['jpf'][SUBSYSTEM + '/' + DTYPE] = (str(number), ".", ":")
 
     column, mod = divmod(number, 10)
-
+    if column ==0:
+        column = 1
     div, mod = divmod(number,column)
 
     dictionary["icolumn"]=str(column)
@@ -58,7 +60,8 @@ if __name__ == "__main__":
                 # break
 
     jpf_signal_list, ppf_signal_list, dictionary = extract_jetdsp_signals(
-        '/home/bviola/.jetdsp/StandardSets/MainParameters_7.jss')
+        # '/home/bviola/.jetdsp/StandardSets/MainParameters_7.jss')
+        '/home/bviola/.jetdsp/StandardSets/{}.jss'.format('m18-02_quick'))
     import json
-    with open("/u/bviola/work/Python/bruvio_tool/standard_set/MainParameters_7_converted.json","w") as f:
-        json.dump(dictionary,f,indent=4)
+    with open("/u/bviola/work/Python/bruvio_tool/standard_set/{}_converted.json".format('m18-02_quick'),"w") as f:
+        json.dump(dictionary,f,indent=2)

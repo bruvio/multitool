@@ -1894,7 +1894,7 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                         # for l, ms in zip(ax_name.lines, itertools.cycle('>^+*')):
                         #     l.set_marker(ms)
                         #     l.set_color('black')
-            mplcursors.cursor(hover=True)
+
             logger.info("\n plot DONE! \n")
             if save is True:
                 cwd = os.getcwd()
@@ -1910,11 +1910,12 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                 plt.savefig(cwd + os.sep + "figures/" + fname + ".png", dpi=300)
 
                 logger.info(" picture saved to {} \n".format(cwd + os.sep + "figures/" + fname))
+            mplcursors.cursor(hover=True)
             t = Toggle(fig)
             fig.canvas.mpl_connect("button_press_event", t.toggle)
             # fig.canvas.mpl_connect("key_press_event", t.toggle)
             fig.tight_layout()
-            plt.show(block=True)
+            # plt.show(block=True)
 
 
     # leave plt.show() outside

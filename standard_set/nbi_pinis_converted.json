@@ -1,0 +1,89 @@
+{
+    "jpf": {},
+    "linewidth": "0.5",
+    "irow": "16",
+    "ppf": {
+        "JETPPF/NBI8/POW8": [
+            "16",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW4": [
+            "12",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW2": [
+            "10",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW7": [
+            "7",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW3": [
+            "11",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW3": [
+            "5",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW5": [
+            "13",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW1": [
+            "9",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW4": [
+            "1",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW6": [
+            "14",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW2": [
+            "4",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW6": [
+            "2",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW5": [
+            "6",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW8": [
+            "8",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI8/POW7": [
+            "15",
+            ".",
+            ":"
+        ],
+        "JETPPF/NBI4/POW1": [
+            "3",
+            ".",
+            ":"
+        ]
+    },
+    "icolumn": "1",
+    "markersize": "1"
+}
