@@ -697,16 +697,21 @@ if __name__ == "__main__":
         simu.data.eirene.get_surface_name(i)
 
 
-    simu.data.eirene.create_connected_eirene_surface(2)
-    simu.data.eirene.assemble_eirene_surfaces(0, 2)
+    # testing plot of a surface
+    surface_number = 1
+    logger.info('testing surface  n {} '.format(surface_number))
+    simu.data.eirene.get_surface_name(surface_number)
 
-    simu.data.eirene.create_surface_start_end_poly()
+    simu.data.eirene.create_connected_eirene_surface(surface_number)
+    for i in range(0,simu.data.eirene.surface_npoly_group):
+        logger.info('plotting surface {} group {} '.format(surface_number,i+1))
+        plt.figure(num=i)
+        simu.data.eirene.assemble_eirene_surfaces(i, surface_number)
 
-    # plt.figure()
-    simu.data.eirene.plot_eirene_grid()
-
-    simu.data.eirene.plot_eirene_surface()
-
+        simu.data.eirene.create_surface_start_end_poly()
+        simu.data.eirene.plot_eirene_surface()
+    plt.show(block=True)
+    raise SystemExit
 
 
 
@@ -715,9 +720,11 @@ if __name__ == "__main__":
     simu.data.eirene.get_data_names(data='atm')
     simu.data.eirene.get_data_names(data='ion')
 
-    simu.data.eirene.get_eirene_surface_data(data='PLS',var=0,species=0)
+    # testing plot of a surface data for the (above selected) surface and group
 
-    simu.data.eirene.plot_eirere_surf_data(data='PLS',var=0,species=0)
+    simu.data.eirene.get_eirene_surface_data(data='atm',var=0,species=0)
+
+    simu.data.eirene.plot_eirere_surf_data(data='atm',var=0,species=0)
 
     raise SystemExit
     # simu.read_eirene('/common/cmg/bviola/edge2d/runs/runsubdiv845981/')

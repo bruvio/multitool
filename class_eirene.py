@@ -1386,8 +1386,8 @@ class Eirene():
         surface_name = self.ESRF_NAMES[isrf]
 
         logger.info(
-                   "surface {}, EIRENE surface number= {}".format(
-                       surface_name, surface_number))
+                   "surface {}, EIRENE surface number= {} - index = {}".format(
+                       surface_name, surface_number,iselect))
 
         return isrf,surface_name,surface_number
 
@@ -1475,7 +1475,7 @@ class Eirene():
                     elif poly[1][poly_idx[tail]] == poly[1][i]:
         # #             switch order of points in poly
                         idummy = poly[0][i]
-                        print(idummy)
+                        # print(idummy)
                         poly[0][i] = poly[1][i]
                         poly[1][i] = idummy
 
@@ -1489,10 +1489,10 @@ class Eirene():
                     elif poly[0][poly_idx[tip]] == poly[1][i]:
         # #             shift polygon upwards
                         e1 = poly_idx[-1]
-                        for ii, e2 in enumerate(poly_idx):
-                            poly_idx[ii], e1 = e1, e2
-        #                 for j in range(tail, tip,-1):
-        #                     poly_idx[j + 1] = poly_idx[j]
+                        # for ii, e2 in enumerate(poly_idx):
+                        #     poly_idx[ii], e1 = e1, e2
+                        for j in range(tail, tip-1,-1):
+                            poly_idx[j + 1] = poly_idx[j]
 
         # #             add poly piece to tip
                         tail = tail + 1
@@ -1509,10 +1509,10 @@ class Eirene():
                     #             shift polygon upwards
 
                         e1 = poly_idx[-1]
-                        for ii, e2 in enumerate(poly_idx):
-                            poly_idx[ii], e1 = e1, e2
-                        # for j in range(tail, tip,-1):
-                        #     poly_idx[j + 1] = poly_idx[j]
+                        # for ii, e2 in enumerate(poly_idx):
+                        #     poly_idx[ii], e1 = e1, e2
+                        for j in range(tail, tip-1,-1):
+                            poly_idx[j + 1] = poly_idx[j]
 
             # #             add poly piece to tip
                         tail = tail + 1
@@ -1521,10 +1521,9 @@ class Eirene():
                         poly_added[i] = True   # mark poly piece to be already added
                         piece_added = True  # remember that a piece was added
 
-                logger.log(5,"i {}".format(i))
-                logger.log(5,"tail {} \n".format(tail))
-                logger.log(5,"poly_idx {} \n".format(poly_idx))
-
+                # logger.log(5,"i {}".format(i))
+                # logger.log(5,"tail {} \n".format(tail))
+                # logger.log(5,"poly_idx {} \n".format(poly_idx))
 
             if not piece_added:
         # #       No piece was added so the poly group is finished
@@ -1546,7 +1545,7 @@ class Eirene():
 
                         poly_added[j] = True   # mark poly piece to be already added
                         break
-
+            # print('end while')
         # poly_group = np.stack([poly_group_x, poly_group_y])
         self.surface_npoly_group = npoly_group
         # surface_poly_group = lonarr(npoly_group, 2)
@@ -1874,30 +1873,27 @@ class Eirene():
         # data = data[data.columns[var + 1]]
         # label = label
         else:
-            logger.error('choose between MOL/ATM \n')
+            logger.error('choose between PLS/MOL/ATM \n')
 
-
-
-
-        plt.figure()
         figtitle = label.split()[0] + label.split()[1] + title
+        plt.figure(figtitle)
         logger.info('plotting {}'.format(figtitle))
         plt.plot(self.surface_data_x,self.surface_data_y)
         xlabel('Distance along the surface [m]')
         ylabel(label.split()[-1])
         plt.title(figtitle)
 
-        plt.figure()
         figtitle = label.split()[0] + label.split()[1] + title
-        logger.info('flux density selected {} ((based on eirene triangle segments))'.format(figtitle))
+        plt.figure('flux density ' + figtitle + ' based on eirene')
+        logger.info('flux density selected {} (based on eirene triangle segments)'.format(figtitle))
         plt.plot(self.surface_data_x,self.surface_flux_data_y)
         xlabel('Distance along the surface [m]')
         ylabel(label.split()[-1] + '/cm^2')
 
         plt.title(figtitle)
 
-        plt.figure()
         figtitle = label.split()[0] + label.split()[1] + title
+        plt.figure('flux density ' + figtitle + ' based on  reconstructed edge2d')
         logger.info('flux density selected {} (based on reconstructed edge2d grid segments)'.format(figtitle))
         plt.plot(self.surface_data_x,self.surface_flux_data_e2d_y)
         xlabel('Distance along the surface [m]')
@@ -1939,7 +1935,7 @@ class Eirene():
         plt.plot(x, y, 'o', color=self.GREEN, zorder=1, alpha=1)
 
         plt.plot(self.surface_polygon[0],
-                 self.surface_polygon[1], 'rx')
+                 self.surface_polygon[1], 'rx-')
         # plt.plot(self.surface_polygon[1], self.surface_polygon[3], 'bo') #axial symmetric surface
         plt.plot(self.r_ves, self.z_ves, 'x',
                  color=self.BLACK, zorder=1, alpha=1)
