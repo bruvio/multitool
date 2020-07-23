@@ -541,22 +541,22 @@ class shot:
 
                     plt.scatter(self.e2d_profiles['dsrad_omp'],
                                 self.e2d_profiles['te_omp'] / self.te_omp_factor,
-                                label=self.conf+'_sim', color=color1)
+                                label=self.conf+'_sim', color=self.color)
                     logger.debug('try plotting e2d te self')
 
                 except:
 
-                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['teve'] / self.te_omp_factor,label=self.conf+'_sim', color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['teve'] / self.te_omp_factor,label=self.conf+'_sim', color=self.color)
                     logger.debug('except plotting e2d ne self')
             #
             if self.plot_exp == "True":
                 try:
 
-                    plt.errorbar(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['TE'],label='_nolegend_', yerr=self.hrts_profiles['DTE'], fmt=None, ecolor=color1)
+                    plt.scatter(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['TE'],label='_nolegend_', color=color1,s=1)
                 except:
                     logger.error('no HRTS exp data')
                 try:
-                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['tef5']/self.te_omp_factor_exp,label='_nolegend_',color=color1)
+                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['tef5']/self.te_omp_factor_exp,label='_nolegend_',color=color1,s=1)
                 except:
                     logger.error('no HRTS fit data')
 
@@ -603,23 +603,23 @@ class shot:
 
                     plt.scatter(self.e2d_profiles['dsrad_omp'],
                                 self.e2d_profiles['denel_omp'] / self.ne_omp_factor,
-                                label=self.conf+'_sim', color=color1)
+                                label=self.conf+'_sim', color=self.color)
                     logger.debug('try plotting e2d ne self')
 
                 except:
 
                     plt.scatter(self.e2d_profiles['dsrad'],
                                 self.e2d_profiles['denel'] / self.ne_omp_factor,
-                                label=self.conf+'_sim', color=color1)
+                                label=self.conf+'_sim', color=self.color)
                     logger.debug('except plotting e2d ne self')
 
             if self.plot_exp == "True":
                 try:
-                    plt.errorbar(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['NE'],label='_nolegend_', yerr=self.hrts_profiles['DNE'], fmt=None, ecolor=color1)
+                    plt.scatter(self.hrts_profiles['RmRsep']+float(self.shift),self.hrts_profiles['NE'] ,label='_nolegend_', color=color1,s=1)
                 except:
                     logger.error('impossible to plot HRTS NE data')
                 try:
-                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['nef3']/self.ne_omp_factor_exp,label='_nolegend_',color=color1)
+                    plt.scatter(self.hrts_fit['Rfit']+float(self.shift_fit),self.hrts_fit['nef3']/self.ne_omp_factor_exp,label='_nolegend_',color=color1,s=1)
                 except:
                     logger.error('impossible to plot HRTS NE fit data')
 
@@ -669,10 +669,10 @@ class shot:
             if self.plot_sim == "True":
                 logger.debug('plot sim self true')
                 try:
-                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['denel_ot'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['denel_ot'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('try plotting e2d ne self')
                 except:
-                    plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['denel'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['denel'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('except plotting e2d ne self')
 
 
@@ -710,10 +710,10 @@ class shot:
             if self.plot_sim == "True":
                 logger.debug('plot sim self true')
                 try:
-                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['te_ot'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],self.e2d_profiles_ot['te_ot'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('try plotting e2d te self')
                 except:
-                    plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['teve'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad'],self.e2d_profiles_ot['teve'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('except plotting e2d te self')
 
 
@@ -749,10 +749,10 @@ class shot:
             if self.plot_sim == "True":
                 logger.debug('plot sim self true')
                 try:
-                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],-self.e2d_profiles_ot['jtargi_ot'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad_ot'],-self.e2d_profiles_ot['jtargi_ot'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('try plotting e2d jsat self')
                 except:
-                    plt.plot(self.e2d_profiles_ot['dsrad'],-self.e2d_profiles_ot['jtargi'],'-',label=self.conf+'_sim',color=color1)
+                    plt.plot(self.e2d_profiles_ot['dsrad'],-self.e2d_profiles_ot['jtargi'],'-',label=self.conf+'_sim',color=self.color)
                     logger.debug('except plotting e2d jsat self')
 
 
@@ -781,9 +781,9 @@ class shot:
             plt.figure(num=fname+"_"+self.label)
             if self.plot_sim == "True":
                 try:
-                    plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['dperp_omp'],label=self.conf,color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['dperp_omp'],label=self.conf,color=self.color)
                 except:
-                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['dperp'],label=self.conf,color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['dperp'],label=self.conf,color=self.color)
             axes = plt.axes()
             axes.set_ylim(bottom=0)
             plt.legend(loc =0,prop={'size':18})
@@ -809,9 +809,9 @@ class shot:
 
             if self.plot_sim == "True":
                 try:
-                    plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['chii_omp'],label=self.conf,color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad_omp'],self.e2d_profiles['chii_omp'],label=self.conf,color=self.color)
                 except:
-                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['chii'],label=self.conf,color=color1)
+                    plt.scatter(self.e2d_profiles['dsrad'],self.e2d_profiles['chii'],label=self.conf,color=self.color)
 
             axes = plt.axes()
             axes.set_ylim(bottom=0)

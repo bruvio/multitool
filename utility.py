@@ -105,8 +105,8 @@ class Toggle():
         self.fig = fig
 
     def toggle(self,evt):
-        # if evt.dblclick:
-        if evt.button == 3:
+        if evt.dblclick:
+        # if evt.button == 3:
                 gs=GridSpec(1,1)
                 if evt.inaxes:
                     if self.all_visible:
@@ -1910,12 +1910,12 @@ def plot_time_traces(diag_json, pulselist, save=False, smooth=False,calc_mean = 
                 plt.savefig(cwd + os.sep + "figures/" + fname + ".png", dpi=300)
 
                 logger.info(" picture saved to {} \n".format(cwd + os.sep + "figures/" + fname))
-            mplcursors.cursor(hover=True)
+            # mplcursors.cursor(hover=True)
             t = Toggle(fig)
             fig.canvas.mpl_connect("button_press_event", t.toggle)
             # fig.canvas.mpl_connect("key_press_event", t.toggle)
-            fig.tight_layout()
-            # plt.show(block=True)
+            # fig.tight_layout()
+            plt.show(block=True)
 
 
     # leave plt.show() outside

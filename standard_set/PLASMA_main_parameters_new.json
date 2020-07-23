@@ -1,4 +1,4 @@
-//symbols 
+//symbols
 //================    ===============================
 //character           description
 //================    ===============================
@@ -47,7 +47,7 @@
       "jetppf/NBI/PTOT": ["4",".","--"],
       "jetppf/ICRH/PTOT": ["4","+","--"],
 //      "jetppf/KG1L/LAD3",
-//      "jetppf/KG1L/LAD4",
+     "jetppf/KG1L/LAD4": ["12","+","--"],
 //      "jetppf/GASM/ELER",
       "jetppf/GASM/G09R": ["5","+",":"],
       "jetppf/GASM/C32R": ["5",".","--"],
@@ -84,13 +84,13 @@
       "jetppf/HRTX/NMAX": ["8",".","--"],
       "jetppf/ECM1/TMAX": ["9","+",":"],
       "jetppf/SCAL/H98Y": ["10","+","-"],
-      "jetppf/KS3/ZEFH": ["11","+","-"],
+      "jetppf/KS3/ZEFH": ["11","+","-"]
 //      "jetppf/KS3/ZEFV": ["11","+","-"],
-      "jetppf/tin/RNT": ["12","+","-"]
+//      "jetppf/tin/RNT": ["12","+","-"]
 //      "jetppf/HRTS/TE": ["13","+","-"],
 //      "jetppf/LIDR/TE": ["13","+","-"]
-      
-      
+
+
 //      "jetppf/S3AD/AD35"
 },
   "icolumn":"2",
@@ -100,5 +100,3 @@
 
 
 }
-
-

@@ -24,7 +24,7 @@
   "plot_exp":"True",
   "plot_bolo":"False",
   "plot_spectro":"False",
-  "compare":"True",
+  "compare":"False",
   "shift":"-1.575",
   "shift_fit":"0.005",
 //hrts

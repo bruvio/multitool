@@ -61,7 +61,9 @@ if __name__ == "__main__":
 
     jpf_signal_list, ppf_signal_list, dictionary = extract_jetdsp_signals(
         # '/home/bviola/.jetdsp/StandardSets/MainParameters_7.jss')
-        '/home/bviola/.jetdsp/StandardSets/{}.jss'.format('m18-02_quick'))
+        # '/home/bviola/.jetdsp/StandardSets/{}.jss'.format('m18-02_quick'))
+        '/home/bviola/.jetdsp/StandardSets/{}.jss'.format('basic_gims_gash'))
+        # '/home/bviola/.jetdsp/StandardSets/{}.jss'.format('gas_puffs_rates'))
     import json
-    with open("/u/bviola/work/Python/bruvio_tool/standard_set/{}_converted.json".format('m18-02_quick'),"w") as f:
+    with open("/u/bviola/work/Python/bruvio_tool/standard_set/{}_converted.json".format('basic_gims_gash'),"w") as f:
         json.dump(dictionary,f,indent=2)

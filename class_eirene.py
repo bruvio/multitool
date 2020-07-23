@@ -1605,6 +1605,9 @@ class Eirene():
         logger.log(5, "surface_polygon {}".format(self.surface_polygon))
         logger.log(5, "surface_polygon_sfidx {}".format(self.surface_polygon_sfidx))
 
+        self.create_surface_start_end_poly()
+
+
 
     def create_surface_start_end_poly(self):
 # Get max min coordinates of all surfaces

@@ -1922,7 +1922,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
 
 
     def checkstateJSON(self, button):
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'+os.sep
         if button.isChecked() == True:
             if button.text() == "edit JSON1":
 
@@ -1940,13 +1940,13 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
                     # os.system(
                     #     'kate {}'.format('/work/bviola/Python/kg1_tools/kg1_tools_gui/standard_set/'+ self.JSONSS))
 
-                    subprocess.Popen('atom {}'.format(folder+ self.JSONSS), shell=True)
+                    subprocess.Popen('atom {}'.format(self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'standard_set'+os.sep+ self.JSONSS), shell=True)
                     self.ui_plotdata.checkBox.setChecked(False)
 
 
 
     def handle_selectjson1(self):
-        folder = self.homefold + os.sep+ self.basefolder+os.sep+ self.installationfolder+os.sep+'input_files'
+        folder = self.homefold + os.sep+ self.basefolder+os.sep+ self.installationfolder+os.sep+'input_files'+os.sep
         self.JSONSS1, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
         if not self.JSONSS1=='':
             self.JSONSS1 = os.path.basename(self.JSONSS1)
@@ -1957,7 +1957,7 @@ class bruvio_tool(QMainWindow, bruvio_tools.Ui_MainWindow):
             return self.JSONSS1
 
     def handle_selectjson2(self):
-        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'
+        folder = self.homefold + os.sep + self.basefolder + os.sep + self.installationfolder+os.sep+'input_files'+os.sep
         self.JSONSS2, _filter = QFileDialog.getOpenFileName(None,'Select PULSE JSON',folder,'JSON Files(*.json)')
         if not self.JSONSS2=='':
             self.JSONSS2 = os.path.basename(self.JSONSS2)

@@ -1353,10 +1353,11 @@ class MAGTool:
         zC=numpy.reshape(zBND,(len(ZBND_t),len(ZBND_x)))
 
         timeEFIT = RBND_t # one of the _t variables
-        iCurrentTime = numpy.where(numpy.abs(timeEquil-timeEFIT)<2*min(numpy.diff(timeEFIT)))# twice of the min of EFIT delta time
+        iCurrentTime, = np.where(np.isclose(timeEquil, timeEFIT))  # floating-p
+        # iCurrentTime = numpy.where(numpy.abs(timeEquil-timeEFIT)<2*min(numpy.diff(timeEFIT)))# twice of the min of EFIT delta time
         print(timeEFIT[iCurrentTime])
 
-        iTEFIT = iCurrentTime[0][0]
+        iTEFIT = iCurrentTime[0]
 
         rC0 = rC[iTEFIT,:]
         zC0 = zC[iTEFIT,:]

@@ -693,6 +693,7 @@ if __name__ == "__main__":
     # simu.read_eirene(simu.fullpath[:-6])
     simu.read_eirene('/work/bviola/Python/bruvio_tool/EIRENE_FILES_UNCATALOGUED/')
 
+    # getting surfaces names and indexes
     for i in range(0,9):
         simu.data.eirene.get_surface_name(i)
 
@@ -703,13 +704,14 @@ if __name__ == "__main__":
     simu.data.eirene.get_surface_name(surface_number)
 
     simu.data.eirene.create_connected_eirene_surface(surface_number)
+
+    # iterate through surfaces groups (if any), assembling surfaces and plotting them
     for i in range(0,simu.data.eirene.surface_npoly_group):
         logger.info('plotting surface {} group {} '.format(surface_number,i+1))
         plt.figure(num=i)
         simu.data.eirene.assemble_eirene_surfaces(i, surface_number)
 
-        simu.data.eirene.create_surface_start_end_poly()
-        simu.data.eirene.plot_eirene_surface()
+        simu.data.eirene.data.eirene.plot_eirene_surface()
     plt.show(block=True)
     raise SystemExit
 
