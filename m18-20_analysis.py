@@ -1025,6 +1025,7 @@ def plot_all_profiles(shot,fname,simu,sequence,dda,owner,allow_write_ppf,allow_p
 
 
     timesteps = list(ep.timestep(simu.fullpath, ALL_TRANFILES=1))
+    time_steps = timesteps
     if allow_write_ppf:
 
         err = open_ppf(shot, 'bviola')
@@ -1070,7 +1071,19 @@ def plot_all_profiles(shot,fname,simu,sequence,dda,owner,allow_write_ppf,allow_p
                               tran_index, fname,
                               allow_write_ppf, allow_plot, 'magenta', tran_index)
 
+
+
+    time_steps = timesteps[1:]
     if allow_write_ppf:
+        # pdb.set_trace()
+        write_err, itref_written = write_ppf(shot, 'edg2',
+                                             'time',
+                                             np.asarray(time_steps),
+                                             comment='time',
+                                             unitd=" ", unitt=" ",
+                                             itref=-1,
+                                             nt =len(time_steps))
+
 
         err = close_ppf(shot, 'bviola',
                         '1')
@@ -1098,7 +1111,6 @@ def runFebsimulations7MW(allow_write_ppf,allow_plot):
 
 
         sim_1 = sim('84600', 'nov1219', '1', workfold, 'vparail',save=True)
-        pdb.set_trace()
         sim_2 = sim('84600', 'nov1419', '2', workfold, 'vparail',save=True)
         sim_3 = sim('84600', 'nov1519', '2', workfold, 'vparail',save=True)
         sim_4 = sim('84600', 'nov1319', '1', workfold, 'vparail',save=True)
@@ -1856,14 +1868,12 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
                 'sim_5',
                 ]
 
+    force_index1 = -2
+    force_index2 = -2
+    force_index3 = -2
+    force_index4 = -2
+    force_index5 = -2
 
-
-    force_index1 = None
-    force_index2 = None
-    force_index3 = None
-    force_index4 = None
-    force_index5 = None
-    force_index6 = None
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, seq1, allow_plot, force_tran=force_index1)
@@ -2077,12 +2087,11 @@ def runJulysimulations_g3(allow_write_ppf, allow_plot):
 
 
 
-    force_index1 = None
-    force_index2 = None
-    force_index3 = None
-    force_index4 = None
-    force_index5 = None
-    force_index6 = None
+    force_index1 = -2
+    force_index2 = -2
+    force_index3 = -2
+    force_index4 = -2
+    force_index5 = -2
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, seq1, allow_plot, force_tran=force_index1)
@@ -2298,11 +2307,11 @@ def runJulysimulations_g2(allow_write_ppf, allow_plot):
 
 
 
-    force_index1 = None
-    force_index2 = None
-    force_index3 = None
-    force_index4 = None
-    force_index5 = None
+    force_index1 = -2
+    force_index2 = -2
+    force_index3 = -2
+    force_index4 = -2
+    force_index5 = -2
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_1, seq1, allow_plot, force_tran=force_index1)
