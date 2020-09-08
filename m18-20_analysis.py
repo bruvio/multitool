@@ -647,10 +647,18 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
                                ['R', 'NE', 'SDII', 'TE'])
     timesteps = list(ep.timestep(simu.fullpath, ALL_TRANFILES=1))
     index, dummy = find_peaks(wth['data'])
-    last_peak_index = index[np.argmax(index)]
-    value_closest = take_closest(timesteps, wth['t'][last_peak_index])
-    peak_selected = wth['t'][last_peak_index]
-    tran_index = timesteps.index(value_closest)
+    if not index.any():
+        last_peak_index = -1
+        value_closest = take_closest(timesteps, wth['t'][last_peak_index])
+        peak_selected = wth['t'][last_peak_index]
+        tran_index = timesteps.index(value_closest)
+
+    else:
+        last_peak_index = index[np.argmax(index)]
+        value_closest = take_closest(timesteps, wth['t'][last_peak_index])
+        peak_selected = wth['t'][last_peak_index]
+        tran_index = timesteps.index(value_closest)
+
     if force_tran:
         tran_index = tran_index + force_tran
         sleep(1)
@@ -1843,6 +1851,8 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
     sim_3 = sim('96202X', 'jul1520', '7', workfold, 'vparail', save=True)
     sim_4 = sim('96202X', 'jul1520', '2', workfold, 'vparail', save=True)
     sim_5 = sim('96202X', 'jun1720', '1', workfold, 'vparail', save=True)
+    sim_6 = sim('96202X', 'aug1820', '1', workfold, 'vparail', save=True)
+    sim_7 = sim('96202X', 'aug1520', '1', workfold, 'vparail', save=True)
 
 
 
@@ -1853,12 +1863,16 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
     fname3 = '33e21'
     fname4 = '16e21'
     fname5 = '3e21'
+    fname6 = '75e20bis'
+    fname7 = '26e21bis'
 
     seq1 = 445
     seq2 = 482
     seq3 =488
     seq4 =483
     seq5 =464
+    seq6 =573
+    seq7 =572
 
 
     sim_list = ['sim_1',
@@ -1866,6 +1880,8 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
                 'sim_3',
                 'sim_4',
                 'sim_5',
+                'sim_6',
+                'sim_7',
                 ]
 
     force_index1 = -2
@@ -1873,6 +1889,8 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
     force_index3 = -2
     force_index4 = -2
     force_index5 = -2
+    force_index6 = -2
+    force_index7 = -2
 
 
     res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
@@ -1885,6 +1903,10 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
         shot, owner, dda, sim_4, seq4, allow_plot, force_tran=force_index4)
     res5, tran_index5, data5, time_used5 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_5, seq5, allow_plot, force_tran=force_index5)
+    res6, tran_index6, data6, time_used6 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_6, seq6, allow_plot, force_tran=force_index6)
+    res7, tran_index7, data7, time_used7 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_7, seq7, allow_plot, force_tran=force_index7)
 
 
     sleep(1)
@@ -1899,6 +1921,10 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
         sim_4.date + '/' + sim_4.seq + '/' + str(seq4), time_used4))
     logging.info('time used for simu {} is {}'.format(
         sim_5.date + '/' + sim_5.seq + '/' + str(seq5), time_used5))
+    logging.info('time used for simu {} is {}'.format(
+        sim_6.date + '/' + sim_6.seq + '/' + str(seq6), time_used6))
+    logging.info('time used for simu {} is {}'.format(
+        sim_7.date + '/' + sim_7.seq + '/' + str(seq7), time_used7))
 
 
     if allow_write_ppf:
@@ -1943,6 +1969,19 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
                           allow_write_ppf, allow_plot, 'magenta', i)
 
 
+    label6 = 'ION ' + fname6
+    i = i + 1
+    plot_write_merged_sim(shot, label6, data6, res6, 'NE', 'ade',
+                          tran_index6, fname6,
+                          allow_write_ppf, allow_plot, 'magenta', i)
+
+    label7 = 'ION ' + fname7
+    i = i + 1
+    plot_write_merged_sim(shot, label7, data7, res7, 'NE', 'ade',
+                          tran_index7, fname7,
+                          allow_write_ppf, allow_plot, 'magenta', i)
+
+
     #
     # ###ionization source
     plt.figure('ION')
@@ -1979,7 +2018,17 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
                           tran_index5, fname5,
                           allow_write_ppf, allow_plot, 'magenta', i)
 
+    label6 = 'ION ' + fname6
+    i = i + 1
+    plot_write_merged_sim(shot, label6, data6, res6, 'SDII', 'ade',
+                          tran_index6, fname6,
+                          allow_write_ppf, allow_plot, 'magenta', i)
 
+    label7 = 'ION ' + fname7
+    i = i + 1
+    plot_write_merged_sim(shot, label7, data7, res7, 'SDII', 'ade',
+                          tran_index7, fname7,
+                          allow_write_ppf, allow_plot, 'magenta', i)
 
     ###temperature
     plt.figure('TE')
@@ -2016,6 +2065,190 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
                           tran_index5, fname5,
                           allow_write_ppf, allow_plot, 'magenta', i)
 
+    label6 = 'ION ' + fname6
+    i = i + 1
+    plot_write_merged_sim(shot, label6, data6, res6, 'TE', 'ade',
+                          tran_index6, fname6,
+                          allow_write_ppf, allow_plot, 'magenta', i)
+
+    label7 = 'ION ' + fname7
+    i = i + 1
+    plot_write_merged_sim(shot, label7, data7, res7, 'TE', 'ade',
+                          tran_index7, fname7,
+                          allow_write_ppf, allow_plot, 'magenta', i)
+
+    if allow_write_ppf:
+
+        err = close_ppf(shot, 'bviola',
+                        '1')
+
+        if err != 0:
+            logger.error('failed to close ppf')
+            raise SystemExit
+
+    # plt.show(block=True)
+
+    #  #test to plot EIRENE PRESSURE AND TEMPERATURE
+    #
+    #
+    #
+    #
+    #
+    # xv=linspace(2.003,2.547,100)';
+    # yv=-2.3*ones(100,1);
+    #
+    #
+    #
+    # simu.data.eirene.plot_eirene_vol_data(data=pressure,label='Pa')
+
+def runJulysimulations_g4(allow_write_ppf, allow_plot):
+    logger = logging.getLogger(__name__)
+    # EDGE2dfold = '/work/bviola/Python/EDGE2D/e2d_data'
+    workfold = 'work/Python/bruvio_tool'
+
+    plt.close('all')
+
+    shot = '96202'
+
+    owner = 'vparail'
+
+    dda = 'JSP'
+    # EXTEND feb2319/2/1386 with discrete ELM model , ALL RUNS WITH 7MW NBI , 5 levels of GAS, same ALPH_crit=1.5
+    sim_number = 5
+
+    sim_1 = sim('96202X', 'aug1420', '1', workfold, 'vparail', save=True)
+    sim_2 = sim('96202X', 'aug1420', '2', workfold, 'vparail', save=True)
+    sim_3 = sim('96202X', 'aug1420', '3', workfold, 'vparail', save=True)
+
+
+
+
+    fname1 = "750"
+    fname2 = '325'
+    fname3 = '162'
+
+    seq1 = 569
+    seq2 = 570
+    seq3 =571
+
+
+
+    sim_list = ['sim_1',
+                'sim_2',
+                'sim_3',
+
+                ]
+
+    force_index1 = -2
+    force_index2 = -2
+    force_index3 = -2
+
+
+
+    res1, tran_index1, data1, time_used1 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_1, seq1, allow_plot, force_tran=force_index1)
+    res2, tran_index2, data2, time_used2 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_2, seq2, allow_plot, force_tran=force_index2)
+    res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_3, seq3, allow_plot, force_tran=force_index3)
+
+
+
+    sleep(1)
+
+    logging.info('time used for simu {} is {}'.format(
+        sim_1.date + '/' + sim_1.seq + '/' + str(seq1), time_used1))
+    logging.info('time used for simu {} is {}'.format(
+        sim_2.date + '/' + sim_2.seq + '/' + str(seq2), time_used2))
+    logging.info('time used for simu {} is {}'.format(
+        sim_3.date + '/' + sim_3.seq + '/' + str(seq3), time_used3))
+
+
+
+    if allow_write_ppf:
+
+        err = open_ppf(shot, 'bviola')
+        if err != 0:
+            logger.error('failed to open ppf')
+            raise SystemExit
+
+    plt.figure('NE')
+    plt.title('NE')
+
+    label1 = 'ION ' + fname1
+
+    i = 1
+    plot_write_merged_sim(shot, label1, data1, res1, 'NE', 'ade',
+                          tran_index1, fname1,
+                          allow_write_ppf, allow_plot, 'blue', i)
+
+    label2 = 'ION ' + fname2
+    i = i + 1
+    plot_write_merged_sim(shot, label2, data2, res2, 'NE', 'ade',
+                          tran_index2, fname2,
+                          allow_write_ppf, allow_plot, 'green', i)
+
+    label3 = 'ION ' + fname3
+    i = i + 1
+    plot_write_merged_sim(shot, label3, data3, res3, 'NE', 'ade',
+                          tran_index3, fname3,
+                          allow_write_ppf, allow_plot, 'red', i)
+
+
+
+
+    #
+    # ###ionization source
+    plt.figure('ION')
+    plt.title('ION')
+
+    label1 = 'ION ' + fname1
+
+    i = 1
+    plot_write_merged_sim(shot, label1, data1, res1, 'SDII', 'asoun',
+                          tran_index1, fname1,
+                          allow_write_ppf, allow_plot, 'blue', i)
+
+    label2 = 'ION ' + fname2
+    i = i + 1
+    plot_write_merged_sim(shot, label2, data2, res2, 'SDII', 'asoun',
+                          tran_index2, fname2,
+                          allow_write_ppf, allow_plot, 'green', i)
+
+    label3 = 'ION ' + fname3
+    i = i + 1
+    plot_write_merged_sim(shot, label3, data3, res3, 'SDII', 'asoun',
+                          tran_index3, fname3,
+                          allow_write_ppf, allow_plot, 'red', i)
+
+
+
+
+    ###temperature
+    plt.figure('TE')
+    plt.title('TE')
+
+    label1 = 'TE '+ fname1
+    i = 1
+    plot_write_merged_sim(shot, label1, data1, res1, 'TE', 'ate',
+                          tran_index1, fname1,
+                          allow_write_ppf, allow_plot, 'blue', i)
+
+    label2 = 'TE '+ fname2
+
+    i = i + 1
+    plot_write_merged_sim(shot, label2, data2, res2, 'TE', 'ate',
+                          tran_index2, fname2,
+                          allow_write_ppf, allow_plot, 'green', i)
+
+    label3 = 'TE '+ fname3
+    i = i + 1
+    plot_write_merged_sim(shot, label3, data3, res3, 'TE', 'ate',
+                          tran_index3, fname3,
+                          allow_write_ppf, allow_plot, 'red', i)
+
+
+
 
 
     if allow_write_ppf:
@@ -2041,6 +2274,7 @@ def runJulysimulations_g1(allow_write_ppf, allow_plot):
     #
     #
     # simu.data.eirene.plot_eirene_vol_data(data=pressure,label='Pa')
+
 
 def runJulysimulations_g3(allow_write_ppf, allow_plot):
     logger = logging.getLogger(__name__)
@@ -2480,6 +2714,8 @@ def runJulysimulations_g2(allow_write_ppf, allow_plot):
     #
     # simu.data.eirene.plot_eirene_vol_data(data=pressure,label='Pa')
 
+
+
 def all_profiles_during_sim(allow_write_ppf, allow_plot):
     logger = logging.getLogger(__name__)
     # EDGE2dfold = '/work/bviola/Python/EDGE2D/e2d_data'
@@ -2507,9 +2743,10 @@ def main():
     # runFebsimulations11MW(allow_write_ppf, allow_plot)
     # runJunesimulations(allow_write_ppf, allow_plot)
     # runJulysimulations_g1(allow_write_ppf, allow_plot)
+    runJulysimulations_g4(allow_write_ppf, allow_plot)
     # runJulysimulations_g2(allow_write_ppf, allow_plot)
     # runJulysimulations_g3(allow_write_ppf, allow_plot)
-    all_profiles_during_sim(allow_write_ppf, allow_plot)
+    # all_profiles_during_sim(allow_write_ppf, allow_plot)
     # plt.show(block=True)
     plt.show(block=False)
 
