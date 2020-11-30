@@ -644,7 +644,7 @@ def get_combined_e2d_jetto_data_before_elm_crash(shot, owner, dda, simu,sequence
     dda_time = 'JST'
     wth = read_jetto_data(shot, sequence, 'WTH', dda_time, owner)
     data = read_jetto_sequence(shot, sequence, dda, owner,
-                               ['R', 'NE', 'SDII', 'TE'])
+                               ['R', 'NE', 'SDII', 'TE','XE','D1'])
     timesteps = list(ep.timestep(simu.fullpath, ALL_TRANFILES=1))
     index, dummy = find_peaks(wth['data'])
     if not index.any():
@@ -994,8 +994,16 @@ def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,l
         # plt.figure(num=fname)
         # plt.title(fname)
         # print(ne5_t[tran_index])
-
-        plt.plot(data['R']['data'][tran_index][0:-1], data[label_jetto]['data'][tran_index][0:-1], label=label,
+        if label_jetto=='XE' or label_jetto=='D1':
+            plt.plot(data['R']['data'][tran_index][0:-1],
+                     np.concatenate([np.zeros(
+                         len(data['R']['data'][tran_index][0:-1]) - len(
+                             data[label_jetto]['data'][tran_index][0:-1])),
+                                     data[label_jetto]['data'][tran_index][
+                                     0:-1]]), label=label,
+                     linestyle=':', color=color)
+        else:
+            plt.plot(data['R']['data'][tran_index][0:-1], data[label_jetto]['data'][tran_index][0:-1], label=label,
                  linestyle=':', color=color)
         plt.plot(res['dsrad'][1:] + data['R']['data'][-1][-1], res[label_e2d].yData[1:],
                 linestyle=':', color=color)
@@ -1011,19 +1019,35 @@ def plot_write_merged_sim(shot,fname,data,res,label_jetto,label_e2d,tran_index,l
             name = name.replace(name[:char2remove],'')
         write_err, itref_written = write_ppf(shot, 'edg2',
                                          name,
-                                         np.concatenate([data[label_jetto]['data'][tran_index][0:-1],
+                                         np.concatenate([np.concatenate([np.zeros(
+                         len(data['R']['data'][tran_index][0:-1]) - len(
+                             data[label_jetto]['data'][tran_index][0:-1])),
+                                     data[label_jetto]['data'][tran_index][
+                                     0:-1]]),
                                                          res[label_e2d].yData[
                                                          1:]]),
-                                         time=np.concatenate([data['R']['data'][tran_index][0:-1],
+                                         time=np.concatenate([np.concatenate([np.zeros(
+                         len(data['R']['data'][tran_index][0:-1]) - len(
+                             data[label_jetto]['data'][tran_index][0:-1])),
+                                     data[label_jetto]['data'][tran_index][
+                                     0:-1]]),
                                                               res['dsrad'][1:] +
                                                               data['R']['data'][-1][-1]]),
-                                         status=np.concatenate([data['R']['data'][tran_index][0:-1],
+                                         status=np.concatenate([np.concatenate([np.zeros(
+                         len(data['R']['data'][tran_index][0:-1]) - len(
+                             data[label_jetto]['data'][tran_index][0:-1])),
+                                     data[label_jetto]['data'][tran_index][
+                                     0:-1]]),
                                                                 res['dsrad'][1:] +
                                                                 data['R']['data'][-1][-1]]),
                                          comment=fname,
                                          unitd=" ", unitt=" ",
                                          itref=-1,
-                                         nt=len(np.concatenate([data['R']['data'][tran_index][0:-1],
+                                         nt=len(np.concatenate([np.concatenate([np.zeros(
+                         len(data['R']['data'][tran_index][0:-1]) - len(
+                             data[label_jetto]['data'][tran_index][0:-1])),
+                                     data[label_jetto]['data'][tran_index][
+                                     0:-1]]),
                                                                 res['dsrad'][0:-1] +
                                                                 data['R']['data'][-1][-1]])))
 
@@ -2119,6 +2143,7 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
     sim_1 = sim('96202X', 'aug1420', '1', workfold, 'vparail', save=True)
     sim_2 = sim('96202X', 'aug1420', '2', workfold, 'vparail', save=True)
     sim_3 = sim('96202X', 'aug1420', '3', workfold, 'vparail', save=True)
+    sim_4 = sim('96202X', 'nov0220', '1', workfold, 'vparail', save=True)
 
 
 
@@ -2126,22 +2151,26 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
     fname1 = "750"
     fname2 = '325'
     fname3 = '162'
+    fname4 = '750e'
 
     seq1 = 569
     seq2 = 570
     seq3 =571
+    seq4 =585
 
 
 
     sim_list = ['sim_1',
                 'sim_2',
                 'sim_3',
+                'sim_4',
 
                 ]
 
     force_index1 = -2
     force_index2 = -2
     force_index3 = -2
+    force_index4 = -2
 
 
 
@@ -2151,6 +2180,9 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
         shot, owner, dda, sim_2, seq2, allow_plot, force_tran=force_index2)
     res3, tran_index3, data3, time_used3 = get_combined_e2d_jetto_data_before_elm_crash(
         shot, owner, dda, sim_3, seq3, allow_plot, force_tran=force_index3)
+
+    res4, tran_index4, data4, time_used4 = get_combined_e2d_jetto_data_before_elm_crash(
+        shot, owner, dda, sim_4, seq4, allow_plot, force_tran=force_index4)
 
 
 
@@ -2162,6 +2194,8 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
         sim_2.date + '/' + sim_2.seq + '/' + str(seq2), time_used2))
     logging.info('time used for simu {} is {}'.format(
         sim_3.date + '/' + sim_3.seq + '/' + str(seq3), time_used3))
+    logging.info('time used for simu {} is {}'.format(
+        sim_4.date + '/' + sim_4.seq + '/' + str(seq4), time_used4))
 
 
 
@@ -2175,24 +2209,30 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
     plt.figure('NE')
     plt.title('NE')
 
-    label1 = 'ION ' + fname1
+    label1 = 'NE ' + fname1
 
     i = 1
     plot_write_merged_sim(shot, label1, data1, res1, 'NE', 'ade',
                           tran_index1, fname1,
                           allow_write_ppf, allow_plot, 'blue', i)
 
-    label2 = 'ION ' + fname2
+    label2 = 'NE ' + fname2
     i = i + 1
     plot_write_merged_sim(shot, label2, data2, res2, 'NE', 'ade',
                           tran_index2, fname2,
                           allow_write_ppf, allow_plot, 'green', i)
 
-    label3 = 'ION ' + fname3
+    label3 = 'NE ' + fname3
     i = i + 1
     plot_write_merged_sim(shot, label3, data3, res3, 'NE', 'ade',
                           tran_index3, fname3,
                           allow_write_ppf, allow_plot, 'red', i)
+
+    label4 = 'NE ' + fname4
+    i = i + 1
+    plot_write_merged_sim(shot, label4, data4, res4, 'NE', 'ade',
+                          tran_index4, fname4,
+                          allow_write_ppf, allow_plot, 'black', i)
 
 
 
@@ -2221,8 +2261,11 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
                           tran_index3, fname3,
                           allow_write_ppf, allow_plot, 'red', i)
 
-
-
+    label4 = 'ION ' + fname4
+    i = i + 1
+    plot_write_merged_sim(shot, label4, data4, res4, 'SDII', 'asoun',
+                          tran_index4, fname4,
+                          allow_write_ppf, allow_plot, 'black', i)
 
     ###temperature
     plt.figure('TE')
@@ -2247,10 +2290,71 @@ def runJulysimulations_g4(allow_write_ppf, allow_plot):
                           tran_index3, fname3,
                           allow_write_ppf, allow_plot, 'red', i)
 
+    label4 = 'TE ' + fname4
+    i = i + 1
+    plot_write_merged_sim(shot, label4, data4, res4, 'TE', 'ate',
+                          tran_index4, fname4,
+                          allow_write_ppf, allow_plot, 'black', i)
 
+###electron diff
 
+    plt.figure('Xperp')
+    plt.title('Xperp')
+    
+    label1 = 'XE ' + fname1
+    i = 1
+    plot_write_merged_sim(shot, label1, data1, res1, 'XE', 'chie',
+                          tran_index1, fname1,
+                          allow_write_ppf, allow_plot, 'blue', i)
 
+    label2 = 'XE ' + fname2
 
+    i = i + 1
+    plot_write_merged_sim(shot, label2, data2, res2, 'XE', 'chie',
+                          tran_index2, fname2,
+                          allow_write_ppf, allow_plot, 'green', i)
+
+    label3 = 'XE ' + fname3
+    i = i + 1
+    plot_write_merged_sim(shot, label3, data3, res3, 'XE', 'chie',
+                          tran_index3, fname3,
+                          allow_write_ppf, allow_plot, 'red', i)
+
+    label4 = 'XE ' + fname4
+    i = i + 1
+    plot_write_merged_sim(shot, label4, data4, res4, 'XE', 'chie',
+                          tran_index4, fname4,
+                          allow_write_ppf, allow_plot, 'black', i)
+
+###particle diff
+
+    plt.figure('Dperp')
+    plt.title('Dperp')
+
+    label1 = 'Dperp ' + fname1
+    i = 1
+    plot_write_merged_sim(shot, label1, data1, res1, 'D1', 'dperp',
+                          tran_index1, fname1,
+                          allow_write_ppf, allow_plot, 'blue', i)
+
+    label2 = 'Dperp ' + fname2
+
+    i = i + 1
+    plot_write_merged_sim(shot, label2, data2, res2, 'D1', 'dperp',
+                          tran_index2, fname2,
+                          allow_write_ppf, allow_plot, 'green', i)
+
+    label3 = 'Dperp ' + fname3
+    i = i + 1
+    plot_write_merged_sim(shot, label3, data3, res3, 'D1', 'dperp',
+                          tran_index3, fname3,
+                          allow_write_ppf, allow_plot, 'red', i)
+
+    label4 = 'Dperp ' + fname4
+    i = i + 1
+    plot_write_merged_sim(shot, label4, data4, res4, 'D1', 'dperp',
+                          tran_index4, fname4,
+                          allow_write_ppf, allow_plot, 'black', i)
     if allow_write_ppf:
 
         err = close_ppf(shot, 'bviola',
